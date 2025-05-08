@@ -96,11 +96,23 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="main\cpp\angleshooter\network\NetworkPair.cpp" />
+    <ClCompile Include="main\cpp\angleshooter\network\PacketIdentifier.cpp" />
+    <ClCompile Include="main\cpp\angleshooter\util\Identifier.cpp" />
     <ClCompile Include="main\cpp\angleshooter\util\Logger.cpp" />
+    <ClCompile Include="main\cpp\angleshooter\util\Util.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="main\cpp\angleshooter\AngleShooterCommon.h" />
+    <ClInclude Include="main\cpp\angleshooter\NetworkProtocol.hpp" />
+    <ClInclude Include="main\cpp\angleshooter\network\NetworkPair.h" />
+    <ClInclude Include="main\cpp\angleshooter\network\PacketIdentifier.h" />
+    <ClInclude Include="main\cpp\angleshooter\network\PortedIP.h" />
+    <ClInclude Include="main\cpp\angleshooter\network\SocketHolder.h" />
     <ClInclude Include="main\cpp\angleshooter\PreCompiledHeaders.h" />
+    <ClInclude Include="main\cpp\angleshooter\util\Identifier.h" />
     <ClInclude Include="main\cpp\angleshooter\util\Logger.h" />
+    <ClInclude Include="main\cpp\angleshooter\util\Util.h" />
     <ClInclude Include="main\cpp\nlohmann\json.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
