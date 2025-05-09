@@ -16,7 +16,13 @@
 #include <unordered_set>
 #include <vector>
 #include <thread>
+#include <algorithm>
+#include <numbers>
+#include <mutex>
+#include <queue>
+#include <regex>
 
+#include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio/SoundBuffer.hpp>
 #include <SFML/Graphics/Color.hpp>
@@ -32,15 +38,25 @@
 #include <SFML/Network/Packet.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Event.hpp>
+#include <SFML/Window/Keyboard.hpp>
+#include <SFML/Graphics/VertexArray.hpp>
 
 #include "../nlohmann/json.hpp"
 
+#include "util/Consumer.h"
 #include "util/Identifier.h"
 #include "util/Logger.h"
 #include "util/Util.h"
+#include "util/StackMove.h"
 #include "network/PacketIdentifier.h"
 #include "network/PortedIP.h"
 #include "network/SocketHolder.h"
 #include "network/NetworkPair.h"
 #include "AngleShooterCommon.h"
 #include "NetworkProtocol.hpp"
+
+#include "resources/MapLoader.h"
+#include "game/entities/Entity.h"
+#include "game/World.h"
+#include "game/entities/PlayerEntity.h"
+#include "game/entities/BulletEntity.h"

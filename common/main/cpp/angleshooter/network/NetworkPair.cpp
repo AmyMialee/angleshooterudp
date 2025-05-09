@@ -38,6 +38,14 @@ void NetworkPair::acceptAcknowledgment(uint32_t sequence) {
 	this->sentPackets.erase(sequence);
 }
 
+void NetworkPair::setPlayerId(uint32_t id) {
+	this->playerId = id;
+}
+
+uint32_t NetworkPair::getPlayerId() const {
+	return this->playerId;
+}
+
 void NetworkPair::startRoundTripTimer() {
 	this->roundTripTimer.restart();
 }
@@ -70,7 +78,11 @@ uint32_t NetworkPair::getNextSequence() {
 }
 
 bool NetworkPair::shouldDisconnect() const {
-	return this->lastResponse.getElapsedTime().asSeconds() > AngleShooterCommon::TIMEOUT;
+	return this->disconnecting || this->lastResponse.getElapsedTime().asSeconds() > AngleShooterCommon::TIMEOUT;
+}
+
+void NetworkPair::setDisconnecting() {
+	this->disconnecting = true;
 }
 
 PortedIP NetworkPair::getPortedIP() const {

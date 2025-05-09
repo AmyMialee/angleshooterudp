@@ -8,9 +8,9 @@ protected:
 	~FontHolder() = default;
 
 public:
-	FontHolder(const FontHolder&) = delete;
+	explicit FontHolder(const FontHolder&) = delete;
 	void operator=(const FontHolder&) = delete;
-	static FontHolder& get() {
+	static FontHolder& getInstance() {
 		static FontHolder instance;
 		return instance;
 	}
