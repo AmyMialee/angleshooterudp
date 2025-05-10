@@ -442,6 +442,10 @@ void AngleShooterClient::runReceiver() {
 }
 
 void AngleShooterClient::send(sf::Packet& packet) {
+	if (this->server == nullptr) {
+		Logger::error("Cannot send packet, not connected to server");
+		return;
+	}
 	this->server->send(packet);
 }
 
