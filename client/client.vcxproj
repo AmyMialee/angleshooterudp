@@ -126,7 +126,6 @@
     <ClCompile Include="main\cpp\angleshooter\rendering\shaders\BloomProcessing.cpp" />
     <ClCompile Include="main\cpp\angleshooter\rendering\shaders\PostProcessing.cpp" />
     <ClCompile Include="main\cpp\angleshooter\rendering\WorldRenderer.cpp" />
-    <ClCompile Include="main\cpp\angleshooter\states\GameOverState.cpp" />
     <ClCompile Include="main\cpp\angleshooter\states\GameState.cpp" />
     <ClCompile Include="main\cpp\angleshooter\states\MenuState.cpp" />
     <ClCompile Include="main\cpp\angleshooter\states\OnboardingState.cpp" />
@@ -162,7 +161,6 @@
     <ClInclude Include="main\cpp\angleshooter\rendering\shaders\BloomProcessing.h" />
     <ClInclude Include="main\cpp\angleshooter\rendering\shaders\PostProcessing.h" />
     <ClInclude Include="main\cpp\angleshooter\rendering\WorldRenderer.h" />
-    <ClInclude Include="main\cpp\angleshooter\states\GameOverState.h" />
     <ClInclude Include="main\cpp\angleshooter\states\GameState.h" />
     <ClInclude Include="main\cpp\angleshooter\states\MenuState.h" />
     <ClInclude Include="main\cpp\angleshooter\states\OnboardingState.h" />

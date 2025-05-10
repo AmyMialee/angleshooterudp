@@ -29,7 +29,6 @@
 #include "states/GameState.h"
 #include "states/SettingsState.h"
 #include "states/OnboardingState.h"
-#include "states/GameOverState.h"
 #include "states/PauseState.h"
 #include "states/SplashState.h"
 #include "rendering/WorldRenderer.h"

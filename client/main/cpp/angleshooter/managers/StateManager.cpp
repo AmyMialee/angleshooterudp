@@ -57,7 +57,6 @@ StateManager::StateManager() {
 	registerState<OnboardingState>(OnboardingState::getId());
 	registerState<GameState>(GameState::getId());
 	registerState<PauseState>(PauseState::getId());
-	registerState<GameOverState>(GameOverState::getId());
 	registerState<ServerListState>(ServerListState::getId());
 }
 
