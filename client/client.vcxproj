@@ -132,7 +132,6 @@
     <ClCompile Include="main\cpp\angleshooter\states\PauseState.cpp" />
     <ClCompile Include="main\cpp\angleshooter\states\ServerListState.cpp" />
     <ClCompile Include="main\cpp\angleshooter\states\SettingsState.cpp" />
-    <ClCompile Include="main\cpp\angleshooter\states\SplashState.cpp" />
     <ClCompile Include="main\cpp\angleshooter\states\State.cpp" />
     <ClCompile Include="main\cpp\angleshooter\util\Keybinding.cpp" />
   </ItemGroup>
@@ -167,7 +166,6 @@
     <ClInclude Include="main\cpp\angleshooter\states\PauseState.h" />
     <ClInclude Include="main\cpp\angleshooter\states\ServerListState.h" />
     <ClInclude Include="main\cpp\angleshooter\states\SettingsState.h" />
-    <ClInclude Include="main\cpp\angleshooter\states\SplashState.h" />
     <ClInclude Include="main\cpp\angleshooter\states\State.h" />
     <ClInclude Include="main\cpp\angleshooter\util\Keybinding.h" />
     <ClInclude Include="main\cpp\angleshooter\util\ResourceHolder.h" />

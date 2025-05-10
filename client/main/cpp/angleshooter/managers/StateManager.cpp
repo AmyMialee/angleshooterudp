@@ -51,7 +51,6 @@ void StateManager::applyChanges() {
 }
 
 StateManager::StateManager() {
-	registerState<SplashState>(SplashState::getId());
 	registerState<MenuState>(MenuState::getId());
 	registerState<SettingsState>(SettingsState::getId());
 	registerState<OnboardingState>(OnboardingState::getId());

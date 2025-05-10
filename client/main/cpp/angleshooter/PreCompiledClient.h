@@ -30,7 +30,6 @@
 #include "states/SettingsState.h"
 #include "states/OnboardingState.h"
 #include "states/PauseState.h"
-#include "states/SplashState.h"
 #include "rendering/WorldRenderer.h"
 #include "rendering/MapRenderer.h"
 #include "game/ClientWorld.h"

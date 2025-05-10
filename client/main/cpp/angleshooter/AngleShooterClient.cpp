@@ -24,7 +24,6 @@ AngleShooterClient::AngleShooterClient() :
 	socket.setBlocking(false);
 	if (socket.bind(sf::Socket::AnyPort) != sf::Socket::Status::Done) throw std::runtime_error("Failed to bind to port, no ports are remaining???");
 	Logger::info("Client started on port " + std::to_string(socket.getLocalPort()));
-	StateManager::get().push(SplashState::getId());
 	OptionsManager::get().loadFromFile();
 	registerPacket(NetworkProtocol::PING, [this](sf::Packet&, const NetworkPair* sender) {
 		Logger::debug("Ping! from " + sender->getPortedIP().toString());
@@ -321,6 +320,34 @@ void AngleShooterClient::registerPacket(PacketIdentifier* packetType, const std:
 
 void AngleShooterClient::run() {
 	Logger::debug("Starting AngleShooter Client");
+	sf::Sprite splashLogo(TextureHolder::getInstance().get(Identifier("sfml_logo.png")));
+	Util::centre(splashLogo);
+	splashLogo.setPosition(window.getView().getSize() / 2.f);
+	auto splashClock = sf::Clock();
+	while (splashClock.isRunning()) {
+		const auto percent = splashClock.getElapsedTime().asSeconds() / 4.f;
+		if (percent >= 1.f) {
+			splashClock.stop();
+			break;
+		}
+		const auto alpha = std::clamp(255 * std::pow(std::sin(Util::toRadians(160 * std::pow(percent, 2))), 2), 0., 255.);
+		splashLogo.setColor(sf::Color(255, 255, 255, static_cast<uint8_t>(alpha)));
+		const auto scale = .4f + .4f * percent;
+		splashLogo.setScale({scale, scale});
+		window.clear();
+		window.draw(splashLogo);
+		window.display();
+		while (const auto optional = window.pollEvent()) {
+			if (!optional.has_value()) continue;
+			if (auto event = optional.value(); event.getIf<sf::Event::KeyPressed>()) {
+				splashClock.stop();
+			} else if (event.is<sf::Event::Closed>()) {
+				window.close();
+				return;
+			}
+		}
+	}
+	StateManager::get().push(MenuState::getId());
 	ClientWorld::get().init();
     std::thread receiverThread(&AngleShooterClient::runReceiver, this);
 	sf::Clock deltaClock;
