@@ -424,26 +424,26 @@ void AngleShooterClient::runReceiver() {
 		unsigned short port;
 		if (sf::Packet packet; socket.receive(packet, sender, port) == sf::Socket::Status::Done) {
 			if (!sender.has_value()) continue;
-			if (auto receivedPip = PortedIP{.ip= sender.value(), .port= port}; this->server == nullptr || receivedPip != this->server->getPortedIP()) {
-				// if (StateManager::get().getStateId() == ServerListState::SERVER_LIST_ID) {
-					// const auto localIp = std::make_shared<Button>();
-					// localIp->setPosition({80.f, 400.f - 36 * 4});
-					// localIp->setText("IP: " + receivedPip.toString());
-					// localIp->setCallback([this, receivedPip] {
+			auto receivedPip = PortedIP{.ip= sender.value(), .port= port};
+			if (!this->server) {
+				if (packet.getDataSize() > 0) {
+					if (const auto type = static_cast<const uint8_t*>(packet.getData())[0]; type == NetworkProtocol::SERVER_SCAN->getId()) {
+						// const auto localIp = std::make_shared<Button>(); TODO: Add a button to the menu
+						// localIp->setPosition({80.f, 400.f - 36 * 4});
+						// localIp->setText("IP: " + receivedPip.toString());
+						// localIp->setCallback([this, receivedPip] {
 						// get().connect(receivedPip);
 						// StateManager::get().clear();
 						// StateManager::get().push(GameState::GAME_ID);
-					// });
-					// const auto serverListState = dynamic_cast<ServerListState*>(StateManager::get().getCurrentState()->get());
-					// serverListState->gui.pack(localIp);
-					// Logger::debug("Scanned server: " + receivedPip.toString());
-				// } else {
-					Logger::warn("Received packet from non-server address: " + receivedPip.toString());
-				// }
-				continue;
-			}
-			if (!this->server) {
-				sleep(sf::milliseconds(128));
+						// });
+						// const auto serverListState = dynamic_cast<ServerListState*>(StateManager::get().getCurrentState()->get());
+						// serverListState->gui.pack(localIp);
+						// Logger::debug("Scanned server: " + receivedPip.toString());
+						continue;
+					}
+				}
+				Logger::warn("Received packet from non-server address: " + receivedPip.toString());
+				sleep(sf::milliseconds(64));
 				continue;
 			}
 			handlePacket(packet, this->server);
