@@ -26,6 +26,8 @@ void InputManager::handleInput(sf::RenderWindow& window) {
 		} else if (event.is<sf::Event::Closed>()) {
 			window.close();
 			return;
+		} else if (const auto* resized = event.getIf<sf::Event::Resized>()) {
+			window.setSize({resized->size.x, (resized->size.x * 9) / 16});
 		}
 		StateManager::get().handleEvent(event);
 	}
