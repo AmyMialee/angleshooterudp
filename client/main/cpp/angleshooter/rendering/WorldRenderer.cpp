@@ -4,8 +4,9 @@
 #include "../game/ClientWorld.h"
 
 WorldRenderer::WorldRenderer() {
-	registerRenderer<PlayerEntity>(PlayerEntity::ID, [this](const std::shared_ptr<PlayerEntity>& player, float deltaTime) {
+	registerRenderer<PlayerEntity>(PlayerEntity::ID, [this](const std::shared_ptr<PlayerEntity>& player) {
 		if (player->deathTime > 0) return;
+		const auto deltaTime = static_cast<float>(AngleShooterClient::get().tickDelta);
 		static sf::Sprite playerSprite(TextureHolder::getInstance().get(Identifier("player.png")));
 		static sf::Text text(FontHolder::getInstance().getDefault());
 		static std::once_flag flag;
@@ -56,7 +57,8 @@ WorldRenderer::WorldRenderer() {
 		text.setFillColor(textColour);
 		AngleShooterClient::get().renderTexture.draw(text);
 	});
-	registerRenderer<BulletEntity>(BulletEntity::ID, [this](const std::shared_ptr<BulletEntity>& bullet, float deltaTime) {
+	registerRenderer<BulletEntity>(BulletEntity::ID, [this](const std::shared_ptr<BulletEntity>& bullet) {
+		const auto deltaTime = static_cast<float>(AngleShooterClient::get().tickDelta);
 		static sf::Sprite bulletCore(TextureHolder::getInstance().get(Identifier("bullet_core.png")));
 		static sf::Sprite bulletRing(TextureHolder::getInstance().get(Identifier("bullet_ring.png")));
 		static std::once_flag flag;
@@ -103,16 +105,16 @@ void WorldRenderer::tick() {
 		{viewCurrent.size.x * (1 - adjustment) + viewTarget.size.x * adjustment, viewCurrent.size.y * (1 - adjustment) + viewTarget.size.y * adjustment}};
 }
 
-void WorldRenderer::render(float deltaTime) {
+void WorldRenderer::render() {
 	auto view = AngleShooterClient::get().renderTexture.getView();
 	const auto center = sf::Vector2f{viewLast.position.x / 2 + viewLast.size.x / 2, viewLast.position.y / 2 + viewLast.size.y / 2};
 	view.setCenter(center);
 	const auto average = 160 + std::max((viewCurrent.size.x - viewCurrent.position.x) / 2, (viewCurrent.size.y - viewCurrent.position.y) / 2) * 3.2f;
 	view.setSize({average, average / static_cast<float>(AngleShooterClient::get().renderTexture.getSize().x) * static_cast<float>(AngleShooterClient::get().renderTexture.getSize().y)});
 	AngleShooterClient::get().renderTexture.setView(view);
-	if (ClientWorld::get().mapRenderer != nullptr) ClientWorld::get().mapRenderer->render(deltaTime);
+	if (ClientWorld::get().mapRenderer != nullptr) ClientWorld::get().mapRenderer->render();
 	for (const auto entity : ClientWorld::get().getEntities()) {
-		if (auto renderer = renderRegistry.find(entity->getEntityType().getHash()); renderer != renderRegistry.end()) renderer->second(entity, deltaTime);
+		if (auto renderer = renderRegistry.find(entity->getEntityType().getHash()); renderer != renderRegistry.end()) renderer->second(entity);
 	}
 	if (OptionsManager::get().isDebugEnabled()) {
 		sf::RectangleShape shape;
@@ -138,8 +140,8 @@ void WorldRenderer::render(float deltaTime) {
 	bloomProcessing.apply(AngleShooterClient::get().renderTexture, AngleShooterClient::get().renderTexture);
 }
 
-template<typename T> void WorldRenderer::registerRenderer(const Identifier& id, std::function<void(std::shared_ptr<T>, float)> renderer) {
-    renderRegistry[id.getHash()] = [renderer](const std::shared_ptr<Entity>& entity, float deltaTime) {
-        renderer(std::static_pointer_cast<T>(entity), deltaTime);
+template<typename T> void WorldRenderer::registerRenderer(const Identifier& id, std::function<void(std::shared_ptr<T>)> renderer) {
+    renderRegistry[id.getHash()] = [renderer](const std::shared_ptr<Entity>& entity) {
+        renderer(std::static_pointer_cast<T>(entity));
     };
 }

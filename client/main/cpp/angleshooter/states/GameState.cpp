@@ -3,9 +3,29 @@
 
 const Identifier GameState::GAME_ID("game");
 
-GameState::GameState() : State() {}
-
 void GameState::init() {
+	// const auto playButton = std::make_shared<Button>();
+	// playButton->setPosition({250, 250});
+	// playButton->setText("Resume");
+	// playButton->setCallback([this] {
+	// 	requestStackPop();
+	// });
+	// gui.pack(playButton);
+	// const auto settingsButton = std::make_shared<Button>();
+	// settingsButton->setPosition({250, 300});
+	// settingsButton->setText("Settings");
+	// settingsButton->setCallback([this] {
+	// 	requestStackPush(SettingsState::getId());
+	// });
+	// gui.pack(settingsButton);
+	// const auto exitButton = std::make_shared<Button>();
+	// exitButton->setPosition({250, 350});
+	// exitButton->setText("Exit");
+	// exitButton->setCallback([this] {
+	// 	requestStackClear();
+	// 	requestStackPush(MenuState::getId());
+	// });
+	// gui.pack(exitButton);
 	SCORES.clear();
 	static const auto GAME_MUSIC = Identifier("gamemusic.ogg");
 	ClientWorld::get().init();
@@ -16,22 +36,14 @@ void GameState::destroy() {
 	AngleShooterClient::get().disconnect();
 }
 
-void GameState::loadAssets() {
-	TextureHolder::getInstance().load(Map::DEFAULT_TILE);
-	TextureHolder::getInstance().load(Identifier("cobble.png"));
-	TextureHolder::getInstance().load(Identifier("player.png"));
-	TextureHolder::getInstance().load(Identifier("player2.png"));
-	TextureHolder::getInstance().load(Identifier("bullet.png"));
-	TextureHolder::getInstance().load(Identifier("bullet2.png"));
-	SoundHolder::getInstance().load(Identifier("bullet.ogg"));
-	SoundHolder::getInstance().load(Identifier("hurt.ogg"));
-	SoundHolder::getInstance().load(Identifier("explode.ogg"));
+void GameState::draw(sf::RenderTarget& target, sf::RenderStates states) const {
+	this->render();
 }
 
-void GameState::render(float deltaTime) {
+void GameState::render() const {
 	auto& window = AngleShooterClient::get().renderTexture;
 	window.setView(window.getDefaultView());
-	WorldRenderer::get().render(deltaTime);
+	WorldRenderer::get().render();
 	window.setView(window.getDefaultView());
 	for (const auto& score : SCORES | std::views::values) {
 		static sf::Sprite playerSprite(TextureHolder::getInstance().get(Identifier("player.png")));
@@ -59,6 +71,18 @@ void GameState::render(float deltaTime) {
 		window.draw(text);
 	}
 	AngleShooterClient::get().window.setView(AngleShooterClient::get().window.getDefaultView());
+	if (this->paused) {
+		static sf::RectangleShape backgroundShape;
+		static std::once_flag flag;
+		std::call_once(flag, [&] {
+			backgroundShape.setFillColor(sf::Color(0, 0, 0, 150));
+			backgroundShape.setSize(AngleShooterClient::get().window.getView().getSize());
+		});
+		auto& texture = AngleShooterClient::get().renderTexture;
+		texture.draw(backgroundShape);
+		texture.setView(texture.getDefaultView());
+		// texture.draw(gui);
+	}
 }
 
 void GameState::refreshScores() {
@@ -79,10 +103,6 @@ void GameState::refreshScores() {
 	}
 }
 
-bool GameState::shouldRenderNextState() const {
-	return false;
-}
-
 bool GameState::tick() {
 	ClientWorld::get().tick();
 	WorldRenderer::get().tick();
@@ -96,11 +116,13 @@ bool GameState::tick() {
 			}
 		}
 	}
+	// if (this->paused) gui.tick();
 	return false;
 }
 
 bool GameState::handleEvent(const sf::Event& event) {
-	if (const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()) if (keyPressed->scancode == sf::Keyboard::Scan::Escape) requestStackPush(PauseState::getId());
+	if (const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()) if (keyPressed->scancode == sf::Keyboard::Scan::Escape) this->paused = !this->paused;
+	// if (this->paused) gui.handleEvent(event);
 	return false;
 }
 

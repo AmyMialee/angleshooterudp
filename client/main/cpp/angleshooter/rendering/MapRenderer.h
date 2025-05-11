@@ -6,5 +6,5 @@ class MapRenderer {
 	
 public:
 	explicit MapRenderer(Map& map);
-	void render(float deltaTime);
+	void render();
 };

@@ -1,15 +1,13 @@
 ﻿#pragma once
 
 class MenuState final : public State {
-	WidgetContainer gui;
+	MenuManager menu;
+	std::vector<MenuWidget*> widgets;
 
 public:
 	static const Identifier MENU_ID;
-	static const Identifier MENU_TEXTURE;
 	void init() override;
-	void loadAssets() override;
-	void render(float deltaTime) override;
-	[[nodiscard]] bool shouldRenderNextState() const override;
+	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 	bool tick() override;
 	bool handleEvent(const sf::Event& event) override;
 	Identifier getStateId() override;

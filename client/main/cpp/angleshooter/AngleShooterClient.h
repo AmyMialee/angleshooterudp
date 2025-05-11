@@ -4,13 +4,12 @@ class AngleShooterClient final : public SocketHolder {
 	std::map<uint8_t, std::function<void(sf::Packet& packet, NetworkPair* pair)>> packetHandlers;
 	std::map<uint8_t, PacketIdentifier*> packetIds;
 	sf::UdpSocket socket;
-	bool running = true;
 
-	void tick();
-	void render(float deltaTime);
+	void render();
 	void runReceiver();
 
 	void handlePacket(sf::Packet& packet, NetworkPair* sender);
+	void registerPackets();
 	void registerPacket(PacketIdentifier* packetType, const std::function<void(sf::Packet& packet, NetworkPair* sender)>& handler);
 
 protected:
@@ -19,11 +18,12 @@ protected:
 
 public:
 	NetworkPair* server = nullptr;
-	sf::RenderWindow window;
-	sf::RenderTexture renderTexture;
-	double fps;
-	double tps;
-	double lps;
+	sf::RenderWindow window = sf::RenderWindow(sf::VideoMode({1920, 1080}), "Angle Shooter", sf::Style::Default);
+	sf::RenderTexture renderTexture = sf::RenderTexture({980, 540});
+	double fps = 0;
+	double tps = 0;
+	double lps = 0;
+	double tickDelta = 0;
 	uint16_t playerId;
 
 	void run();

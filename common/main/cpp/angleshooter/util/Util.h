@@ -3,10 +3,12 @@
 class Util {
 public:
 	static sf::Vector2f lerp(float delta, const sf::Vector2f& a, const sf::Vector2f& b);
+	static sf::View lerp(float delta, const sf::View& a, const sf::View& b);
 	static double toRadians(double degrees);
 	static double toDegrees(double radians);
 	static void centre(sf::Sprite& sprite);
 	static void centre(sf::Text& text);
+	static void centre(sf::Shape& shape);
 	static int randomInt(int exclusiveMax);
 	static float randomFloat();
 	static float randomFloat(float min, float max);

@@ -13,6 +13,10 @@ sf::Vector2f Util::lerp(float delta, const sf::Vector2f& a, const sf::Vector2f& 
 	return a + delta * (b - a);
 }
 
+sf::View Util::lerp(float delta, const sf::View& a, const sf::View& b) {
+	return {lerp(delta, a.getCenter(), b.getCenter()), lerp(delta, a.getSize(), b.getSize())};
+}
+
 double Util::toRadians(double degrees) {
 	return degrees * M_PI / 180;
 }
@@ -29,6 +33,11 @@ void Util::centre(sf::Sprite& sprite) {
 void Util::centre(sf::Text& text) {
 	const auto bounds = text.getLocalBounds();
 	text.setOrigin({std::floor(bounds.position.x + bounds.size.x / 2.f), std::floor(bounds.position.y + bounds.size.y / 2.f)});
+}
+
+void Util::centre(sf::Shape& shape) {
+	const auto bounds = shape.getLocalBounds();
+	shape.setOrigin({std::floor(bounds.position.x + bounds.size.x / 2.f), std::floor(bounds.position.y + bounds.size.y / 2.f)});
 }
 
 int Util::randomInt(int exclusiveMax) {

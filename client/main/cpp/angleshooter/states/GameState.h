@@ -1,16 +1,18 @@
 ﻿#pragma once
 
 class GameState final : public State {
+	MenuManager menu;
+	bool paused;
+
 public:
 	inline static std::unordered_map<uint16_t, ScoreEntry> SCORES;
 	static const Identifier GAME_ID;
-	GameState();
+	GameState() = default;
 	void init() override;
 	void destroy() override;
-	void loadAssets() override;
-	void render(float deltaTime) override;
+	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+	void render() const;
 	static void refreshScores();
-	[[nodiscard]] bool shouldRenderNextState() const override;
 	bool tick() override;
 	bool handleEvent(const sf::Event& event) override;
 	Identifier getStateId() override;

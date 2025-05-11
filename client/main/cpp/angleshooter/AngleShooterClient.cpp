@@ -14,17 +14,16 @@ int main(int, char*[]) {
 	return 0;
 }
 
-AngleShooterClient::AngleShooterClient() :
-	window(sf::VideoMode({1920, 1080}), "Angle Shooter", sf::Style::Titlebar | sf::Style::Close),
-	renderTexture({960, 540})
-{
+AngleShooterClient::AngleShooterClient() {
 	NetworkProtocol::initialize();
-	window.clear();
 	window.setKeyRepeatEnabled(false);
 	socket.setBlocking(false);
 	if (socket.bind(sf::Socket::AnyPort) != sf::Socket::Status::Done) throw std::runtime_error("Failed to bind to port, no ports are remaining???");
 	Logger::info("Client started on port " + std::to_string(socket.getLocalPort()));
-	OptionsManager::get().loadFromFile();
+	registerPackets();
+}
+
+void AngleShooterClient::registerPackets() {
 	registerPacket(NetworkProtocol::PING, [this](sf::Packet&, const NetworkPair* sender) {
 		Logger::debug("Ping! from " + sender->getPortedIP().toString());
 		auto pong = NetworkProtocol::PONG->getPacket();
@@ -357,7 +356,7 @@ void AngleShooterClient::run() {
 	auto frames = 0;
 	auto ticks = 0;
 	auto loops = 0;
-	while (this->running && window.isOpen()) {
+	while (window.isOpen()) {
 		const auto deltaTime = deltaClock.restart().asSeconds();
 		tickTime += deltaTime;
 		frameTime += deltaTime;
@@ -369,12 +368,14 @@ void AngleShooterClient::run() {
 		}
 		while (tickTime >= AngleShooterCommon::TIME_PER_TICK) {
 			tickTime -= AngleShooterCommon::TIME_PER_TICK;
-			this->tick();
+			AudioManager::get().tick();
+			StateManager::get().tick();
 			++ticks;
 		}
 		if (const auto timePerFrame = AngleShooterCommon::TIME_PER_TICK; frameTime >= timePerFrame) {
 			frameTime -= timePerFrame;
-			render(static_cast<float>(tickTime / AngleShooterCommon::TIME_PER_TICK));
+			this->tickDelta = tickTime / AngleShooterCommon::TIME_PER_TICK;
+			render();
 			while (frameTime >= timePerFrame) frameTime -= timePerFrame;
 			++frames;
 		}
@@ -392,19 +393,9 @@ void AngleShooterClient::run() {
 	}
 }
 
-void AngleShooterClient::tick() {
-	AudioManager::get().tick();
-	StateManager::get().tick();
-}
-
-void AngleShooterClient::render(float deltaTime) {
+void AngleShooterClient::render() {
 	window.clear();
-	renderTexture.clear();
-	StateManager::get().render(deltaTime);
-	renderTexture.display();
-	sf::Sprite sprite(renderTexture.getTexture());
-	sprite.setScale({2.f, 2.f});
-	window.draw(sprite);
+	window.draw(StateManager::get());
 	{
 		auto offset = 0;
 		auto fill = [&](const std::string& words) {
@@ -428,27 +419,27 @@ void AngleShooterClient::render(float deltaTime) {
 
 void AngleShooterClient::runReceiver() {
 	Logger::info("Starting Client Network Handler");
-	while (this->running && window.isOpen()) {
+	while (window.isOpen()) {
 		std::optional<sf::IpAddress> sender;
 		unsigned short port;
 		if (sf::Packet packet; socket.receive(packet, sender, port) == sf::Socket::Status::Done) {
 			if (!sender.has_value()) continue;
 			if (auto receivedPip = PortedIP{.ip= sender.value(), .port= port}; this->server == nullptr || receivedPip != this->server->getPortedIP()) {
-				if (StateManager::get().getStateId() == ServerListState::SERVER_LIST_ID) {
-					const auto localIp = std::make_shared<Button>();
-					localIp->setPosition({80.f, 400.f - 36 * 4});
-					localIp->setText("IP: " + receivedPip.toString());
-					localIp->setCallback([this, receivedPip] {
-						get().connect(receivedPip);
-						StateManager::get().clear();
-						StateManager::get().push(GameState::GAME_ID);
-					});
-					const auto serverListState = dynamic_cast<ServerListState*>(StateManager::get().getCurrentState()->get());
-					serverListState->gui.pack(localIp);
-					Logger::debug("Scanned server: " + receivedPip.toString());
-				} else {
+				// if (StateManager::get().getStateId() == ServerListState::SERVER_LIST_ID) {
+					// const auto localIp = std::make_shared<Button>();
+					// localIp->setPosition({80.f, 400.f - 36 * 4});
+					// localIp->setText("IP: " + receivedPip.toString());
+					// localIp->setCallback([this, receivedPip] {
+						// get().connect(receivedPip);
+						// StateManager::get().clear();
+						// StateManager::get().push(GameState::GAME_ID);
+					// });
+					// const auto serverListState = dynamic_cast<ServerListState*>(StateManager::get().getCurrentState()->get());
+					// serverListState->gui.pack(localIp);
+					// Logger::debug("Scanned server: " + receivedPip.toString());
+				// } else {
 					Logger::warn("Received packet from non-server address: " + receivedPip.toString());
-				}
+				// }
 				continue;
 			}
 			if (!this->server) {

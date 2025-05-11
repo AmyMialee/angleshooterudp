@@ -19,7 +19,7 @@ MapRenderer::MapRenderer(Map& map) : mapSprite(sf::Sprite(sf::RenderTexture({1, 
 	this->mapSprite.setPosition({0.f, static_cast<float>(map.getRows() * 16)});
 }
 
-void MapRenderer::render(float) {
+void MapRenderer::render() {
 	auto& texture = AngleShooterClient::get().renderTexture;
 	texture.draw(this->mapSprite);
 }

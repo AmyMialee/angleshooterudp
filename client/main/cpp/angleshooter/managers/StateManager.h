@@ -1,6 +1,6 @@
 #pragma once
 
-class StateManager final {
+class StateManager final : public sf::Drawable {
 	struct PendingChange {
 		explicit PendingChange(StackMove action, Identifier id = Identifier::empty);
 		StackMove action;
@@ -15,13 +15,11 @@ class StateManager final {
 
 protected:
 	StateManager();
-	~StateManager() = default;
 
 public:
 	template<typename T> void registerState(const Identifier& id);
-	void loadAssets();
 	void tick();
-	void render(float deltaTime);
+	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 	void handleEvent(const sf::Event& event);
 	[[nodiscard]] Identifier getStateId() const;
 

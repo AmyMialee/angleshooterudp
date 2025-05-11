@@ -52,15 +52,7 @@ void StateManager::applyChanges() {
 
 StateManager::StateManager() {
 	registerState<MenuState>(MenuState::getId());
-	registerState<SettingsState>(SettingsState::getId());
-	registerState<OnboardingState>(OnboardingState::getId());
 	registerState<GameState>(GameState::getId());
-	registerState<PauseState>(PauseState::getId());
-	registerState<ServerListState>(ServerListState::getId());
-}
-
-void StateManager::loadAssets() {
-	for (const auto& second : stateMap | std::views::values) second()->loadAssets();
 }
 
 void StateManager::tick() {
@@ -70,11 +62,9 @@ void StateManager::tick() {
 	applyChanges();
 }
 
-void StateManager::render(float deltaTime) {
+void StateManager::draw(sf::RenderTarget& target, sf::RenderStates states) const {
 	if (stack.empty()) return;
-	auto iterator = stack.end() - 1;
-	for (; iterator != stack.begin(); --iterator) if (!iterator->first->shouldRenderNextState()) break;
-	for (; iterator != stack.end(); ++iterator) iterator->first->render(deltaTime);
+	target.draw(*stack.back().first, states);
 }
 
 void StateManager::handleEvent(const sf::Event& event) {

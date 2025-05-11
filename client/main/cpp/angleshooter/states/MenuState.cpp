@@ -4,66 +4,46 @@
 #include "ServerListState.h"
 
 const Identifier MenuState::MENU_ID("menu");
-const Identifier MenuState::MENU_TEXTURE("main_menu.png");
 
 void MenuState::init() {
-	const auto playButton = std::make_shared<Button>();
-	playButton->setPosition({100, 250});
-	playButton->setText("Play");
-	playButton->setCallback([this] {
-		requestStackPush(ServerListState::getId());
-	});
-	const auto settingsButton = std::make_shared<Button>();
-	settingsButton->setPosition({100, 300});
-	settingsButton->setText("Settings");
-	settingsButton->setCallback([this] {
-		requestStackPush(SettingsState::getId());
-	});
-	const auto exitButton = std::make_shared<Button>();
-	exitButton->setPosition({100, 350});
-	exitButton->setText("Exit");
-	exitButton->setCallback([this] {
-		requestStackPop();
-	});
-	gui.pack(playButton);
-	gui.pack(settingsButton);
-	gui.pack(exitButton);
+	this->menu.addWidget(new MenuWidget({0, 0}, 1860, Identifier("menu/menu_bg.png")));
+	this->menu.addWidget(new MenuWidget({0, 0}, 1044, Identifier("menu/menu_main.png")));
+	this->menu.addWidget(new MenuWidget({-17, -154}, 508, Identifier("menu/menu_logo.png")));
+
+	const auto pageMain = this->menu.addPage(new MenuPage({{0, 0}, {1920, 1080}}));
+	const auto pageOptions = this->menu.addPage(new MenuPage({{980, 540}, {1920, 1080}}, pageMain));
+
+	const auto widgetServers = pageMain->addButton(new MenuButton({-27, 98}, 232, Identifier("menu/menu_button_servers.png"), ([this] {
+
+	})));
+	const auto widgetCredits = pageMain->addButton(new MenuButton({-278, 91}, 241, Identifier("menu/menu_button_credits.png"), ([this] {
+
+	})), widgetServers, MenuInput::RIGHT);
+	const auto widgetOptions = pageMain->addButton(new MenuButton({218, 116}, 231, Identifier("menu/menu_button_options.png"), ([this, pageOptions] {
+		this->menu.setCurrentPage(pageOptions);
+	})), widgetServers, MenuInput::LEFT);
+	const auto widgetExit = pageMain->addButton(new MenuButton({-32, 217}, 320, Identifier("menu/menu_button_exit.png"), ([this] {
+		this->requestStackPop();
+	})), widgetServers, MenuInput::UP);
+
+	const auto widgetBack = pageOptions->addButton(new MenuButton({980 + 100, 400}, {200, 50}, Identifier("menu/menu_button_back"), ([this, pageMain] {
+		this->menu.setCurrentPage(pageMain);
+	})));
+
 	AudioManager::get().playMusic(Identifier("backgroundmusic.ogg"));
 }
 
-void MenuState::loadAssets() {
-	TextureHolder::getInstance().load(MENU_TEXTURE);
-	TextureHolder::getInstance().load(Button::defaultTexture);
-	TextureHolder::getInstance().load(Button::pressedTexture);
-	TextureHolder::getInstance().load(Button::selectedTexture);
-	SoundHolder::getInstance().load(Button::buttonSound);
-}
-
-void MenuState::render(float deltaTime) {
-	static sf::Sprite background(TextureHolder::getInstance().get(MENU_TEXTURE));
-	static std::once_flag flag;
-	std::call_once(flag, [&] {
-		Util::centre(background);
-		background.setPosition(AngleShooterClient::get().renderTexture.getView().getSize() / 2.f);
-		background.setScale({2.f, 2.f});
-	});
-	auto& window = AngleShooterClient::get().renderTexture;
-	window.setView(window.getDefaultView());
-	window.draw(background);
-	window.draw(gui);
-}
-
-bool MenuState::shouldRenderNextState() const {
-	return false;
+void MenuState::draw(sf::RenderTarget& target, sf::RenderStates states) const {
+	target.draw(this->menu);
 }
 
 bool MenuState::tick() {
-	gui.tick();
+	this->menu.tick();
 	return false;
 }
 
 bool MenuState::handleEvent(const sf::Event& event) {
-	gui.handleEvent(event);
+	this->menu.handleEvent(event);
 	return false;
 }
 

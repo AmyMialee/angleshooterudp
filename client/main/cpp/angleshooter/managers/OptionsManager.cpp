@@ -62,6 +62,10 @@ void OptionsManager::loadFromFile() {
 	}
 }
 
+OptionsManager::OptionsManager() {
+	loadFromFile();
+}
+
 std::string OptionsManager::getName() const {
 	return this->name;
 }

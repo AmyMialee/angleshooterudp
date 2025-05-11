@@ -15,7 +15,7 @@ class OptionsManager final {
 	bool debug = false;
 
 protected:
-	OptionsManager() = default;
+	OptionsManager();
 	~OptionsManager() = default;
 
 public:

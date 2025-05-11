@@ -2,22 +2,16 @@
 
 class StateManager;
 
-class State {
+class State : public sf::Drawable {
 public:
 	typedef std::unique_ptr<State> Pointer;
 
 	State() = default;
-	virtual ~State() = default;
+	~State() override = default;
 	State(const State&) = delete;
 	State& operator=(const State&) = delete;
 	virtual void init() = 0;
 	virtual void destroy();
-	virtual void loadAssets() = 0;
-	virtual void render(float deltaTime) = 0;
-	/**
-	 * @return Should continue drawing States
-	 */
-	[[nodiscard]] virtual bool shouldRenderNextState() const = 0;
 	/**
 	 * @return Should continue ticking States
 	 */
