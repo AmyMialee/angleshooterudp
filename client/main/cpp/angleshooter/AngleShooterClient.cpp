@@ -402,10 +402,11 @@ void AngleShooterClient::render() {
 			static auto text = sf::Text(FontHolder::getInstance().getDefault(), "", 12);
 			text.setString(words);
 			text.setFillColor(sf::Color::Black);
-			text.setPosition(sf::Vector2f{4.f, 4.f + offset} + sf::Vector2f{1.f, 1.f});
+			const auto topLeftPos = window.getView().getCenter() - window.getView().getSize() / 2.f;
+			text.setPosition(topLeftPos + sf::Vector2f{4.f, 4.f + offset} + sf::Vector2f{1.f, 1.f});
 			window.draw(text);
 			text.setFillColor(sf::Color::White);
-			text.setPosition({4.f, 4.f + offset});
+			text.setPosition(topLeftPos + sf::Vector2f{4.f, 4.f + offset});
 			window.draw(text);
 			offset += 14;
 		};

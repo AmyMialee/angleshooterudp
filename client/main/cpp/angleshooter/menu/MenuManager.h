@@ -4,8 +4,8 @@ class MenuManager : public sf::Drawable {
 	std::vector<MenuWidget*> widgets;
 	std::vector<MenuPage*> pages;
 	MenuPage* currentPage = nullptr;
-	sf::View prevView;
-	sf::View view;
+	sf::View prevView = sf::View({0, 0}, {1920, 1080});
+	sf::View view = sf::View({0, 0}, {1920, 1080});
 
 public:
 	MenuWidget* addWidget(MenuWidget* page);

@@ -13,6 +13,7 @@ MenuPage* MenuManager::addPage(MenuPage* page) {
 }
 
 void MenuManager::tick() {
+	for (const auto& widget : this->widgets) widget->tick();
 	if (this->currentPage == nullptr) return;
 	this->currentPage->tick();
 	this->prevView = this->view;
@@ -21,7 +22,8 @@ void MenuManager::tick() {
 
 void MenuManager::draw(sf::RenderTarget& target, sf::RenderStates states) const {
 	const auto oldView = target.getView();
-	target.setView(Util::lerp(static_cast<float>(AngleShooterClient::get().tickDelta), this->prevView, this->view));
+	const auto view = Util::lerp(static_cast<float>(AngleShooterClient::get().tickDelta), this->prevView, this->view);
+	target.setView({view.getCenter(), view.getSize()});
 	for (const auto& widget : this->widgets) target.draw(*widget, states);
 	for (const auto& page : this->pages) target.draw(*page, states);
 	target.setView(oldView);
@@ -42,9 +44,12 @@ void MenuManager::input(const MenuInput& input) {
 	if (this->currentPage == nullptr) return;
 	if (input == MenuInput::ESCAPE) {
 		this->currentPage = this->currentPage->getPreviousPage();
-		Logger::debug("MenuManager::input - Back to previous page");
 	} else {
-		this->currentPage->input(input);
+		if (this->currentPage->getSelectedButton() == nullptr && input == MenuInput::PRESS) {
+			this->currentPage = this->currentPage->getPreviousPage();
+		} else {
+			this->currentPage->input(input);
+		}
 	}
 }
 

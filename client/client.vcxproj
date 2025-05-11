@@ -117,6 +117,7 @@
     <ClCompile Include="main\cpp\angleshooter\menu\MenuButton.cpp" />
     <ClCompile Include="main\cpp\angleshooter\menu\MenuManager.cpp" />
     <ClCompile Include="main\cpp\angleshooter\menu\MenuPage.cpp" />
+    <ClCompile Include="main\cpp\angleshooter\menu\MenuWidget.cpp" />
     <ClCompile Include="main\cpp\angleshooter\PreCompiledClient.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeaderOutputFile>$(IntDir)client.pch</PrecompiledHeaderOutputFile>

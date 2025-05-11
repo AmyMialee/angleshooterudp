@@ -13,6 +13,7 @@ public:
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
 	MenuButton* addButton(MenuButton* button, MenuButton* neighbour = nullptr, MenuInput side = MenuInput::ESCAPE);
+	void addLink(MenuButton* button1, MenuButton* button2, MenuInput side);
 
 	void input(MenuInput input);
 
