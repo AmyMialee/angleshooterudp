@@ -31,10 +31,14 @@ void MenuState::init() {
 	const auto widgetExit = pageMain->addButton(new MenuButton({-47, 221}, 320, Identifier("menu/menu_button_exit.png"), ([this] {
 		this->requestStackPop();
 	})), widgetServers, MenuInput::UP);
+	pageMain->addLink(widgetCredits, widgetOptions, MenuInput::LEFT);
 	pageMain->addLink(widgetExit, widgetCredits, MenuInput::UP);
 	pageMain->addLink(widgetExit, widgetOptions, MenuInput::UP);
 	pageMain->addLink(widgetExit, widgetCredits, MenuInput::LEFT);
 	pageMain->addLink(widgetExit, widgetOptions, MenuInput::RIGHT);
+	pageMain->addLink(widgetExit, widgetServers, MenuInput::DOWN);
+	pageMain->addLink(widgetExit, widgetCredits, MenuInput::DOWN);
+	pageMain->addLink(widgetExit, widgetOptions, MenuInput::DOWN);
 
 
 
