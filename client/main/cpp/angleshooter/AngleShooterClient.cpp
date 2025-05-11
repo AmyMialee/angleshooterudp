@@ -353,9 +353,9 @@ void AngleShooterClient::run() {
 	auto frameTime = 0.;
 	auto tickTime = 0.;
 	auto secondTime = 0.;
-	auto frames = 0;
-	auto ticks = 0;
-	auto loops = 0;
+	auto frames = 0.;
+	auto ticks = 0.;
+	auto loops = 0.;
 	while (window.isOpen()) {
 		const auto deltaTime = deltaClock.restart().asSeconds();
 		tickTime += deltaTime;
@@ -372,24 +372,23 @@ void AngleShooterClient::run() {
 			StateManager::get().tick();
 			++ticks;
 		}
-		if (const auto timePerFrame = AngleShooterCommon::TIME_PER_TICK; frameTime >= timePerFrame) {
-			frameTime -= timePerFrame;
+		if (frameTime >= OptionsManager::get().getTimePerFrame()) {
 			this->tickDelta = tickTime / AngleShooterCommon::TIME_PER_TICK;
 			render();
-			while (frameTime >= timePerFrame) frameTime -= timePerFrame;
+			while (frameTime >= OptionsManager::get().getTimePerFrame()) frameTime -= OptionsManager::get().getTimePerFrame();
 			++frames;
 		}
 		++loops;
 		if (secondTime >= .1f) {
-			tps = ticks / secondTime;
-			fps = frames / secondTime;
-			lps = loops / secondTime;
+			tps = tps * .9 + .1 * (ticks / secondTime);
+			fps = fps * .9 + .1 * (frames / secondTime);
+			lps = lps * .9 + .1 * (loops / secondTime);
 			ticks = 0;
 			frames = 0;
 			loops = 0;
 			secondTime = 0;
 		}
-		std::this_thread::sleep_for(std::chrono::milliseconds(6));
+		sf::sleep(std::chrono::milliseconds(1));
 	}
 }
 
