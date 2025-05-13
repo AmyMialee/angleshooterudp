@@ -8,6 +8,7 @@ MenuWidget* MenuManager::addWidget(MenuWidget* page) {
 
 MenuPage* MenuManager::addPage(MenuPage* page) {
 	this->pages.push_back(page);
+	if (this->mainPage == nullptr) this->mainPage = page;
 	if (this->currentPage == nullptr) this->currentPage = page;
 	return page;
 }
@@ -43,7 +44,7 @@ void MenuManager::handleEvent(const sf::Event& event) {
 void MenuManager::input(const MenuInput& input) {
 	if (this->currentPage == nullptr) return;
 	if (input == MenuInput::ESCAPE) {
-		this->currentPage = this->currentPage->getPreviousPage();
+		if (this->currentPage->getPreviousPage()) this->currentPage = this->currentPage->getPreviousPage();
 	} else {
 		if (this->currentPage->getSelectedButton() == nullptr && input == MenuInput::PRESS) {
 			this->currentPage = this->currentPage->getPreviousPage();
@@ -55,4 +56,8 @@ void MenuManager::input(const MenuInput& input) {
 
 void MenuManager::setCurrentPage(MenuPage* page) {
 	this->currentPage = page;
+}
+
+MenuPage* MenuManager::getMainPage() {
+	return this->mainPage;
 }

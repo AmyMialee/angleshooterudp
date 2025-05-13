@@ -12,7 +12,6 @@ class OptionsManager final {
 	int framesPerSecond = 144;
 	double timePerFrame = 1. / framesPerSecond;
 	bool onboarded = false;
-	bool debug = false;
 
 protected:
 	OptionsManager();
@@ -30,7 +29,6 @@ public:
 	[[nodiscard]] bool isOnboarded() const;
 	[[nodiscard]] int getFps();
 	[[nodiscard]] double getTimePerFrame();
-	[[nodiscard]] bool isDebugEnabled() const;
 	void setName(const std::string& name);
 	void setIp(const std::string& ip);
 	void setColour(sf::Color colour);
@@ -39,7 +37,6 @@ public:
 	void setSoundVolume(double volume);
 	void setOnboarded(bool onboarded);
 	void setFps(int fps);
-	void setDebugEnabled(bool enabled);
 	void saveToFile();
 	void loadFromFile();
 

@@ -102,10 +102,6 @@ double OptionsManager::getTimePerFrame() {
 	return this->timePerFrame;
 }
 
-bool OptionsManager::isDebugEnabled() const {
-	return this->debug;
-}
-
 void OptionsManager::setName(const std::string& name) {
 	this->name = name;
 	saveToFile();
@@ -157,8 +153,4 @@ void OptionsManager::setSoundVolume(double volume) {
 void OptionsManager::setOnboarded(bool onboarded) {
 	this->onboarded = onboarded;
 	saveToFile();
-}
-
-void OptionsManager::setDebugEnabled(bool enabled) {
-	this->debug = enabled;
 }

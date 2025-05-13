@@ -3,6 +3,7 @@
 class MenuManager : public sf::Drawable {
 	std::vector<MenuWidget*> widgets;
 	std::vector<MenuPage*> pages;
+	MenuPage* mainPage = nullptr;
 	MenuPage* currentPage = nullptr;
 	sf::View prevView = sf::View({0, 0}, {1920, 1080});
 	sf::View view = sf::View({0, 0}, {1920, 1080});
@@ -16,4 +17,6 @@ public:
 
 	void input(const MenuInput& input);
 	void setCurrentPage(MenuPage* page);
+
+	MenuPage* getMainPage();
 };

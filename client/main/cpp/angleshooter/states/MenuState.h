@@ -1,8 +1,6 @@
 ﻿#pragma once
 
 class MenuState final : public State {
-	MenuManager menu;
-	std::vector<MenuWidget*> widgets;
 
 public:
 	static const Identifier MENU_ID;

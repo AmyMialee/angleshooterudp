@@ -34,7 +34,8 @@ void InputManager::handleInput(sf::RenderWindow& window) {
 }
 void InputManager::onKeyPressed(sf::Keyboard::Scancode code) {
 	for (const auto& keybinding : keybindings) if (keybinding->getKey() == code) keybinding->onPressed();
-	if (code == sf::Keyboard::Scancode::F3) OptionsManager::get().setDebugEnabled(!OptionsManager::get().isDebugEnabled());
+	if (code == sf::Keyboard::Scancode::F3) AngleShooterClient::get().debug = !AngleShooterClient::get().debug;
+	if (code == sf::Keyboard::Scancode::F4) AngleShooterClient::get().hitboxes = !AngleShooterClient::get().hitboxes;
 }
 
 void InputManager::onKeyReleased(sf::Keyboard::Scancode code) {

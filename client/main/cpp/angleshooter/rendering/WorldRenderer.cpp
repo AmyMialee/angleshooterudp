@@ -116,7 +116,7 @@ void WorldRenderer::render() {
 	for (const auto entity : ClientWorld::get().getEntities()) {
 		if (auto renderer = renderRegistry.find(entity->getEntityType().getHash()); renderer != renderRegistry.end()) renderer->second(entity);
 	}
-	if (OptionsManager::get().isDebugEnabled()) {
+	if (AngleShooterClient::get().hitboxes) {
 		sf::RectangleShape shape;
 		shape.setFillColor(sf::Color::Transparent);
 		shape.setOutlineColor(sf::Color::Green);
