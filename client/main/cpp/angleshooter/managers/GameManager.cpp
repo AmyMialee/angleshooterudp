@@ -1,9 +1,7 @@
 ﻿#include "PreCompiledClient.h"
-#include "GameState.h"
+#include "GameManager.h"
 
-const Identifier GameState::GAME_ID("game");
-
-void GameState::init() {
+void GameManager::init() {
 	// const auto playButton = std::make_shared<Button>();
 	// playButton->setPosition({250, 250});
 	// playButton->setText("Resume");
@@ -26,21 +24,16 @@ void GameState::init() {
 	// 	requestStackPush(MenuState::getId());
 	// });
 	// gui.pack(exitButton);
-	SCORES.clear();
 	static const auto GAME_MUSIC = Identifier("gamemusic.ogg");
 	ClientWorld::get().init();
 	AudioManager::get().playMusic(GAME_MUSIC);
 }
 
-void GameState::destroy() {
+void GameManager::destroy() {
 	AngleShooterClient::get().disconnect();
 }
 
-void GameState::draw(sf::RenderTarget& target, sf::RenderStates states) const {
-	this->render();
-}
-
-void GameState::render() const {
+void GameManager::draw(sf::RenderTarget& target, sf::RenderStates states) const {
 	auto& window = AngleShooterClient::get().renderTexture;
 	window.setView(window.getDefaultView());
 	WorldRenderer::get().render();
@@ -81,11 +74,11 @@ void GameState::render() const {
 		auto& texture = AngleShooterClient::get().renderTexture;
 		texture.draw(backgroundShape);
 		texture.setView(texture.getDefaultView());
-		// texture.draw(gui);
+		texture.draw(this->menu);
 	}
 }
 
-void GameState::refreshScores() {
+void GameManager::refreshScores() {
 	for (const auto& entity : ClientWorld::get().getEntities()) {
 		if (entity->getEntityType() != PlayerEntity::ID) continue;
 		const auto player = dynamic_cast<PlayerEntity*>(entity.get());
@@ -103,7 +96,7 @@ void GameState::refreshScores() {
 	}
 }
 
-bool GameState::tick() {
+bool GameManager::tick() {
 	ClientWorld::get().tick();
 	WorldRenderer::get().tick();
 	for (auto& score : SCORES | std::views::values) {
@@ -116,20 +109,12 @@ bool GameState::tick() {
 			}
 		}
 	}
-	// if (this->paused) gui.tick();
+	if (this->paused) menu.tick();
 	return false;
 }
 
-bool GameState::handleEvent(const sf::Event& event) {
+bool GameManager::handleEvent(const sf::Event& event) {
 	if (const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()) if (keyPressed->scancode == sf::Keyboard::Scan::Escape) this->paused = !this->paused;
-	// if (this->paused) gui.handleEvent(event);
+	if (this->paused) menu.handleEvent(event);
 	return false;
-}
-
-Identifier GameState::getId() {
-	return GAME_ID;
-}
-
-Identifier GameState::getStateId() {
-	return GAME_ID;
 }

@@ -29,9 +29,10 @@ void InputManager::handleInput(sf::RenderWindow& window) {
 		} else if (const auto* resized = event.getIf<sf::Event::Resized>()) {
 			window.setSize({resized->size.x, (resized->size.x * 9) / 16});
 		}
-		StateManager::get().handleEvent(event);
+		AngleShooterClient::get().onMainMenu ? MainMenuManager::get().handleEvent(event) : GameManager::get().handleEvent(event);
 	}
 }
+
 void InputManager::onKeyPressed(sf::Keyboard::Scancode code) {
 	for (const auto& keybinding : keybindings) if (keybinding->getKey() == code) keybinding->onPressed();
 	if (code == sf::Keyboard::Scancode::F3) AngleShooterClient::get().debug = !AngleShooterClient::get().debug;

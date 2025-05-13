@@ -108,9 +108,10 @@
     <ClCompile Include="main\cpp\angleshooter\game\ClientPlayerEntity.cpp" />
     <ClCompile Include="main\cpp\angleshooter\game\ClientWorld.cpp" />
     <ClCompile Include="main\cpp\angleshooter\managers\AudioManager.cpp" />
+    <ClCompile Include="main\cpp\angleshooter\managers\GameManager.cpp" />
     <ClCompile Include="main\cpp\angleshooter\managers\InputManager.cpp" />
+    <ClCompile Include="main\cpp\angleshooter\managers\MainMenuManager.cpp" />
     <ClCompile Include="main\cpp\angleshooter\managers\OptionsManager.cpp" />
-    <ClCompile Include="main\cpp\angleshooter\managers\StateManager.cpp" />
     <ClCompile Include="main\cpp\angleshooter\menuold\IpButton.cpp" />
     <ClCompile Include="main\cpp\angleshooter\menuold\NameButton.cpp" />
     <ClCompile Include="main\cpp\angleshooter\menuold\Slider.cpp" />
@@ -127,11 +128,8 @@
     <ClCompile Include="main\cpp\angleshooter\rendering\shaders\BloomProcessing.cpp" />
     <ClCompile Include="main\cpp\angleshooter\rendering\shaders\PostProcessing.cpp" />
     <ClCompile Include="main\cpp\angleshooter\rendering\WorldRenderer.cpp" />
-    <ClCompile Include="main\cpp\angleshooter\states\GameState.cpp" />
-    <ClCompile Include="main\cpp\angleshooter\states\MenuState.cpp" />
     <ClCompile Include="main\cpp\angleshooter\states\ServerListState.cpp" />
     <ClCompile Include="main\cpp\angleshooter\util\Keybinding.cpp" />
-    <ClCompile Include="main\cpp\angleshooter\util\State.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main\cpp\angleshooter\AngleShooterClient.h" />
@@ -145,9 +143,10 @@
     <ClInclude Include="main\cpp\angleshooter\game\ClientPlayerEntity.h" />
     <ClInclude Include="main\cpp\angleshooter\game\ClientWorld.h" />
     <ClInclude Include="main\cpp\angleshooter\managers\AudioManager.h" />
+    <ClInclude Include="main\cpp\angleshooter\managers\GameManager.h" />
     <ClInclude Include="main\cpp\angleshooter\managers\InputManager.h" />
+    <ClInclude Include="main\cpp\angleshooter\managers\MainMenuManager.h" />
     <ClInclude Include="main\cpp\angleshooter\managers\OptionsManager.h" />
-    <ClInclude Include="main\cpp\angleshooter\managers\StateManager.h" />
     <ClInclude Include="main\cpp\angleshooter\menuold\IpButton.h" />
     <ClInclude Include="main\cpp\angleshooter\menuold\NameButton.h" />
     <ClInclude Include="main\cpp\angleshooter\menuold\Slider.h" />
@@ -162,12 +161,9 @@
     <ClInclude Include="main\cpp\angleshooter\rendering\shaders\BloomProcessing.h" />
     <ClInclude Include="main\cpp\angleshooter\rendering\shaders\PostProcessing.h" />
     <ClInclude Include="main\cpp\angleshooter\rendering\WorldRenderer.h" />
-    <ClInclude Include="main\cpp\angleshooter\states\GameState.h" />
-    <ClInclude Include="main\cpp\angleshooter\states\MenuState.h" />
     <ClInclude Include="main\cpp\angleshooter\states\ServerListState.h" />
     <ClInclude Include="main\cpp\angleshooter\util\Keybinding.h" />
     <ClInclude Include="main\cpp\angleshooter\util\ScoreEntry.h" />
-    <ClInclude Include="main\cpp\angleshooter\util\State.h" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="main\resources\assets\angleshooter\fonts\ubuntu-m.ttf" />

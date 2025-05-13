@@ -5,7 +5,7 @@ ClientPlayerEntity::ClientPlayerEntity(uint16_t id, World* world) : PlayerEntity
 
 void ClientPlayerEntity::tick() {
 	PlayerEntity::tick();
-	if (!isClientPlayer || StateManager::get().getStateId() != GameState::GAME_ID) return;
+	if (!isClientPlayer) return;
 	input = sf::Vector2f(0, 0);
 	if (InputManager::get().getUp()->isPressed()) input += sf::Vector2f(0, -1);
 	if (InputManager::get().getDown()->isPressed()) input += sf::Vector2f(0, 1);
@@ -31,10 +31,10 @@ void ClientPlayerEntity::tick() {
 
 void ClientPlayerEntity::readFromPacket(sf::Packet& packet) {
 	PlayerEntity::readFromPacket(packet);
-	if (const auto it = GameState::SCORES.find(this->getId()); it != GameState::SCORES.end()) {
+	if (const auto it = GameManager::get().SCORES.find(this->getId()); it != GameManager::get().SCORES.end()) {
 		it->second.score = this->score;
 	} else {
-		GameState::SCORES.emplace(this->getId(), ScoreEntry{this->name, this->colour, this->score, 0, 0});
+		GameManager::get().SCORES.emplace(this->getId(), ScoreEntry{this->name, this->colour, this->score, 0, 0});
 	}
-	GameState::refreshScores();
+	GameManager::get().refreshScores();
 }

@@ -1,7 +1,7 @@
 ﻿#include "PreCompiledClient.h"
 #include "AngleShooterClient.h"
 
-#include "states/ServerListState.h"
+#include "managers/GameManager.h"
 
 int main(int, char*[]) {
 	try {
@@ -95,8 +95,8 @@ void AngleShooterClient::registerPackets() {
 	registerPacket(NetworkProtocol::S2C_SPAWN_PLAYER, [this](sf::Packet& packet, const NetworkPair*) {
 		const auto player = ClientWorld::get().spawnPlayer(packet);
 		packet >> player->isClientPlayer;
-		GameState::SCORES.emplace(player->getId(), ScoreEntry{player->name, player->colour, player->score, 0, 0});
-		GameState::refreshScores();
+		GameManager::get().SCORES.emplace(player->getId(), ScoreEntry{player->name, player->colour, player->score, 0, 0});
+		GameManager::get().refreshScores();
 	});
 	registerPacket(NetworkProtocol::S2C_SPAWN_BULLET, [this](sf::Packet& packet, const NetworkPair*) {
 		ClientWorld::get().spawnBullet(packet);
@@ -206,9 +206,9 @@ void AngleShooterClient::registerPackets() {
 		while (iterator != ClientWorld::get().gameObjects.end()) {
 			if (iterator->first == id) {
 				iterator = ClientWorld::get().gameObjects.erase(iterator);
-				if (const auto it = GameState::SCORES.find(id); it != GameState::SCORES.end()) {
-					GameState::SCORES.erase(it);
-					GameState::refreshScores();
+				if (const auto it = GameManager::get().SCORES.find(id); it != GameManager::get().SCORES.end()) {
+					GameManager::get().SCORES.erase(it);
+					GameManager::get().refreshScores();
 				}
 			} else {
 				++iterator;
@@ -228,12 +228,12 @@ void AngleShooterClient::registerPackets() {
 			}
 			const auto player = dynamic_cast<PlayerEntity*>(entity.get());
 			player->score = score;
-			if (const auto it = GameState::SCORES.find(player->getId()); it != GameState::SCORES.end()) {
+			if (const auto it = GameManager::get().SCORES.find(player->getId()); it != GameManager::get().SCORES.end()) {
 				it->second.score = player->score;
 			} else {
-				GameState::SCORES.emplace(player->getId(), ScoreEntry{player->name, player->colour, player->score, 0, 0});
+				GameManager::get().SCORES.emplace(player->getId(), ScoreEntry{player->name, player->colour, player->score, 0, 0});
 			}
-			GameState::refreshScores();
+			GameManager::get().refreshScores();
 			return;
 		}
 	});
@@ -250,9 +250,9 @@ void AngleShooterClient::registerPackets() {
 			}
 			const auto player = dynamic_cast<PlayerEntity*>(entity.get());
 			player->name = name;
-			if (const auto it = GameState::SCORES.find(player->getId()); it != GameState::SCORES.end()) {
+			if (const auto it = GameManager::get().SCORES.find(player->getId()); it != GameManager::get().SCORES.end()) {
 				it->second.name = player->name;
-				GameState::refreshScores();
+				GameManager::get().refreshScores();
 			}
 			return;
 		}
@@ -270,9 +270,9 @@ void AngleShooterClient::registerPackets() {
 			}
 			const auto player = dynamic_cast<PlayerEntity*>(entity.get());
 			player->colour = {r, g, b, 255};
-			if (const auto it = GameState::SCORES.find(player->getId()); it != GameState::SCORES.end()) {
+			if (const auto it = GameManager::get().SCORES.find(player->getId()); it != GameManager::get().SCORES.end()) {
 				it->second.colour = player->colour;
-				GameState::refreshScores();
+				GameManager::get().refreshScores();
 			}
 			return;
 		}
@@ -347,7 +347,7 @@ void AngleShooterClient::run() {
 			}
 		}
 	}
-	populateMainMenu();
+	MainMenuManager::get().populateMainMenu();
 	ClientWorld::get().init();
     std::thread receiverThread(&AngleShooterClient::runReceiver, this);
 	sf::Clock deltaClock;
@@ -370,8 +370,11 @@ void AngleShooterClient::run() {
 		while (tickTime >= AngleShooterCommon::TIME_PER_TICK) {
 			tickTime -= AngleShooterCommon::TIME_PER_TICK;
 			AudioManager::get().tick();
-			if (onMainMenu)
-			StateManager::get().tick();
+			if (onMainMenu) {
+				MainMenuManager::get().tick();
+			} else {
+				GameManager::get().tick();
+			}
 			++ticks;
 		}
 		if (frameTime >= OptionsManager::get().getTimePerFrame()) {
@@ -396,7 +399,11 @@ void AngleShooterClient::run() {
 
 void AngleShooterClient::render() {
 	window.clear();
-	window.draw(StateManager::get());
+	if (onMainMenu) {
+		window.draw(MainMenuManager::get());
+	} else {
+		window.draw(GameManager::get());
+	}
 	if (this->debug) {
 		auto offset = 0;
 		auto fill = [&](const std::string& words) {
@@ -419,72 +426,6 @@ void AngleShooterClient::render() {
 	window.display();
 }
 
-void AngleShooterClient::populateMainMenu() {
-
-	for (auto x = -1; x <= 1; ++x) {
-		for (auto y = -1; y <= 1; ++y) {
-			this->mainMenuManager.addWidget(new MenuWidget({1860.f * x, 1317.f * y}, 1860, Identifier("menu/menu_bg.png")));
-		}
-	}
-	this->mainMenuManager.addWidget(new MenuWidget({-763, 32}, 461, Identifier("menu/menu_credits_techy.png")));
-	this->mainMenuManager.addWidget(new MenuWidget({0, 0}, 1044, Identifier("menu/menu_main.png")));
-
-	const auto pageMain = this->mainMenuManager.addPage(new MenuPage({{0, -20}, sf::Vector2f{1920, 1080} * .7f}));
-	this->serverListPage = this->mainMenuManager.addPage(new MenuPage({{0, 420}, sf::Vector2f{1920, 1080} * .7f}, pageMain));
-	const auto pageCredits = this->mainMenuManager.addPage(new MenuPage({{-763, 2}, sf::Vector2f{1920, 1080} * .55f}, pageMain));
-	const auto pageOptions = this->mainMenuManager.addPage(new MenuPage({{980, 540}, {1920, 1080}}, pageMain));
-
-	pageMain->addWidget(new FloatingWidget({-17, -129}, {-17, -139}, 508, Identifier("menu/menu_logo.png"), 120));
-	const auto widgetServers = pageMain->addButton(new MenuButton({-27, 88}, 232, Identifier("menu/menu_button_servers.png"), ([this] {
-		this->mainMenuManager.setCurrentPage(this->serverListPage);
-	})));
-	const auto widgetCredits = pageMain->addButton(new MenuButton({-278, 96}, 241, Identifier("menu/menu_button_credits.png"), ([this, pageCredits] {
-		this->mainMenuManager.setCurrentPage(pageCredits);
-	})), widgetServers, MenuInput::RIGHT);
-	const auto widgetOptions = pageMain->addButton(new MenuButton({218, 105}, 231, Identifier("menu/menu_button_options.png"), ([this, pageOptions] {
-		this->mainMenuManager.setCurrentPage(pageOptions);
-	})), widgetServers, MenuInput::LEFT);
-	const auto widgetExit = pageMain->addButton(new MenuButton({-47, 221}, 320, Identifier("menu/menu_button_exit.png"), ([this] {
-		this->window.close();
-	})), widgetServers, MenuInput::UP);
-	pageMain->addLink(widgetCredits, widgetOptions, MenuInput::LEFT);
-	pageMain->addLink(widgetExit, widgetCredits, MenuInput::UP);
-	pageMain->addLink(widgetExit, widgetOptions, MenuInput::UP);
-	pageMain->addLink(widgetExit, widgetCredits, MenuInput::LEFT);
-	pageMain->addLink(widgetExit, widgetOptions, MenuInput::RIGHT);
-	pageMain->addLink(widgetExit, widgetServers, MenuInput::DOWN);
-	pageMain->addLink(widgetExit, widgetCredits, MenuInput::DOWN);
-	pageMain->addLink(widgetExit, widgetOptions, MenuInput::DOWN);
-
-
-
-
-	const auto widgetBack = pageOptions->addButton(new MenuButton({980 + 100, 400}, {200, 50}, Identifier("menu/menu_button_back"), ([this, pageMain] {
-		this->mainMenuManager.setCurrentPage(pageMain);
-	})));
-
-	this->populateServerPage();
-}
-
-void AngleShooterClient::populateServerPage() {
-	this->serverListPage->clearButtons();
-	const auto widgetBack = this->serverListPage->addButton(new MenuButton({980 + 100, 400}, {200, 50}, Identifier("menu/menu_button_back"), ([this] {
-		this->mainMenuManager.setCurrentPage(this->mainMenuManager.getMainPage());
-	})));
-
-	// const auto localIp = std::make_shared<Button>(); TODO: Add a button to the menu
-	// localIp->setPosition({80.f, 400.f - 36 * 4});
-	// localIp->setText("IP: " + receivedPip.toString());
-	// localIp->setCallback([this, receivedPip] {
-	// get().connect(receivedPip);
-	// StateManager::get().clear();
-	// StateManager::get().push(GameState::GAME_ID);
-	// });
-	// const auto serverListState = dynamic_cast<ServerListState*>(StateManager::get().getCurrentState()->get());
-	// serverListState->gui.pack(localIp);
-	// Logger::debug("Scanned server: " + receivedPip.toString());
-}
-
 void AngleShooterClient::runReceiver() {
 	Logger::info("Starting Client Network Handler");
 	while (window.isOpen()) {
@@ -496,8 +437,7 @@ void AngleShooterClient::runReceiver() {
 			if (!this->server) {
 				if (packet.getDataSize() > 0) {
 					if (const auto type = static_cast<const uint8_t*>(packet.getData())[0]; type == NetworkProtocol::SERVER_SCAN->getId()) {
-						this->servers.push_back(receivedPip);
-						this->populateServerPage();
+						MainMenuManager::get().addServer(receivedPip);
 						continue;
 					}
 				}

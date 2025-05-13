@@ -4,14 +4,8 @@ class AngleShooterClient final : public SocketHolder {
 	std::map<uint8_t, std::function<void(sf::Packet& packet, NetworkPair* pair)>> packetHandlers;
 	std::map<uint8_t, PacketIdentifier*> packetIds;
 	sf::UdpSocket socket;
-	std::vector<PortedIP> servers;
-	MenuManager mainMenuManager;
-	MenuPage* serverListPage;
-	bool onMainMenu = true;
 
 	void render();
-	void populateMainMenu();
-	void populateServerPage();
 	void runReceiver();
 
 	void handlePacket(sf::Packet& packet, NetworkPair* sender);
@@ -33,6 +27,7 @@ public:
 	uint16_t playerId;
 	bool debug = false;
 	bool hitboxes = false;
+	bool onMainMenu = true;
 
 	void run();
 	void send(sf::Packet& packet);
