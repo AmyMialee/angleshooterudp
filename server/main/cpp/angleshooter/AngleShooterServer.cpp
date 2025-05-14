@@ -1,10 +1,6 @@
 #include "PreCompiledServer.h"
 #include "AngleShooterServer.h"
 
-#include <utility>
-
-#include "../robocat/RoboCatServerPCH.hpp"
-
 int main() {
 	try {
 		AngleShooterServer::get().run();
