@@ -4,7 +4,9 @@ class MainMenuManager : public sf::Drawable {
 	std::vector<PortedIP> servers;
 	MenuManager mainMenuManager;
 	MenuPage* optionsPage;
+	MenuPage* onboardingPage;
 	MenuPage* serverListPage;
+	PlayerPreviewWidget* onboardingPreviewWidget;
 	PlayerPreviewWidget* playerPreviewWidget;
 
 protected:
@@ -17,6 +19,7 @@ public:
 	bool handleEvent(const sf::Event& event);
 
 	void populateMainMenu();
+	void populateOnboardingPage();
 	void populateOptionsPage();
 	void populateServerPage();
 	void addServer(const PortedIP& server);

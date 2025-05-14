@@ -50,6 +50,92 @@ void MainMenuManager::populateMainMenu() {
 	this->optionsPage->addWidget(this->playerPreviewWidget);
 	this->populateOptionsPage();
 	this->populateServerPage();
+	if (!OptionsManager::get().isOnboarded()) {
+		this->mainMenuManager.addWidget(new MenuWidget({0, 540 - 1500}, 788, Identifier("menu/menu_options.png")));
+		this->onboardingPage = this->mainMenuManager.addPage(new MenuPage({{0, 560 - 1500}, sf::Vector2f{1920, 1080} * .85f}, this->mainMenuManager.getMainPage()));
+		this->onboardingPreviewWidget = new PlayerPreviewWidget({828 - 700, 490 - 1500}, {828 - 700, 500 - 1500}, OptionsManager::get().getCosmetics(), 240);
+		this->onboardingPage->addWidget(this->onboardingPreviewWidget);
+		this->mainMenuManager.setCurrentPage(this->onboardingPage);
+		this->mainMenuManager.view = this->onboardingPage->getView();
+		this->populateOnboardingPage();
+		OptionsManager::get().setOnboarded(true);
+	}
+}
+
+void MainMenuManager::populateOnboardingPage() {
+	if (!this->onboardingPage) return;
+	this->onboardingPage->clearButtons();
+
+	const auto sliderMaster = this->onboardingPage->addButton(new MenuSlider({380 - 700, 380 - 1500}, OptionsManager::get().getMasterVolume(), "Master Volume", [this](double value) {
+		OptionsManager::get().setMasterVolume(value);
+	}, [this](double value) {
+		AudioManager::get().setMusicVolume(OptionsManager::get().getMusicVolume() * value);
+		AudioManager::get().setSoundVolume(OptionsManager::get().getSoundVolume() * value);
+	}));
+	const auto sliderMusic = this->onboardingPage->addButton(new MenuSlider({380 - 700, 460 - 1500}, OptionsManager::get().getMusicVolume(), "Music Volume", [this](double value) {
+		OptionsManager::get().setMusicVolume(value);
+	}, [this](double value) {
+		AudioManager::get().setMusicVolume(value * OptionsManager::get().getMasterVolume());
+	}));
+	const auto sliderSound = this->onboardingPage->addButton(new MenuSlider({380 - 700, 540 - 1500}, OptionsManager::get().getSoundVolume(), "Sound Volume", [this](double value) {
+		OptionsManager::get().setSoundVolume(value);
+	}, [this](double value) {
+		AudioManager::get().setSoundVolume(value * OptionsManager::get().getMasterVolume());
+	}));
+
+	const auto widgetBack = this->onboardingPage->addButton(new TextButton({400 - 700, 240 - 1100}, "Back", 28, [this] {
+		this->mainMenuManager.setCurrentPage(this->mainMenuManager.getMainPage());
+	}));
+
+	const auto leftHatButton = this->onboardingPage->addButton(new MenuButton({746 - 700, 462 - 1500}, 72, Identifier("menu/button_left.png"), [this] {
+		OptionsManager::get().setCosmetic(OptionsManager::get().getCosmetics().getCosmeticIndex() + static_cast<uint8_t>(PlayerCosmetics::COSMETICS.size()) - 1);
+		if (this->onboardingPreviewWidget) this->onboardingPreviewWidget->setCosmetics(OptionsManager::get().getCosmetics());
+		this->playerPreviewWidget->setCosmetics(OptionsManager::get().getCosmetics());
+	}));
+	const auto rightHatButton = this->onboardingPage->addButton(new MenuButton({914 - 700, 462 - 1500}, 72, Identifier("menu/button_right.png"), [this] {
+		OptionsManager::get().setCosmetic(OptionsManager::get().getCosmetics().getCosmeticIndex() + 1);
+		if (this->onboardingPreviewWidget) this->onboardingPreviewWidget->setCosmetics(OptionsManager::get().getCosmetics());
+		this->playerPreviewWidget->setCosmetics(OptionsManager::get().getCosmetics());
+	}));
+	const auto leftCharacterButton = this->onboardingPage->addButton(new MenuButton({746 - 700, 522 - 1500}, 72, Identifier("menu/button_left.png"), [this] {
+		OptionsManager::get().setCharacter(OptionsManager::get().getCosmetics().getCharacterIndex() + static_cast<uint8_t>(PlayerCosmetics::CHARACTERS.size()) - 1);
+		if (this->onboardingPreviewWidget) this->onboardingPreviewWidget->setCosmetics(OptionsManager::get().getCosmetics());
+		this->playerPreviewWidget->setCosmetics(OptionsManager::get().getCosmetics());
+	}));
+	const auto rightCharacterButton = this->onboardingPage->addButton(new MenuButton({914 - 700, 522 - 1500}, 72, Identifier("menu/button_right.png"), [this] {
+		OptionsManager::get().setCharacter(OptionsManager::get().getCosmetics().getCharacterIndex() + 1);
+		if (this->onboardingPreviewWidget) this->onboardingPreviewWidget->setCosmetics(OptionsManager::get().getCosmetics());
+		this->playerPreviewWidget->setCosmetics(OptionsManager::get().getCosmetics());
+	}));
+	const auto nameEntry = this->onboardingPage->addButton(new NameTypingButton({710 - 700, 605 - 1500}, OptionsManager::get().getName(), "Name"));
+	const auto sliderHue = this->onboardingPage->addButton(new MenuSlider({710 - 700, 675 - 1500}, OptionsManager::get().getHue(), "Colour", [this](double value) {
+		OptionsManager::get().setColour(Util::hsvToRgb(static_cast<float>(value) * 360.f, .5f, 1.f));
+		if (this->onboardingPreviewWidget) this->onboardingPreviewWidget->setCosmetics(OptionsManager::get().getCosmetics());
+		this->playerPreviewWidget->setCosmetics(OptionsManager::get().getCosmetics());
+	}, [this](double value) {
+		auto cosmetics = OptionsManager::get().getCosmetics();
+		cosmetics.colour = Util::hsvToRgb(static_cast<float>(value) * 360.f, .5f, 1.f);
+		if (this->onboardingPreviewWidget) this->onboardingPreviewWidget->setCosmetics(cosmetics);
+		this->playerPreviewWidget->setCosmetics(cosmetics);
+	}));
+
+	this->onboardingPage->addLink(sliderSound, widgetBack, MenuInput::DOWN);
+	this->onboardingPage->addLink(sliderHue, widgetBack, MenuInput::LEFT);
+	this->onboardingPage->addLink(sliderMaster, sliderMusic, MenuInput::DOWN);
+	this->onboardingPage->addLink(sliderMusic, sliderSound, MenuInput::DOWN);
+	this->onboardingPage->addLink(sliderMaster, leftHatButton, MenuInput::RIGHT);
+	this->onboardingPage->addLink(sliderMusic, leftCharacterButton, MenuInput::RIGHT);
+	this->onboardingPage->addLink(sliderSound, nameEntry, MenuInput::RIGHT);
+	this->onboardingPage->addLink(sliderMaster, rightHatButton, MenuInput::LEFT);
+	this->onboardingPage->addLink(sliderMusic, rightCharacterButton, MenuInput::LEFT);
+	this->onboardingPage->addLink(sliderSound, nameEntry, MenuInput::LEFT);
+	this->onboardingPage->addLink(leftHatButton, rightHatButton, MenuInput::RIGHT);
+	this->onboardingPage->addLink(leftCharacterButton, rightCharacterButton, MenuInput::RIGHT);
+	this->onboardingPage->addLink(leftHatButton, leftCharacterButton, MenuInput::DOWN);
+	this->onboardingPage->addLink(rightHatButton, rightCharacterButton, MenuInput::DOWN);
+	this->onboardingPage->addLink(leftCharacterButton, nameEntry, MenuInput::DOWN);
+	this->onboardingPage->addLink(rightCharacterButton, nameEntry, MenuInput::DOWN);
+	this->onboardingPage->addLink(nameEntry, sliderHue, MenuInput::DOWN);
 }
 
 void MainMenuManager::populateOptionsPage() {
@@ -62,27 +148,33 @@ void MainMenuManager::populateOptionsPage() {
 
 	const auto leftHatButton = this->optionsPage->addButton(new MenuButton({746, 462}, 72, Identifier("menu/button_left.png"), [this] {
 		OptionsManager::get().setCosmetic(OptionsManager::get().getCosmetics().getCosmeticIndex() + static_cast<uint8_t>(PlayerCosmetics::COSMETICS.size()) - 1);
+		if (this->onboardingPreviewWidget) this->onboardingPreviewWidget->setCosmetics(OptionsManager::get().getCosmetics());
 		this->playerPreviewWidget->setCosmetics(OptionsManager::get().getCosmetics());
 	}));
 	const auto rightHatButton = this->optionsPage->addButton(new MenuButton({914, 462}, 72, Identifier("menu/button_right.png"), [this] {
 		OptionsManager::get().setCosmetic(OptionsManager::get().getCosmetics().getCosmeticIndex() + 1);
+		if (this->onboardingPreviewWidget) this->onboardingPreviewWidget->setCosmetics(OptionsManager::get().getCosmetics());
 		this->playerPreviewWidget->setCosmetics(OptionsManager::get().getCosmetics());
 	}));
 	const auto leftCharacterButton = this->optionsPage->addButton(new MenuButton({746, 522}, 72, Identifier("menu/button_left.png"), [this] {
 		OptionsManager::get().setCharacter(OptionsManager::get().getCosmetics().getCharacterIndex() + static_cast<uint8_t>(PlayerCosmetics::CHARACTERS.size()) - 1);
+		if (this->onboardingPreviewWidget) this->onboardingPreviewWidget->setCosmetics(OptionsManager::get().getCosmetics());
 		this->playerPreviewWidget->setCosmetics(OptionsManager::get().getCosmetics());
 	}));
 	const auto rightCharacterButton = this->optionsPage->addButton(new MenuButton({914, 522}, 72, Identifier("menu/button_right.png"), [this] {
 		OptionsManager::get().setCharacter(OptionsManager::get().getCosmetics().getCharacterIndex() + 1);
+		if (this->onboardingPreviewWidget) this->onboardingPreviewWidget->setCosmetics(OptionsManager::get().getCosmetics());
 		this->playerPreviewWidget->setCosmetics(OptionsManager::get().getCosmetics());
 	}));
 	const auto nameEntry = this->optionsPage->addButton(new NameTypingButton({710, 605}, OptionsManager::get().getName(), "Name"));
 	const auto sliderHue = this->optionsPage->addButton(new MenuSlider({710, 675}, OptionsManager::get().getHue(), "Colour", [this](double value) {
 		OptionsManager::get().setColour(Util::hsvToRgb(static_cast<float>(value) * 360.f, .5f, 1.f));
+		if (this->onboardingPreviewWidget) this->onboardingPreviewWidget->setCosmetics(OptionsManager::get().getCosmetics());
 		this->playerPreviewWidget->setCosmetics(OptionsManager::get().getCosmetics());
 	}, [this](double value) {
 		auto cosmetics = OptionsManager::get().getCosmetics();
 		cosmetics.colour = Util::hsvToRgb(static_cast<float>(value) * 360.f, .5f, 1.f);
+		if (this->onboardingPreviewWidget) this->onboardingPreviewWidget->setCosmetics(cosmetics);
 		this->playerPreviewWidget->setCosmetics(cosmetics);
 	}));
 

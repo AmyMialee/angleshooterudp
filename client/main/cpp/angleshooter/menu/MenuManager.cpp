@@ -9,7 +9,10 @@ MenuWidget* MenuManager::addWidget(MenuWidget* page) {
 MenuPage* MenuManager::addPage(MenuPage* page) {
 	this->pages.push_back(page);
 	if (this->mainPage == nullptr) this->mainPage = page;
-	if (this->currentPage == nullptr) this->currentPage = page;
+	if (this->currentPage == nullptr) {
+		this->view = page->getView();
+		this->currentPage = page;
+	}
 	return page;
 }
 

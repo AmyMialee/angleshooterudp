@@ -1,8 +1,8 @@
 {
-    "character": 1,
+    "character": 0,
     "colour_b": 255,
     "colour_g": 128,
-    "colour_r": 207,
+    "colour_r": 199,
     "cosmetic": 0,
     "fps": 144,
     "ip": "127.0.0.1",
@@ -16,9 +16,9 @@
         "angleshooter:right": 3,
         "angleshooter:up": 22
     },
-    "masterVolume": 0.7500000000000004,
-    "musicVolume": 0.48000000000000026,
+    "masterVolume": 1.0,
+    "musicVolume": 0.0,
     "name": "Amy",
-    "onboarded": true,
-    "soundVolume": 0.4200000000000002
+    "onboarded": false,
+    "soundVolume": 0.0
 }

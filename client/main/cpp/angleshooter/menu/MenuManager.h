@@ -5,10 +5,11 @@ class MenuManager : public sf::Drawable {
 	std::vector<MenuPage*> pages;
 	MenuPage* mainPage = nullptr;
 	MenuPage* currentPage = nullptr;
+
+public:
 	sf::View prevView = sf::View({0, 0}, {1920, 1080});
 	sf::View view = sf::View({0, 0}, {1920, 1080});
 
-public:
 	MenuWidget* addWidget(MenuWidget* page);
 	MenuPage* addPage(MenuPage* page);
 	void tick();
