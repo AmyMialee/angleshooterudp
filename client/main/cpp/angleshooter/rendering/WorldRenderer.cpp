@@ -91,7 +91,7 @@ void WorldRenderer::tick() {
 
 void WorldRenderer::draw(sf::RenderTarget& target, sf::RenderStates states) const {
 	const auto delta = AngleShooterClient::get().tickDelta;
-	const auto view = Util::lerp(delta, viewLast, viewCurrent);
+	const auto view = Util::lerp(static_cast<float>(delta), viewLast, viewCurrent);
 	target.setView(view);
 	if (ClientWorld::get().mapRenderer != nullptr) target.draw(*ClientWorld::get().mapRenderer);
 	for (const auto entity : ClientWorld::get().getEntities()) {

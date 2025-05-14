@@ -487,6 +487,7 @@ void AngleShooterClient::send(sf::Packet& packet) {
 }
 
 void AngleShooterClient::connect(const PortedIP& server) {
+	ClientWorld::get().init();
 	this->server = new NetworkPair(*this, server);
 	auto join = NetworkProtocol::C2S_JOIN->getPacket();
 	join << OptionsManager::get().getName();

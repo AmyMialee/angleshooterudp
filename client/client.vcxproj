@@ -112,7 +112,6 @@
     <ClCompile Include="main\cpp\angleshooter\managers\InputManager.cpp" />
     <ClCompile Include="main\cpp\angleshooter\managers\MainMenuManager.cpp" />
     <ClCompile Include="main\cpp\angleshooter\managers\OptionsManager.cpp" />
-    <ClCompile Include="main\cpp\angleshooter\menuold\NameButton.cpp" />
     <ClCompile Include="main\cpp\angleshooter\menu\FloatingWidget.cpp" />
     <ClCompile Include="main\cpp\angleshooter\menu\MenuButton.cpp" />
     <ClCompile Include="main\cpp\angleshooter\menu\MenuManager.cpp" />
@@ -121,6 +120,7 @@
     <ClCompile Include="main\cpp\angleshooter\menu\MenuWidget.cpp" />
     <ClCompile Include="main\cpp\angleshooter\menu\PlayerPreviewWidget.cpp" />
     <ClCompile Include="main\cpp\angleshooter\menu\TextButton.cpp" />
+    <ClCompile Include="main\cpp\angleshooter\menu\NameTypingButton.cpp" />
     <ClCompile Include="main\cpp\angleshooter\PreCompiledClient.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeaderOutputFile>$(IntDir)client.pch</PrecompiledHeaderOutputFile>
@@ -147,7 +147,6 @@
     <ClInclude Include="main\cpp\angleshooter\managers\InputManager.h" />
     <ClInclude Include="main\cpp\angleshooter\managers\MainMenuManager.h" />
     <ClInclude Include="main\cpp\angleshooter\managers\OptionsManager.h" />
-    <ClInclude Include="main\cpp\angleshooter\menuold\NameButton.h" />
     <ClInclude Include="main\cpp\angleshooter\menu\FloatingWidget.h" />
     <ClInclude Include="main\cpp\angleshooter\menu\MenuButton.h" />
     <ClInclude Include="main\cpp\angleshooter\menu\MenuInput.h" />
@@ -157,6 +156,7 @@
     <ClInclude Include="main\cpp\angleshooter\menu\MenuWidget.h" />
     <ClInclude Include="main\cpp\angleshooter\menu\PlayerPreviewWidget.h" />
     <ClInclude Include="main\cpp\angleshooter\menu\TextButton.h" />
+    <ClInclude Include="main\cpp\angleshooter\menu\NameTypingButton.h" />
     <ClInclude Include="main\cpp\angleshooter\PreCompiledClient.h" />
     <ClInclude Include="main\cpp\angleshooter\rendering\MapRenderer.h" />
     <ClInclude Include="main\cpp\angleshooter\rendering\shaders\BloomProcessing.h" />
@@ -328,6 +328,7 @@
     <Content Include="main\resources\assets\angleshooter\textures\menu\menu_options_bar_fill.png" />
     <Content Include="main\resources\assets\angleshooter\textures\menu\menu_options_check_empty.png" />
     <Content Include="main\resources\assets\angleshooter\textures\menu\menu_options_check_full.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\menu\menu_options_underline.png" />
     <Content Include="main\resources\assets\angleshooter\textures\menu\menu_servers.png" />
     <Content Include="main\resources\assets\angleshooter\textures\menu\no_friends.png" />
     <Content Include="main\resources\assets\angleshooter\textures\misc\gun_big.png" />

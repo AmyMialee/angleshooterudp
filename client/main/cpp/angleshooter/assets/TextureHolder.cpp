@@ -8,8 +8,8 @@ TextureHolder::TextureHolder() : ResourceHolder("textures", std::move(createDefa
 }
 
 sf::Texture TextureHolder::getText(const std::string& string, int characterWidth) {
-	sf::RenderTexture combinedImage({static_cast<unsigned int>(string.size()) * static_cast<unsigned int>(characterWidth), 72});
-	auto xOffset = -characterWidth * 2;
+	sf::RenderTexture combinedImage({static_cast<unsigned int>(string.size()) * static_cast<unsigned int>(characterWidth) + characterWidth, 72});
+	auto xOffset = -characterWidth;
 	for (auto character : string) {
 		xOffset += characterWidth;
 		const Identifier* id = CHARACTER_MAP[character];

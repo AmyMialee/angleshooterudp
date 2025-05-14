@@ -76,7 +76,8 @@ void MainMenuManager::populateOptionsPage() {
 		OptionsManager::get().setCharacter(OptionsManager::get().getCosmetics().getCharacterIndex() + 1);
 		this->playerPreviewWidget->setCosmetics(OptionsManager::get().getCosmetics());
 	}));
-	const auto sliderHue = this->optionsPage->addButton(new MenuSlider({710, 605}, OptionsManager::get().getHue(), "Colour", [this](double value) {
+	const auto nameEntry = this->optionsPage->addButton(new NameTypingButton({710, 605}, OptionsManager::get().getName(), "Name"));
+	const auto sliderHue = this->optionsPage->addButton(new MenuSlider({710, 675}, OptionsManager::get().getHue(), "Colour", [this](double value) {
 		OptionsManager::get().setColour(Util::hsvToRgb(static_cast<float>(value) * 360.f, .5f, 1.f));
 		this->playerPreviewWidget->setCosmetics(OptionsManager::get().getCosmetics());
 	}, [this](double value) {
@@ -107,18 +108,19 @@ void MainMenuManager::populateOptionsPage() {
 	this->optionsPage->addLink(sliderMusic, sliderSound, MenuInput::DOWN);
 	this->optionsPage->addLink(sliderMaster, leftHatButton, MenuInput::RIGHT);
 	this->optionsPage->addLink(sliderMusic, leftCharacterButton, MenuInput::RIGHT);
-	this->optionsPage->addLink(sliderSound, sliderHue, MenuInput::RIGHT);
+	this->optionsPage->addLink(sliderSound, nameEntry, MenuInput::RIGHT);
 	this->optionsPage->addLink(sliderMaster, rightHatButton, MenuInput::LEFT);
 	this->optionsPage->addLink(sliderMusic, rightCharacterButton, MenuInput::LEFT);
-	this->optionsPage->addLink(sliderSound, sliderHue, MenuInput::LEFT);
+	this->optionsPage->addLink(sliderSound, nameEntry, MenuInput::LEFT);
 	this->optionsPage->addLink(widgetBack, leftHatButton, MenuInput::RIGHT);
 	this->optionsPage->addLink(widgetBack, rightHatButton, MenuInput::LEFT);
 	this->optionsPage->addLink(leftHatButton, rightHatButton, MenuInput::RIGHT);
 	this->optionsPage->addLink(leftCharacterButton, rightCharacterButton, MenuInput::RIGHT);
 	this->optionsPage->addLink(leftHatButton, leftCharacterButton, MenuInput::DOWN);
 	this->optionsPage->addLink(rightHatButton, rightCharacterButton, MenuInput::DOWN);
-	this->optionsPage->addLink(leftCharacterButton, sliderHue, MenuInput::DOWN);
-	this->optionsPage->addLink(rightCharacterButton, sliderHue, MenuInput::DOWN);
+	this->optionsPage->addLink(leftCharacterButton, nameEntry, MenuInput::DOWN);
+	this->optionsPage->addLink(rightCharacterButton, nameEntry, MenuInput::DOWN);
+	this->optionsPage->addLink(nameEntry, sliderHue, MenuInput::DOWN);
 }
 
 void MainMenuManager::populateServerPage() {

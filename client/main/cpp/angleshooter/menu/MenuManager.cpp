@@ -31,6 +31,12 @@ void MenuManager::draw(sf::RenderTarget& target, sf::RenderStates states) const 
 }
 
 void MenuManager::handleEvent(const sf::Event& event) {
+	if (this->currentPage && this->currentPage->getSelectedButton()) {
+		if (const auto typing = dynamic_cast<NameTypingButton*>(this->currentPage->getSelectedButton())) if (typing->pressed) {
+			typing->handleEvent(event);
+			return;
+		}
+	}
 	if (const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()) {
 		if (keyPressed->scancode == sf::Keyboard::Scan::Escape) this->input(MenuInput::ESCAPE);
 		if (keyPressed->scancode == sf::Keyboard::Scan::Enter || keyPressed->scancode == sf::Keyboard::Scan::Space) this->input(MenuInput::PRESS);
