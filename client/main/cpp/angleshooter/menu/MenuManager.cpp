@@ -39,6 +39,10 @@ void MenuManager::handleEvent(const sf::Event& event) {
 			typing->handleEvent(event);
 			return;
 		}
+		if (const auto typing = dynamic_cast<DirectConnectButton*>(this->currentPage->getSelectedButton())) if (typing->pressed) {
+			typing->handleEvent(event);
+			return;
+		}
 	}
 	if (const auto* keyPressed = event.getIf<sf::Event::KeyPressed>()) {
 		if (keyPressed->scancode == sf::Keyboard::Scan::Escape) this->input(MenuInput::ESCAPE);

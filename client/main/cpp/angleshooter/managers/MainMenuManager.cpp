@@ -227,10 +227,7 @@ void MainMenuManager::populateServerPage() {
 		auto status = sf::Socket::Status::Partial;
 		while (status == sf::Socket::Status::Partial) status = AngleShooterClient::get().getSocket().send(packet, sf::IpAddress(255, 255, 255, 255), AngleShooterCommon::PORT);
 	})));
-	const auto widgetLocal = this->serverListPage->addButton(new TextButton({-80, 630}, "localhost", 22, ([this] {
-		this->mainMenuManager.setCurrentPage(this->mainMenuManager.getMainPage());
-		AngleShooterClient::get().connect(PortedIP(sf::IpAddress(127, 0, 0, 1)));
-	})));
+	const auto widgetLocal = this->serverListPage->addButton(new DirectConnectButton({-80, 630}, "Direct"));
 	this->serverListPage->addLink(widgetBack, widgetRefresh, MenuInput::DOWN);
 	this->serverListPage->addLink(widgetRefresh, widgetLocal, MenuInput::DOWN);
 	auto xOffset = -1;

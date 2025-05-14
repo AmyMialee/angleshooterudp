@@ -112,6 +112,7 @@
     <ClCompile Include="main\cpp\angleshooter\managers\InputManager.cpp" />
     <ClCompile Include="main\cpp\angleshooter\managers\MainMenuManager.cpp" />
     <ClCompile Include="main\cpp\angleshooter\managers\OptionsManager.cpp" />
+    <ClCompile Include="main\cpp\angleshooter\menu\DirectConnectButton.cpp" />
     <ClCompile Include="main\cpp\angleshooter\menu\FloatingWidget.cpp" />
     <ClCompile Include="main\cpp\angleshooter\menu\MenuButton.cpp" />
     <ClCompile Include="main\cpp\angleshooter\menu\MenuManager.cpp" />
@@ -146,6 +147,7 @@
     <ClInclude Include="main\cpp\angleshooter\managers\InputManager.h" />
     <ClInclude Include="main\cpp\angleshooter\managers\MainMenuManager.h" />
     <ClInclude Include="main\cpp\angleshooter\managers\OptionsManager.h" />
+    <ClInclude Include="main\cpp\angleshooter\menu\DirectConnectButton.h" />
     <ClInclude Include="main\cpp\angleshooter\menu\FloatingWidget.h" />
     <ClInclude Include="main\cpp\angleshooter\menu\MenuButton.h" />
     <ClInclude Include="main\cpp\angleshooter\menu\MenuInput.h" />
@@ -332,6 +334,7 @@
     <Content Include="main\resources\assets\angleshooter\textures\misc\gun_big.png" />
     <Content Include="main\resources\assets\angleshooter\textures\misc\gun_small.png" />
     <Content Include="main\resources\assets\angleshooter\textures\sfml_logo.png" />
+    <Content Include="main\resources\data\angleshooter\maps\e1m1.json" />
     <Content Include="main\resources\data\angleshooter\maps\testmap.json" />
     <Content Include="main\resources\data\angleshooter\maps\testmaplarge.json" />
   </ItemGroup>

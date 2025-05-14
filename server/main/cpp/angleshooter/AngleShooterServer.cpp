@@ -182,7 +182,7 @@ void AngleShooterServer::registerPacket(PacketIdentifier* packetType, const std:
 void AngleShooterServer::run() {
 	Logger::info("Starting AngleShooter Server");
 	ServerWorld::get().init();
-	ServerWorld::get().loadMap(Identifier("testmaplarge"));
+	ServerWorld::get().loadMap(Identifier("e1m1"));
     sf::Clock deltaClock;
     auto tickTime = 0.;
 	auto networkTime = 0.;
