@@ -27,7 +27,6 @@
 #include "managers/MainMenuManager.h"
 #include "managers/GameManager.h"
 #include "rendering/shaders/PostProcessing.h"
-#include "rendering/shaders/BloomProcessing.h"
 #include "rendering/WorldRenderer.h"
 #include "rendering/WorldRenderer.h"
 #include "rendering/MapRenderer.h"

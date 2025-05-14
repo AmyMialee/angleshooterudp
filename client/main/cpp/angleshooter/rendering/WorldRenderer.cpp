@@ -133,8 +133,6 @@ void WorldRenderer::draw(sf::RenderTarget& target, sf::RenderStates states) cons
 			target.draw(line);
 		}
 	}
-	// static auto bloomProcessing = BloomProcessing();
-	// bloomProcessing.apply(target, target);
 }
 
 template<typename T> void WorldRenderer::registerRenderer(const Identifier& id, std::function<void(sf::RenderTarget&, std::shared_ptr<T>)> renderer) {
