@@ -4,12 +4,12 @@
 MenuSlider::MenuSlider(sf::Vector2f position, double value, const std::function<std::string(double)>& textCallback, const std::function<void(double)>& finalCallback, const std::function<void(double)>& constantCallback) : MenuButton(position, {0, 0}, Identifier(), [this] {
 	this->pressed = true;
 }), textCallback(textCallback), constantCallback(constantCallback), finalCallback(finalCallback), value(value) {
-	empty.setScale({0.8f, 0.8f});
-	bar.setScale({0.8f, 0.8f});
-	text.setScale({0.8f, 0.8f});
+	empty.setScale({0.6f, 0.6f});
+	bar.setScale({0.6f, 0.6f});
+	text.setScale({0.6f, 0.6f});
 	empty.setPosition(this->getPosition());
 	bar.setPosition(this->getPosition());
-	text.setPosition(this->getPosition() + sf::Vector2f{16, -52} * 0.8f);
+	text.setPosition(this->getPosition() + sf::Vector2f{16, -40} * 0.8f);
 	text.rotate(sf::degrees(6));
 	empty.setTexture(TextureHolder::getInstance().getPointer(Identifier("menu/menu_options_bar_empty.png")));
 	bar.setTexture(TextureHolder::getInstance().getPointer(Identifier("menu/menu_options_bar_fill.png")));

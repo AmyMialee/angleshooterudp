@@ -105,6 +105,11 @@ double OptionsManager::getSoundVolume() const {
 	return this->soundVolume;
 }
 
+float OptionsManager::getHue() const {
+	const auto hsv = Util::rgbToHsv(this->cosmetics.colour);
+	return std::get<0>(hsv) / 360.f;
+}
+
 bool OptionsManager::isOnboarded() const {
 	return this->onboarded;
 }
@@ -130,6 +135,28 @@ void OptionsManager::setName(const std::string& name) {
 void OptionsManager::setIp(const std::string& ip) {
 	this->ip = ip;
 	saveToFile();
+}
+
+void OptionsManager::setCharacter(uint8_t character) {
+	if (character >= PlayerCosmetics::CHARACTERS.size()) character %= PlayerCosmetics::CHARACTERS.size();
+	this->cosmetics.character = PlayerCosmetics::getCharacter(character);
+	saveToFile();
+	if (AngleShooterClient::get().server != nullptr) {
+		auto packet = NetworkProtocol::C2S_UPDATE_COSMETICS->getPacket();
+		packet << this->cosmetics;
+		AngleShooterClient::get().send(packet);
+	}
+}
+
+void OptionsManager::setCosmetic(uint8_t cosmetic) {
+	if (cosmetic >= PlayerCosmetics::COSMETICS.size()) cosmetic %= PlayerCosmetics::COSMETICS.size();
+	this->cosmetics.cosmetic = PlayerCosmetics::getCosmetic(cosmetic);
+	saveToFile();
+	if (AngleShooterClient::get().server != nullptr) {
+		auto packet = NetworkProtocol::C2S_UPDATE_COSMETICS->getPacket();
+		packet << this->cosmetics;
+		AngleShooterClient::get().send(packet);
+	}
 }
 
 void OptionsManager::setColour(sf::Color colour) {

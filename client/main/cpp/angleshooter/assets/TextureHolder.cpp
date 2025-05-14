@@ -7,19 +7,11 @@ TextureHolder::TextureHolder() : ResourceHolder("textures", std::move(createDefa
 	for (const auto letter : ALPHABET_LOWERCASE) this->load(*letter);
 }
 
-unsigned int TextureHolder::getStringWidth(const std::string& string) {
-	return static_cast<unsigned int>(string.size() * 28) + 28;
-}
-
-sf::Texture TextureHolder::getText(const std::string& string) {
-	return getText(string, getStringWidth(string));
-}
-
-sf::Texture TextureHolder::getText(const std::string& string, unsigned int width) {
-	sf::RenderTexture combinedImage({width, 72});
-	auto xOffset = -28;
+sf::Texture TextureHolder::getText(const std::string& string, int characterWidth) {
+	sf::RenderTexture combinedImage({static_cast<unsigned int>(string.size()) * static_cast<unsigned int>(characterWidth) + characterWidth, 72});
+	auto xOffset = -characterWidth;
 	for (auto character : string) {
-		xOffset += 28;
+		xOffset += characterWidth;
 		const Identifier* id = CHARACTER_MAP[character];
 		if (!id) continue;
 		const sf::Texture* charTexture = getPointer(*id);

@@ -24,11 +24,14 @@ public:
 	[[nodiscard]] double getMasterVolume() const;
 	[[nodiscard]] double getMusicVolume() const;
 	[[nodiscard]] double getSoundVolume() const;
+	[[nodiscard]] float getHue() const;
 	[[nodiscard]] bool isOnboarded() const;
 	[[nodiscard]] int getFps();
 	[[nodiscard]] double getTimePerFrame();
 	void setName(const std::string& name);
 	void setIp(const std::string& ip);
+	void setCharacter(uint8_t character);
+	void setCosmetic(uint8_t cosmetic);
 	void setColour(sf::Color colour);
 	void setCharacter(Identifier* character);
 	void setCosmetic(Identifier* cosmetic);

@@ -21,6 +21,14 @@ struct PlayerCosmetics {
 	Identifier* character = KITA;
 	Identifier* cosmetic = AMY_HAT;
 
+	[[nodiscard]] uint8_t getCharacterIndex() const {
+		return getCharacterIndex(*character);
+	}
+
+	unsigned char getCosmeticIndex() const {
+		return getCosmeticIndex(*cosmetic);
+	}
+
 	static uint8_t getCharacterIndex(const Identifier& character) {
 		for (uint8_t i = 0; i < CHARACTERS.size(); ++i) {  // NOLINT(bugprone-too-small-loop-variable)
 			if (CHARACTERS[i]->getHash() == character.getHash()) return i;

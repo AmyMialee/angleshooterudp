@@ -5,6 +5,7 @@ class MainMenuManager : public sf::Drawable {
 	MenuManager mainMenuManager;
 	MenuPage* optionsPage;
 	MenuPage* serverListPage;
+	PlayerPreviewWidget* playerPreviewWidget;
 
 protected:
 	explicit MainMenuManager() = default;

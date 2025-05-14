@@ -46,6 +46,8 @@ void MainMenuManager::populateMainMenu() {
 	pageMain->addLink(widgetExit, widgetServers, MenuInput::DOWN);
 	pageMain->addLink(widgetExit, widgetCredits, MenuInput::DOWN);
 	pageMain->addLink(widgetExit, widgetOptions, MenuInput::DOWN);
+	this->playerPreviewWidget = new PlayerPreviewWidget({828, 490}, {828, 500}, OptionsManager::get().getCosmetics(), 240);
+	this->optionsPage->addWidget(this->playerPreviewWidget);
 	this->populateOptionsPage();
 	this->populateServerPage();
 }
@@ -53,45 +55,98 @@ void MainMenuManager::populateMainMenu() {
 void MainMenuManager::populateOptionsPage() {
 	if (!this->optionsPage) return;
 	this->optionsPage->clearButtons();
-	const auto widgetBack = this->optionsPage->addButton(new TextButton({500, 240}, {200, 50}, "Back", [this] {
+
+	const auto widgetBack = this->optionsPage->addButton(new TextButton({500, 240}, {200, 50}, "Back", 28, [this] {
 		this->mainMenuManager.setCurrentPage(this->mainMenuManager.getMainPage());
 	}));
-	const auto sliderMaster = this->optionsPage->addButton(new MenuSlider({620, 650}, OptionsManager::get().getMasterVolume(), "Master Volume", [this](double value) {
+
+	const auto leftHatButton = this->optionsPage->addButton(new MenuButton({746, 462}, 72, Identifier("menu/button_left.png"), [this] {
+		OptionsManager::get().setCosmetic(OptionsManager::get().getCosmetics().getCosmeticIndex() + static_cast<uint8_t>(PlayerCosmetics::COSMETICS.size()) - 1);
+		this->playerPreviewWidget->setCosmetics(OptionsManager::get().getCosmetics());
+	}));
+	const auto rightHatButton = this->optionsPage->addButton(new MenuButton({914, 462}, 72, Identifier("menu/button_right.png"), [this] {
+		OptionsManager::get().setCosmetic(OptionsManager::get().getCosmetics().getCosmeticIndex() + 1);
+		this->playerPreviewWidget->setCosmetics(OptionsManager::get().getCosmetics());
+	}));
+	const auto leftCharacterButton = this->optionsPage->addButton(new MenuButton({746, 522}, 72, Identifier("menu/button_left.png"), [this] {
+		OptionsManager::get().setCharacter(OptionsManager::get().getCosmetics().getCharacterIndex() + static_cast<uint8_t>(PlayerCosmetics::CHARACTERS.size()) - 1);
+		this->playerPreviewWidget->setCosmetics(OptionsManager::get().getCosmetics());
+	}));
+	const auto rightCharacterButton = this->optionsPage->addButton(new MenuButton({914, 522}, 72, Identifier("menu/button_right.png"), [this] {
+		OptionsManager::get().setCharacter(OptionsManager::get().getCosmetics().getCharacterIndex() + 1);
+		this->playerPreviewWidget->setCosmetics(OptionsManager::get().getCosmetics());
+	}));
+	const auto sliderHue = this->optionsPage->addButton(new MenuSlider({710, 605}, OptionsManager::get().getHue(), "Colour", [this](double value) {
+		OptionsManager::get().setColour(Util::hsvToRgb(static_cast<float>(value) * 360.f, .5f, 1.f));
+		this->playerPreviewWidget->setCosmetics(OptionsManager::get().getCosmetics());
+	}, [this](double value) {
+		auto cosmetics = OptionsManager::get().getCosmetics();
+		cosmetics.colour = Util::hsvToRgb(static_cast<float>(value) * 360.f, .5f, 1.f);
+		this->playerPreviewWidget->setCosmetics(cosmetics);
+	}));
+
+	const auto sliderMaster = this->optionsPage->addButton(new MenuSlider({380, 380}, OptionsManager::get().getMasterVolume(), "Master Volume", [this](double value) {
 		OptionsManager::get().setMasterVolume(value);
 	}, [this](double value) {
 		AudioManager::get().setMusicVolume(OptionsManager::get().getMusicVolume() * value);
 		AudioManager::get().setSoundVolume(OptionsManager::get().getSoundVolume() * value);
-	}), widgetBack, MenuInput::UP);
-	const auto sliderMusic = this->optionsPage->addButton(new MenuSlider({620, 750}, OptionsManager::get().getMusicVolume(), "Music Volume", [this](double value) {
+	}));
+	const auto sliderMusic = this->optionsPage->addButton(new MenuSlider({380, 460}, OptionsManager::get().getMusicVolume(), "Music Volume", [this](double value) {
 		OptionsManager::get().setMusicVolume(value);
 	}, [this](double value) {
 		AudioManager::get().setMusicVolume(value * OptionsManager::get().getMasterVolume());
-	}), sliderMaster, MenuInput::UP);
-	const auto sliderSound = this->optionsPage->addButton(new MenuSlider({620, 850}, OptionsManager::get().getSoundVolume(), "Sound Volume", [this](double value) {
+	}));
+	const auto sliderSound = this->optionsPage->addButton(new MenuSlider({380, 540}, OptionsManager::get().getSoundVolume(), "Sound Volume", [this](double value) {
 		OptionsManager::get().setSoundVolume(value);
 	}, [this](double value) {
 		AudioManager::get().setSoundVolume(value * OptionsManager::get().getMasterVolume());
-	}), sliderMusic, MenuInput::UP);
+	}));
+
+	this->optionsPage->addLink(widgetBack, sliderMaster, MenuInput::DOWN);
+	this->optionsPage->addLink(sliderMaster, sliderMusic, MenuInput::DOWN);
+	this->optionsPage->addLink(sliderMusic, sliderSound, MenuInput::DOWN);
+	this->optionsPage->addLink(sliderMaster, leftHatButton, MenuInput::RIGHT);
+	this->optionsPage->addLink(sliderMusic, leftCharacterButton, MenuInput::RIGHT);
+	this->optionsPage->addLink(sliderSound, sliderHue, MenuInput::RIGHT);
+	this->optionsPage->addLink(sliderMaster, rightHatButton, MenuInput::LEFT);
+	this->optionsPage->addLink(sliderMusic, rightCharacterButton, MenuInput::LEFT);
+	this->optionsPage->addLink(sliderSound, sliderHue, MenuInput::LEFT);
+	this->optionsPage->addLink(widgetBack, leftHatButton, MenuInput::RIGHT);
+	this->optionsPage->addLink(widgetBack, rightHatButton, MenuInput::LEFT);
+	this->optionsPage->addLink(leftHatButton, rightHatButton, MenuInput::RIGHT);
+	this->optionsPage->addLink(leftCharacterButton, rightCharacterButton, MenuInput::RIGHT);
+	this->optionsPage->addLink(leftHatButton, leftCharacterButton, MenuInput::DOWN);
+	this->optionsPage->addLink(rightHatButton, rightCharacterButton, MenuInput::DOWN);
+	this->optionsPage->addLink(leftCharacterButton, sliderHue, MenuInput::DOWN);
+	this->optionsPage->addLink(rightCharacterButton, sliderHue, MenuInput::DOWN);
 }
 
 void MainMenuManager::populateServerPage() {
 	if (!this->serverListPage) return;
 	this->serverListPage->clearButtons();
-	const auto widgetBack = this->serverListPage->addButton(new TextButton({20, 430}, {200, 50}, "Back", ([this] {
+	const auto widgetBack = this->serverListPage->addButton(new TextButton({20, 430}, {200, 50}, "Back", 28, ([this] {
 		this->mainMenuManager.setCurrentPage(this->mainMenuManager.getMainPage());
 	})));
+	const auto widgetRefresh = this->serverListPage->addButton(new TextButton({20, 530}, {200, 50}, "Refresh", 24, ([this] {
+		this->servers.clear();
+		auto packet = NetworkProtocol::SERVER_SCAN->getPacket();
+		auto status = sf::Socket::Status::Partial;
+		while (status == sf::Socket::Status::Partial) status = AngleShooterClient::get().getSocket().send(packet, sf::IpAddress(255, 255, 255, 255), AngleShooterCommon::PORT);
+	})));
+	const auto widgetLocal = this->serverListPage->addButton(new TextButton({20, 630}, {200, 50}, "localhost", 18, ([this] {
+		this->mainMenuManager.setCurrentPage(this->mainMenuManager.getMainPage());
+		AngleShooterClient::get().connect(PortedIP(sf::IpAddress(127, 0, 0, 1)));
+	})));
+	this->serverListPage->addLink(widgetBack, widgetRefresh, MenuInput::DOWN);
+	this->serverListPage->addLink(widgetRefresh, widgetLocal, MenuInput::DOWN);
 
-	// const auto localIp = std::make_shared<Button>(); TODO: Add a button to the menu
-	// localIp->setPosition({80.f, 400.f - 36 * 4});
-	// localIp->setText("IP: " + receivedPip.toString());
-	// localIp->setCallback([this, receivedPip] {
-	// get().connect(receivedPip);
-	// StateManager::get().clear();
-	// StateManager::get().push(GameState::GAME_ID);
-	// });
-	// const auto serverListState = dynamic_cast<ServerListState*>(StateManager::get().getCurrentState()->get());
-	// serverListState->gui.pack(localIp);
-	// Logger::debug("Scanned server: " + receivedPip.toString());
+	for (const auto& server : this->servers) {
+		const auto button = this->serverListPage->addButton(new TextButton({-200, 0}, {0, 50}, server.toString(), 18, ([this, server] {
+			this->mainMenuManager.setCurrentPage(this->mainMenuManager.getMainPage());
+			AngleShooterClient::get().connect(server);
+		})), widgetRefresh, MenuInput::LEFT);
+		button->setPosition({20.f, 630.f - static_cast<float>(this->servers.size()) * 60.f});
+	}
 }
 
 void MainMenuManager::addServer(const PortedIP& server) {

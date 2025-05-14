@@ -348,6 +348,9 @@ void AngleShooterClient::run() {
 		}
 	}
 	MainMenuManager::get().populateMainMenu();
+	auto packet = NetworkProtocol::SERVER_SCAN->getPacket();
+	auto status = sf::Socket::Status::Partial;
+	while (status == sf::Socket::Status::Partial) status = getSocket().send(packet, sf::IpAddress(255, 255, 255, 255), AngleShooterCommon::PORT);
 	ClientWorld::get().init();
     std::thread receiverThread(&AngleShooterClient::runReceiver, this);
 	sf::Clock deltaClock;
@@ -472,6 +475,7 @@ void AngleShooterClient::connect(const PortedIP& server) {
 	join << OptionsManager::get().getName();
 	join << OptionsManager::get().getCosmetics();
 	send(join);
+	this->onMainMenu = false;
 }
 
 void AngleShooterClient::disconnect() {
@@ -479,6 +483,7 @@ void AngleShooterClient::disconnect() {
 	//TODO: Send disconnect packet
 	delete(this->server);
 	this->server = nullptr;
+	this->onMainMenu = true;
 }
 
 sf::UdpSocket& AngleShooterClient::getSocket() {

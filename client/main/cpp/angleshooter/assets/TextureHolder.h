@@ -100,9 +100,7 @@ public:
 		{'u', FONT_u}, {'v', FONT_v}, {'w', FONT_w}, {'x', FONT_x}, {'y', FONT_y},
 		{'z', FONT_z}
 	};
-	static unsigned int getStringWidth(const std::string&);
-	sf::Texture getText(const std::string& string, unsigned int width);
-	sf::Texture getText(const std::string& string);
+	sf::Texture getText(const std::string& string, int characterWidth = 28);
 
 	explicit TextureHolder(const FontHolder&) = delete;
 	void operator=(const TextureHolder&) = delete;

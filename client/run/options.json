@@ -1,8 +1,8 @@
 {
-    "character": 0,
-    "colour_b": 170,
-    "colour_g": 170,
-    "colour_r": 255,
+    "character": 1,
+    "colour_b": 255,
+    "colour_g": 128,
+    "colour_r": 184,
     "cosmetic": 0,
     "fps": 144,
     "ip": "127.0.0.1",
@@ -16,9 +16,9 @@
         "angleshooter:right": 3,
         "angleshooter:up": 22
     },
-    "masterVolume": 0.6800000000000004,
-    "musicVolume": 0.2800000000000001,
+    "masterVolume": 0.7500000000000004,
+    "musicVolume": 0.35000000000000014,
     "name": "Player",
     "onboarded": true,
-    "soundVolume": 0.3900000000000002
+    "soundVolume": 0.4200000000000002
 }

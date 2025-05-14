@@ -1,22 +1,22 @@
 ﻿#include "PreCompiledClient.h"
 #include "TextButton.h"
 
-TextButton::TextButton(sf::Vector2f position, sf::Vector2f size, const std::string& texture, const std::function<void()>& onClick) : MenuButton(position, size, Identifier::empty, onClick) {
-	this->textTexture = getStringTexture(texture);
+TextButton::TextButton(sf::Vector2f position, sf::Vector2f size, const std::string& texture, int characterWidth, const std::function<void()>& onClick) : MenuButton(position, size, Identifier::empty, onClick), characterWidth(characterWidth) {
+	this->textTexture = getStringTexture(texture, characterWidth);
 	this->setTexture(&this->textTexture);
 	this->setSize(sf::Vector2f(this->textTexture.getSize()));
 }
 
-TextButton::TextButton(sf::Vector2f position, float size, const std::string& texture, const std::function<void()>& onClick) : MenuButton(position, size, Identifier::empty, onClick) {
-	this->textTexture = getStringTexture(texture);
+TextButton::TextButton(sf::Vector2f position, float size, const std::string& texture, int characterWidth, const std::function<void()>& onClick) : MenuButton(position, size, Identifier::empty, onClick), characterWidth(characterWidth) {
+	this->textTexture = getStringTexture(texture, characterWidth);
 	this->setTexture(&this->textTexture);
 	this->setSize(sf::Vector2f(this->textTexture.getSize()));
 }
 
-sf::Texture TextButton::getStringTexture(const std::string& text) {
+sf::Texture TextButton::getStringTexture(const std::string& text, int characterWidth) {
 	sf::RenderTexture combinedImage({241, 119});
 	combinedImage.draw(sf::Sprite(TextureHolder::getInstance().get(Identifier("menu/menu_button_blank.png"))));
-	const auto textTexture = TextureHolder::getInstance().getText(text);
+	const auto textTexture = TextureHolder::getInstance().getText(text, characterWidth);
 	auto textSprite = sf::Sprite(textTexture);
 	textSprite.setPosition({241 / 2 - textSprite.getLocalBounds().size.x / 2, 16});
 	combinedImage.draw(textSprite);

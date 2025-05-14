@@ -97,3 +97,108 @@ uint64_t Util::swapBytes64(uint64_t inData) {
 		(inData << 40 & 0xFF00000000 << 16) |
 		(inData << 56 & 0xFF00000000 << 24));
 }
+
+// Colour Methods Taken From https://gist.github.com/marukrap/7c361f2c367eaf40537a8715e3fd952a
+
+std::tuple<float, float, float> Util::rgbToHsl(const sf::Color& color) {
+	auto r = color.r / 255.f;
+	auto g = color.g / 255.f;
+	auto b = color.b / 255.f;
+	const auto max = std::max({ r, g, b });
+	const auto min = std::min({ r, g, b });
+	const auto chroma = max - min; // Chroma
+	auto hue = 0.f;
+	auto saturation = 0.f;
+	auto lightness = 0.f;
+	if (chroma != 0.f) {
+		if (max == r) {
+			hue = std::fmod(((g - b) / chroma), 6.f);
+		} else if (max == g) {
+			hue = ((b - r) / chroma) + 2;
+		} else if (max == b) {
+			hue = ((r - g) / chroma) + 4;
+		}
+		hue *= 60;
+	}
+	if (hue < 0.f) hue += 360;
+	lightness += (max + min) / 2;
+	if (lightness != 1.f && lightness != 0.f) saturation = chroma / (1 - std::fabs(2 * lightness - 1));
+	return { hue, saturation, lightness };
+}
+
+std::tuple<float, float, float> Util::rgbToHsv(const sf::Color& color) {
+	auto r = color.r / 255.f;
+	auto g = color.g / 255.f;
+	auto b = color.b / 255.f;
+	const auto max = std::max({ r, g, b });
+	const auto min = std::min({ r, g, b });
+	const auto chroma = max - min;
+	auto hue = 0.f;
+	auto saturation = 0.f;
+	if (chroma != 0.f) {
+		if (max == r) {
+			hue = std::fmod(((g - b) / chroma), 6.f);
+		} else if (max == g) {
+			hue = ((b - r) / chroma) + 2;
+		} else if (max == b) {
+			hue = ((r - g) / chroma) + 4;
+		}
+		hue *= 60;
+	}
+	if (hue < 0.f)hue += 360;
+	auto value = max;
+	if (value != 0.f)saturation = chroma / value;
+	return { hue, saturation, value };
+}
+
+sf::Color Util::hslToRgb(float hue, float saturation, float lightness) {
+	const auto chroma = (1 - std::fabs(2 * lightness - 1)) * saturation;
+	const auto hPrime = hue / 60; // H'
+	const auto x = chroma * (1 - std::fabs(std::fmod(hPrime, 2.f) - 1));
+	const auto m = lightness - chroma / 2;
+	auto r = 0.f;
+	auto g = 0.f;
+	auto b = 0.f;
+	switch (static_cast<int>(hPrime)) {
+		case 0: r = chroma; g = x;        break;
+		case 1: r = x; g = chroma;        break;
+		case 2:        g = chroma; b = x; break;
+		case 3:        g = x; b = chroma; break;
+		case 4: r = x;        b = chroma; break;
+		case 5: r = chroma;        b = x; break;
+	}
+	r += m;
+	g += m;
+	b += m;
+	sf::Color color;
+	color.r = static_cast<uint8_t>(std::round(r * 255));
+	color.g = static_cast<uint8_t>(std::round(g * 255));
+	color.b = static_cast<uint8_t>(std::round(b * 255));
+	return color;
+}
+
+sf::Color Util::hsvToRgb(float hue, float saturation, float value) {
+	const auto chroma = saturation * value;
+	const auto hPrime = std::fmod(hue / 60, 6.f);
+	const auto x = chroma * (1 - std::fabs(std::fmod(hPrime, 2.f) - 1));
+	const auto m = value - chroma;
+	auto r = 0.f;
+	auto g = 0.f;
+	auto b = 0.f;
+	switch (static_cast<int>(hPrime)) {
+		case 0: r = chroma; g = x;        break;
+		case 1: r = x; g = chroma;        break;
+		case 2:        g = chroma; b = x; break;
+		case 3:        g = x; b = chroma; break;
+		case 4: r = x;        b = chroma; break;
+		case 5: r = chroma;        b = x; break;
+	}
+	r += m;
+	g += m;
+	b += m;
+	sf::Color color;
+	color.r = static_cast<uint8_t>(std::round(r * 255));
+	color.g = static_cast<uint8_t>(std::round(g * 255));
+	color.b = static_cast<uint8_t>(std::round(b * 255));
+	return color;
+}
