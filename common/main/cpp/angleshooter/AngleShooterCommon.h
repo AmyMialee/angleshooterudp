@@ -6,7 +6,7 @@ public:
 	static constexpr auto TIME_PER_TICK = 1. / 60.;
 	static constexpr auto TIMEOUT = 30.f;
 	static constexpr auto MAX_BULLETS = 360;
-	static constexpr auto BULLET_CHARGE = 2;
-	static constexpr auto BULLET_DRAIN = 2;
+	static constexpr auto BULLET_CHARGE = 6;
+	static constexpr auto BULLET_DRAIN = 5;
 
 };

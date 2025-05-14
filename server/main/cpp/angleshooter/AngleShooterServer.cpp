@@ -58,10 +58,14 @@ AngleShooterServer::AngleShooterServer() {
         for (const auto& [pair, details] : clients | std::views::values) {
             if (!details.player) return;
             if (details.player->getId() == sender.second.player->getId()) continue;
-            auto syncPlayerPacket = NetworkProtocol::S2C_SPAWN_PLAYER->getPacket();
-            details.player->writeToPacket(syncPlayerPacket);
-            syncPlayerPacket << false;
-            send(syncPlayerPacket, pair);
+            auto newPlayerPacket = NetworkProtocol::S2C_SPAWN_PLAYER->getPacket();
+            sender.second.player->writeToPacket(newPlayerPacket);
+            newPlayerPacket << false;
+            send(newPlayerPacket, pair);
+        	auto existingPlayerPacket = NetworkProtocol::S2C_SPAWN_PLAYER->getPacket();
+			details.player->writeToPacket(existingPlayerPacket);
+			existingPlayerPacket << false;
+			send(existingPlayerPacket, sender.first);
         }
     });
     registerPacket(NetworkProtocol::C2S_SEND_MESSAGE, [this](sf::Packet& packet, const std::pair<std::unique_ptr<NetworkPair>, PlayerDetails>& sender) {
