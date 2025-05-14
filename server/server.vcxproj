@@ -117,7 +117,10 @@
     <ClInclude Include="main\cpp\angleshooter\PreCompiledServer.h" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="main\resources\data\angleshooter\maps\arena.json" />
+    <Content Include="main\resources\data\angleshooter\maps\circle_maze.json" />
     <Content Include="main\resources\data\angleshooter\maps\e1m1.json" />
+    <Content Include="main\resources\data\angleshooter\maps\somethingwicked.json" />
     <Content Include="main\resources\data\angleshooter\maps\testmap.json" />
     <Content Include="main\resources\data\angleshooter\maps\testmaplarge.json" />
   </ItemGroup>

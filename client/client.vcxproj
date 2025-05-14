@@ -252,6 +252,7 @@
     <Content Include="main\resources\assets\angleshooter\textures\mapassets\wall_tiles\export8.png" />
     <Content Include="main\resources\assets\angleshooter\textures\mapassets\wall_tiles\export9.png" />
     <Content Include="main\resources\assets\angleshooter\textures\mapassets\wall_tiles_sheet.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\mapassets\wall_tiles_sheet_filled.png" />
     <Content Include="main\resources\assets\angleshooter\textures\menu\button_left.png" />
     <Content Include="main\resources\assets\angleshooter\textures\menu\button_right.png" />
     <Content Include="main\resources\assets\angleshooter\textures\menu\font\0.png" />
@@ -338,7 +339,10 @@
     <Content Include="main\resources\assets\angleshooter\textures\misc\gun_big.png" />
     <Content Include="main\resources\assets\angleshooter\textures\misc\gun_small.png" />
     <Content Include="main\resources\assets\angleshooter\textures\sfml_logo.png" />
+    <Content Include="main\resources\data\angleshooter\maps\arena.json" />
+    <Content Include="main\resources\data\angleshooter\maps\circle_maze.json" />
     <Content Include="main\resources\data\angleshooter\maps\e1m1.json" />
+    <Content Include="main\resources\data\angleshooter\maps\somethingwicked.json" />
     <Content Include="main\resources\data\angleshooter\maps\testmap.json" />
     <Content Include="main\resources\data\angleshooter\maps\testmaplarge.json" />
   </ItemGroup>

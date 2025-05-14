@@ -1,7 +1,7 @@
 {
   "textures": {
-    "x": "angleshooter:bricks.png",
-    "c": "angleshooter:cobble.png"
+    "x": "angleshooter:mapassets/wall_tiles_sheet.png",
+    "c": "angleshooter:mapassets/floor.png"
   },
   "textureGrid": [
     "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",

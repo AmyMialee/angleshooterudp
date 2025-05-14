@@ -10,8 +10,6 @@ MapRenderer::MapRenderer(Map& map) {
 		for (uint16_t column = 0; column < map.getColumns(); ++column) {
 			{
 				floorTile.setPosition({column * 16.f, row * 16.f});
-				const auto color = static_cast<uint8_t>(map.isSolid(row, column) ? 255 : 128);
-				floorTile.setColor(sf::Color(color, color, color, 255));
 				this->mapTexture->draw(floorTile);
 			}
 			const auto texture = TextureHolder::getInstance().getPointer(map.getTextures()[map.getTextureGrid()[row][column]]);
@@ -22,14 +20,14 @@ MapRenderer::MapRenderer(Map& map) {
 				tileMap.rotate(sf::degrees(180));
 				const auto tileSize = tileMap.getTexture().getSize();
 				auto sides = this->getTileSides(map, row, column);
-				auto uv = tileMaskToUV.find(sides);
-				if (uv == tileMaskToUV.end()) {
+				if (auto uvFind = tileMaskToUV.find(sides); uvFind == tileMaskToUV.end()) {
 					std::stringstream ss;
 					ss << std::bitset<8>(sides);
-					Logger::errorOnce("MapRenderer: Tile mask not found for tile with mask " + ss.str());
-					continue;
+					Logger::warnOnce("MapRenderer: Tile mask not found for tile with mask " + ss.str());
+					tileMap.setTextureRect({{static_cast<int>(tileSize.x / 12) * 9, static_cast<int>(tileSize.y / 4) * 2}, {static_cast<int>(tileSize.x / 12), static_cast<int>(tileSize.y / 4)}});
+				} else {
+					tileMap.setTextureRect({{static_cast<int>(tileSize.x / 12) * uvFind->second.first, static_cast<int>(tileSize.y / 4) * uvFind->second.second}, {static_cast<int>(tileSize.x / 12), static_cast<int>(tileSize.y / 4)}});
 				}
-				tileMap.setTextureRect({{static_cast<int>(tileSize.x / 12) * uv->second.first, static_cast<int>(tileSize.y / 4) * uv->second.second}, {static_cast<int>(tileSize.x / 12), static_cast<int>(tileSize.y / 4)}});
 				tileMap.setScale(sf::Vector2f{16.f, 16.f}.componentWiseDiv(sf::Vector2f{static_cast<float>(tileSize.x / 12), static_cast<float>(tileSize.y / 4)}));
 				// const auto color = static_cast<uint8_t>(map.isSolid(row, column) ? 255 : 128);
 				// tileMap.setColor(sf::Color(color, color, color, 255));
