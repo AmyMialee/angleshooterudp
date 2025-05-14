@@ -16,7 +16,7 @@ void BulletEntity::tick() {
 
 void BulletEntity::onCollision(Entity& other) {
 	if (other.getEntityType() != PlayerEntity::ID) return;
-	if (const auto player = dynamic_cast<PlayerEntity*>(&other); this->source != player->getId() && this->getDistanceTo(other) < 8) {
+	if (const auto player = dynamic_cast<PlayerEntity*>(&other); this->source != player->getId() && this->getDistanceTo(other) < AngleShooterCommon::BULLET_RADIUS) {
 		if (player != nullptr) {
 			if (player->damage(this->source, 1)) {
 				this->hasHit = true;

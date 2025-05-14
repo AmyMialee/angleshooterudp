@@ -8,5 +8,5 @@ public:
 	static constexpr auto MAX_BULLETS = 360;
 	static constexpr auto BULLET_CHARGE = 2;
 	static constexpr auto BULLET_DRAIN = 12;
-
+	static constexpr auto BULLET_RADIUS = 6;
 };
