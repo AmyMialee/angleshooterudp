@@ -21,7 +21,11 @@ MenuSlider::MenuSlider(sf::Vector2f position, double value, const std::string& t
 void MenuSlider::refreshTexture() {
 	bar.setTextureRect({{0, 0}, {static_cast<int>(428 * this->value), 116}});
 	bar.setSize({static_cast<float>(428 * this->value), 116});
-	this->textTexture = TextureHolder::getInstance().getText(this->textCallback ? this->textCallback(this->value) : "Slider");
+	if (this->textCallback == nullptr) {
+		this->textTexture = TextureHolder::getInstance().getText("Slider " + Util::toRoundedString(this->value * 100, 0));
+	} else {
+		this->textTexture = TextureHolder::getInstance().getText(this->textCallback(this->value));
+	}
 	text.setSize(sf::Vector2f(this->textTexture.getSize()));
 	text.setTexture(&this->textTexture, true);
 }
@@ -64,7 +68,7 @@ void MenuSlider::input(MenuInput input) {
 	}
 }
 
-const std::function<std::string(double)>& MenuSlider::createTextFunction(const std::string& textFunction) {
+std::function<std::string(double)> MenuSlider::createTextFunction(const std::string& textFunction) {
 	return [textFunction](double value) {
 		return textFunction + " " + Util::toRoundedString(value * 100, 0);
 	};

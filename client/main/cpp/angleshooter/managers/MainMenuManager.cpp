@@ -54,7 +54,6 @@ void MainMenuManager::populateOptionsPage() {
 	const auto widgetBack = this->optionsPage->addButton(new TextButton({500, 240}, {200, 50}, "Back", [this] {
 		this->mainMenuManager.setCurrentPage(this->mainMenuManager.getMainPage());
 	}));
-
 	const auto sliderMaster = this->optionsPage->addButton(new MenuSlider({800, 700}, OptionsManager::get().getMasterVolume(), "Master Volume", [this](double value) {
 		OptionsManager::get().setMasterVolume(value);
 	}, [this](double value) {

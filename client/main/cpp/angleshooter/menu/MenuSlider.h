@@ -20,7 +20,7 @@ struct MenuSlider : MenuButton {
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 	void tick(bool selected) override;
 	void input(MenuInput input);
-	const std::function<std::string(double)>& createTextFunction(const std::string& textFunction);
+	static std::function<std::string(double)> createTextFunction(const std::string& textFunction);
 	MenuSlider* setTextFunction(const std::string& textFunction);
 	MenuSlider* setTextFunction(const std::function<std::string(double)>& textFunction);
 	MenuSlider* setConstantCallback(const std::function<void(double)>& textCallback);
