@@ -224,10 +224,9 @@ void AngleShooterServer::run() {
 
 void AngleShooterServer::tickNetwork() {
     Logger::info("Starting Server Network Handler");
-	std::set<PortedIP> pendingDisconnects;
+	std::optional<sf::IpAddress> sender;
+	unsigned short port;
 	while (this->running) {
-		std::optional<sf::IpAddress> sender;
-		unsigned short port;
 		if (sf::Packet packet; listenerSocket.receive(packet, sender, port) == sf::Socket::Status::Done) {
 			if (!sender.has_value()) continue;
 			if (const auto bytes = static_cast<const uint8_t*>(packet.getData()); PacketIdentifier::fromId(bytes[0]) == NetworkProtocol::SERVER_SCAN) {
@@ -245,21 +244,22 @@ void AngleShooterServer::tickNetwork() {
 			handlePacket(packet, clients[pip]);
 			continue;
 		}
-		for (const auto& [first, second] : clients | std::views::values) {
-			first->update();
-			if (first->shouldDisconnect()) pendingDisconnects.insert(first->getPortedIP());
-		}
-		auto iterator = clients.begin();
-		while (iterator != clients.end()) {
-			if (pendingDisconnects.contains(iterator->second.first->getPortedIP())) {
-                Logger::info("Client disconnected: " + iterator->second.first->getPortedIP().toString());
-				if (iterator->second.second.player) iterator->second.second.player->shouldBeErased = true;
-				iterator = clients.erase(iterator);
-			} else ++iterator;
-		}
-		pendingDisconnects.clear();
-		sleep(sf::milliseconds(6));
-    }
+		break;
+	}
+	std::set<PortedIP> pendingDisconnects;
+	for (const auto& [first, second] : clients | std::views::values) {
+		first->update();
+		if (first->shouldDisconnect()) pendingDisconnects.insert(first->getPortedIP());
+	}
+	auto iterator = clients.begin();
+	while (iterator != clients.end()) {
+		if (pendingDisconnects.contains(iterator->second.first->getPortedIP())) {
+               Logger::info("Client disconnected: " + iterator->second.first->getPortedIP().toString());
+			if (iterator->second.second.player) iterator->second.second.player->shouldBeErased = true;
+			iterator = clients.erase(iterator);
+		} else ++iterator;
+	}
+	pendingDisconnects.clear();
 }
 
 void AngleShooterServer::sendToAll(const sf::Packet& packet, const std::function<bool(const std::pair<std::unique_ptr<NetworkPair>, PlayerDetails>&)>& predicate) {
