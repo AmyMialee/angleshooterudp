@@ -104,11 +104,12 @@ void AngleShooterClient::registerPackets() {
 	registerPacket(NetworkProtocol::S2C_PLAYER_INPUT, [this](sf::Packet& packet, const NetworkPair*) {
 		uint16_t id;
 		float x, y;
-		bool isFiring;
+		float firingX, firingY;
 		packet >> id;
 		packet >> x;
 		packet >> y;
-		packet >> isFiring;
+		packet >> firingX;
+		packet >> firingY;
 		for (const auto& entity : ClientWorld::get().getEntities()) {
 			if (entity->getId() != id) continue;
 			if (entity->getEntityType() != PlayerEntity::ID) {
@@ -117,7 +118,7 @@ void AngleShooterClient::registerPackets() {
 			}
 			const auto player = dynamic_cast<PlayerEntity*>(entity.get());
 			player->input = {x, y};
-			player->isFiring = isFiring;
+			player->firingInput = {firingX, firingY};
 			return;
 		}
 	});
@@ -315,11 +316,10 @@ void AngleShooterClient::handlePacket(sf::Packet& packet, NetworkPair* sender) {
 void AngleShooterClient::registerPacket(PacketIdentifier* packetType, const std::function<void(sf::Packet& packet, NetworkPair* sender)>& handler) {
 	this->packetHandlers.emplace(packetType->getId(), handler);
 	this->packetIds.emplace(packetType->getId(), packetType);
-	Logger::debug("Registered packet: " + packetType->toString() + " (" + std::to_string(packetType->getId()) + ")");
 }
 
 void AngleShooterClient::run() {
-	Logger::debug("Starting AngleShooter Client");
+	Logger::info("Starting AngleShooter Client");
 	sf::Sprite splashLogo(TextureHolder::getInstance().get(Identifier("sfml_logo.png")));
 	Util::centre(splashLogo);
 	splashLogo.setPosition(window.getView().getSize() / 2.f);

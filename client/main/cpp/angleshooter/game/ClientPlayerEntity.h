@@ -1,7 +1,7 @@
 #pragma once
 
 class ClientPlayerEntity final : public PlayerEntity {
-	bool syncedFiring = false;
+	sf::Vector2f syncedFiring = sf::Vector2f(0, 0);
 	sf::Vector2f syncedInput = sf::Vector2f(0, 0);
 	sf::Vector2f syncedPosition = sf::Vector2f(0, 0);
 public:

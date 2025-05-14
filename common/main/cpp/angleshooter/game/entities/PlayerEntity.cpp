@@ -27,6 +27,9 @@ void PlayerEntity::tick() {
 		constexpr auto movementSpeed = 1.6f;
 		input *= movementSpeed;
 		this->addVelocity(input);
+	}
+	if (this->firingInput.length() > 0) {
+		this->firingInput /= this->firingInput.length();
 		const auto currentRotation = this->getRotation();
 		const auto targetRotation = sf::radians(std::atan2(input.y, input.x));
 		auto rotationDifference = targetRotation - currentRotation;

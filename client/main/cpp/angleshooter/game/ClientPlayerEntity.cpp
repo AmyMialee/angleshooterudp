@@ -11,13 +11,17 @@ void ClientPlayerEntity::tick() {
 	if (InputManager::get().getDown()->isPressed()) input += sf::Vector2f(0, 1);
 	if (InputManager::get().getLeft()->isPressed()) input += sf::Vector2f(-1, 0);
 	if (InputManager::get().getRight()->isPressed()) input += sf::Vector2f(1, 0);
-	isFiring = InputManager::get().getFire()->isPressed();
-	if (syncedInput != input || syncedFiring != isFiring) {
+	firingInput = sf::Vector2f(0, 0);
+	if (InputManager::get().getFireUp()->isPressed()) firingInput += sf::Vector2f(0, -1);
+	if (InputManager::get().getFireDown()->isPressed()) firingInput += sf::Vector2f(0, 1);
+	if (InputManager::get().getFireLeft()->isPressed()) firingInput += sf::Vector2f(-1, 0);
+	if (InputManager::get().getFireRight()->isPressed()) firingInput += sf::Vector2f(1, 0);
+	if (syncedInput != input || syncedFiring != firingInput) {
 		auto packetIn = NetworkProtocol::C2S_PLAYER_INPUT->getPacket();
-		packetIn << input.x << input.y << isFiring;
+		packetIn << input.x << input.y << firingInput.x << firingInput.y;
 		AngleShooterClient::get().send(packetIn);
 		this->syncedInput = input;
-		this->syncedFiring = isFiring;
+		this->syncedFiring = firingInput;
 		AudioManager::get().setListenerPosition(this->getPosition());
 	}
 	if (this->world->getAge() % 8 == 0 && this->getPosition() != this->syncedPosition) {

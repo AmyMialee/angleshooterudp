@@ -78,17 +78,19 @@ AngleShooterServer::AngleShooterServer() {
     });
     registerPacket(NetworkProtocol::C2S_PLAYER_INPUT, [this](sf::Packet& packet, const std::pair<std::unique_ptr<NetworkPair>, PlayerDetails>& sender) {
         float x, y;
-        bool isFiring;
+        float firingX, firingY;
         packet >> x;
         packet >> y;
-        packet >> isFiring;
+        packet >> firingX;
+    	packet >> firingY;
         sender.second.player->input = {x, y};
-        sender.second.player->isFiring = isFiring;
+        sender.second.player->firingInput = {firingX, firingY};
         auto syncPlayerPacket = NetworkProtocol::S2C_PLAYER_INPUT->getPacket();
         syncPlayerPacket << sender.second.player->getId();
         syncPlayerPacket << x;
         syncPlayerPacket << y;
-        syncPlayerPacket << isFiring;
+        syncPlayerPacket << firingX;
+    	syncPlayerPacket << firingY;
         sendToAll(syncPlayerPacket, [&sender](const std::pair<std::unique_ptr<NetworkPair>, PlayerDetails>& client) {
             if (!client.second.player) return true;
             if (client.second.player->getId() == sender.second.player->getId()) return false;
@@ -170,7 +172,6 @@ void AngleShooterServer::handlePacket(sf::Packet& packet, std::pair<std::unique_
 void AngleShooterServer::registerPacket(PacketIdentifier* packetType, const std::function<void(sf::Packet& packet, std::pair<std::unique_ptr<NetworkPair>, PlayerDetails>& sender)>& handler) {
 	this->packetHandlers.emplace(packetType->getId(), handler);
 	this->packetIds.emplace(packetType->getId(), packetType);
-	Logger::debug("Registered packet: " + packetType->toString() + " (" + std::to_string(packetType->getId()) + ")");
 }
 
 void AngleShooterServer::run() {

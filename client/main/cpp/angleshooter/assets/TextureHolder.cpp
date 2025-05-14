@@ -21,10 +21,7 @@ sf::Texture TextureHolder::getText(const std::string& string, unsigned int width
 	for (auto character : string) {
 		xOffset += 28;
 		const Identifier* id = CHARACTER_MAP[character];
-		if (!id) {
-			Logger::errorOnce("Character not found in map: " + std::string(1, character));
-			continue;
-		}
+		if (!id) continue;
 		const sf::Texture* charTexture = getPointer(*id);
 		if (!charTexture) {
 			Logger::errorOnce("Failed to load texture for character: " + std::string(1, character));

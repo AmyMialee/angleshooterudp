@@ -7,7 +7,10 @@ class InputManager final {
 	std::shared_ptr<Keybinding> down;
 	std::shared_ptr<Keybinding> left;
 	std::shared_ptr<Keybinding> right;
-	std::shared_ptr<Keybinding> fire;
+	std::shared_ptr<Keybinding> fireUp;
+	std::shared_ptr<Keybinding> fireDown;
+	std::shared_ptr<Keybinding> fireLeft;
+	std::shared_ptr<Keybinding> fireRight;
 
 protected:
 	explicit InputManager();
@@ -25,7 +28,10 @@ public:
 	Keybinding* getDown();
 	Keybinding* getLeft();
 	Keybinding* getRight();
-	Keybinding* getFire();
+	Keybinding* getFireUp();
+	Keybinding* getFireDown();
+	Keybinding* getFireLeft();
+	Keybinding* getFireRight();
 
 	explicit InputManager(const InputManager&) = delete;
 	void operator=(const InputManager&) = delete;

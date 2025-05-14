@@ -17,15 +17,16 @@ void ServerPlayerEntity::tick() {
 		AngleShooterServer::get().sendToAll(healthPacket);
 	}
 	static Identifier shootSound("bullet.ogg");
-	if (isFiring && this->bulletCharge >= 12) {
+	if (this->firingInput.length() > 0.5f && this->bulletCharge >= 12) {
 		this->bulletCharge -= 12;
-		auto x = std::cos(this->getRotation().asRadians());
-		auto y = std::sin(this->getRotation().asRadians());
+		const auto targetRotation = sf::radians(std::atan2(firingInput.y, firingInput.x));
+		auto x = std::cos(targetRotation.asRadians());
+		auto y = std::sin(targetRotation.asRadians());
 		x += Util::randomNormalFloat(0.025f);
 		y += Util::randomNormalFloat(0.025f);
 		const auto velocity = sf::Vector2f(x, y);
 		const auto bullet = dynamic_cast<ServerWorld*>(this->world)->spawnBullet(this->getId(), this->getPosition(), velocity * 8.f);
-		bullet->setRotation(this->getRotation());
+		bullet->setRotation(targetRotation);
 		this->world->playSound(shootSound, .6f, Util::randomFloat(1.f, 1.6f), this->getPosition());
 		auto packet = NetworkProtocol::S2C_BULLET_CHARGE->getPacket();
 		packet << this->getId() << this->bulletCharge;

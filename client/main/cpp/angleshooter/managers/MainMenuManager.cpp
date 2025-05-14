@@ -51,21 +51,23 @@ void MainMenuManager::populateMainMenu() {
 }
 
 void MainMenuManager::populateOptionsPage() {
+	if (!this->optionsPage) return;
+	this->optionsPage->clearButtons();
 	const auto widgetBack = this->optionsPage->addButton(new TextButton({500, 240}, {200, 50}, "Back", [this] {
 		this->mainMenuManager.setCurrentPage(this->mainMenuManager.getMainPage());
 	}));
-	const auto sliderMaster = this->optionsPage->addButton(new MenuSlider({800, 700}, OptionsManager::get().getMasterVolume(), "Master Volume", [this](double value) {
+	const auto sliderMaster = this->optionsPage->addButton(new MenuSlider({620, 650}, OptionsManager::get().getMasterVolume(), "Master Volume", [this](double value) {
 		OptionsManager::get().setMasterVolume(value);
 	}, [this](double value) {
 		AudioManager::get().setMusicVolume(OptionsManager::get().getMusicVolume() * value);
 		AudioManager::get().setSoundVolume(OptionsManager::get().getSoundVolume() * value);
 	}), widgetBack, MenuInput::UP);
-	const auto sliderMusic = this->optionsPage->addButton(new MenuSlider({800, 800}, OptionsManager::get().getMusicVolume(), "Music Volume", [this](double value) {
+	const auto sliderMusic = this->optionsPage->addButton(new MenuSlider({620, 750}, OptionsManager::get().getMusicVolume(), "Music Volume", [this](double value) {
 		OptionsManager::get().setMusicVolume(value);
 	}, [this](double value) {
 		AudioManager::get().setMusicVolume(value * OptionsManager::get().getMasterVolume());
 	}), sliderMaster, MenuInput::UP);
-	const auto sliderSound = this->optionsPage->addButton(new MenuSlider({800, 900}, OptionsManager::get().getSoundVolume(), "Sound Volume", [this](double value) {
+	const auto sliderSound = this->optionsPage->addButton(new MenuSlider({620, 850}, OptionsManager::get().getSoundVolume(), "Sound Volume", [this](double value) {
 		OptionsManager::get().setSoundVolume(value);
 	}, [this](double value) {
 		AudioManager::get().setSoundVolume(value * OptionsManager::get().getMasterVolume());
@@ -73,6 +75,7 @@ void MainMenuManager::populateOptionsPage() {
 }
 
 void MainMenuManager::populateServerPage() {
+	if (!this->serverListPage) return;
 	this->serverListPage->clearButtons();
 	const auto widgetBack = this->serverListPage->addButton(new TextButton({20, 430}, {200, 50}, "Back", ([this] {
 		this->mainMenuManager.setCurrentPage(this->mainMenuManager.getMainPage());

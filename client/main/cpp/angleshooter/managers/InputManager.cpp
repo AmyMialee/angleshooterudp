@@ -6,13 +6,19 @@ InputManager::InputManager() :
 	down(new Keybinding(std::make_shared<Identifier>("down"), sf::Keyboard::Scancode::S)),
 	left(new Keybinding(std::make_shared<Identifier>("left"), sf::Keyboard::Scancode::A)),
 	right(new Keybinding(std::make_shared<Identifier>("right"), sf::Keyboard::Scancode::D)),
-	fire(new Keybinding(std::make_shared<Identifier>("fire"), sf::Keyboard::Scancode::Space))
+	fireUp(new Keybinding(std::make_shared<Identifier>("fireup"), sf::Keyboard::Scancode::Up)),
+	fireDown(new Keybinding(std::make_shared<Identifier>("firedown"), sf::Keyboard::Scancode::Down)),
+	fireLeft(new Keybinding(std::make_shared<Identifier>("fireleft"), sf::Keyboard::Scancode::Left)),
+	fireRight(new Keybinding(std::make_shared<Identifier>("fireright"), sf::Keyboard::Scancode::Right))
 {
 	this->keybindings.push_back(this->up);
 	this->keybindings.push_back(this->down);
 	this->keybindings.push_back(this->left);
 	this->keybindings.push_back(this->right);
-	this->keybindings.push_back(this->fire);
+	this->keybindings.push_back(this->fireUp);
+	this->keybindings.push_back(this->fireDown);
+	this->keybindings.push_back(this->fireLeft);
+	this->keybindings.push_back(this->fireRight);
 }
 
 void InputManager::handleInput(sf::RenderWindow& window) {
@@ -76,6 +82,18 @@ Keybinding* InputManager::getRight() {
 	return this->right.get();
 }
 
-Keybinding* InputManager::getFire() {
-	return this->fire.get();
+Keybinding* InputManager::getFireUp() {
+	return this->fireUp.get();
+}
+
+Keybinding* InputManager::getFireDown() {
+	return this->fireDown.get();
+}
+
+Keybinding* InputManager::getFireLeft() {
+	return this->fireLeft.get();
+}
+
+Keybinding* InputManager::getFireRight() {
+	return this->fireRight.get();
 }
