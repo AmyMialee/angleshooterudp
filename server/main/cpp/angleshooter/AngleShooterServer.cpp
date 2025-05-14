@@ -106,6 +106,7 @@ AngleShooterServer::AngleShooterServer() {
         float x, y;
         packet >> x;
         packet >> y;
+    	if (!sender.second.player) return;
         sender.second.player->setPosition({x, y});
         auto syncPlayerPacket = NetworkProtocol::S2C_PLAYER_POSITION_SYNC->getPacket();
         syncPlayerPacket << sender.second.player->getId();

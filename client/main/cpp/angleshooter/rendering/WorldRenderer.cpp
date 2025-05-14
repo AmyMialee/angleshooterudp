@@ -107,7 +107,7 @@ void WorldRenderer::tick() {
 	this->viewLast = this->viewCurrent;
 	if (!ClientWorld::get().gameObjects.contains(AngleShooterClient::get().playerId)) return;
 	const auto player = ClientWorld::get().gameObjects[AngleShooterClient::get().playerId];
-	const sf::View viewTarget = {player->getPosition(), sf::Vector2f{1920, 1080} * 0.25f};
+	const sf::View viewTarget = {player->getPosition(), sf::Vector2f{1920, 1080} * 0.3f};
 	viewCurrent = Util::lerp(0.1f, viewCurrent, viewTarget);
 }
 

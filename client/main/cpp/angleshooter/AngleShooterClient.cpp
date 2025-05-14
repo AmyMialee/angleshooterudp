@@ -44,6 +44,7 @@ void AngleShooterClient::registerPackets() {
 		packet >> message;
 		Logger::info(message);
 	});
+	registerPacket(NetworkProtocol::HEARTBEAT, [this](InputBitStream&, const NetworkPair*) {});
 	registerPacket(NetworkProtocol::S2C_INITIAL_SETUP, [this](InputBitStream& packet, const NetworkPair*) {
 		Logger::debug("Received Initial Setup Packet");
 		Identifier id;

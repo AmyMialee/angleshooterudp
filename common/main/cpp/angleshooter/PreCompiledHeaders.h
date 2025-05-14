@@ -38,6 +38,7 @@
 #include <queue>
 #include <utility>
 #include <regex>
+#include <bitset>
 
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
