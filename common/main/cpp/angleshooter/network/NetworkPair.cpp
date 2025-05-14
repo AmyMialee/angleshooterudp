@@ -2,7 +2,7 @@
 #include "NetworkPair.h"
 
 NetworkPair::NetworkPair(SocketHolder& socketHolder, PortedIP pip) : socketHolder(socketHolder), pip(pip) {
-	auto packet = NetworkProtocol::PING->getPacket();
+	const auto packet = NetworkProtocol::PING->getPacket();
 	this->send(packet);
 	this->lastResponse.restart();
 }
@@ -16,7 +16,7 @@ void NetworkPair::update() {
 		}
 	}
 	if (this->lastSendTimer.getElapsedTime().asSeconds() > AngleShooterCommon::TIMEOUT / 3) {
-		auto packet = NetworkProtocol::HEARTBEAT->getPacket();
+		const auto packet = NetworkProtocol::HEARTBEAT->getPacket();
 		send(packet);
 	}
 }

@@ -50,6 +50,7 @@ void AngleShooterClient::registerPackets() {
 		packet >> id;
 		ClientWorld::get().loadMap(id);
 		packet >> this->playerId;
+		GameManager::get().SCORES.clear();
 	});
 	registerPacket(NetworkProtocol::S2C_BROADCAST_MESSAGE, [this](InputBitStream& packet, const NetworkPair*) {
 		std::string message;

@@ -60,8 +60,10 @@ void ServerPlayerEntity::onDeath(uint16_t source) {
 	auto packet = NetworkProtocol::S2C_DEATH->getPacket();
 	packet << this->getId();
 	AngleShooterServer::get().sendToAll(packet);
-	for (const auto iterator = AngleShooterServer::get().clients.begin(); iterator != AngleShooterServer::get().clients.end();) {
-		const auto details = iterator->second.second;
+
+
+	for (const auto key : AngleShooterServer::get().clients | std::views::keys) {
+		auto& [pair, details] = AngleShooterServer::get().clients[key];
 		if (details.player->getId() != source) continue;
 		details.player->score++;
 		auto scorePacket = NetworkProtocol::S2C_UPDATE_SCORE->getPacket();
