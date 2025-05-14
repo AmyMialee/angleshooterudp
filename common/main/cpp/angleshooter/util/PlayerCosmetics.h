@@ -25,7 +25,7 @@ struct PlayerCosmetics {
 		return getCharacterIndex(*character);
 	}
 
-	[[nodiscard]] unsigned char getCosmeticIndex() const {
+	[[nodiscard]] uint8_t getCosmeticIndex() const {
 		return getCosmeticIndex(*cosmetic);
 	}
 

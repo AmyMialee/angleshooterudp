@@ -98,4 +98,8 @@ void NetworkPair::sendPacketInternal(const OutputBitStream& packet) {
 	auto status = sf::Socket::Status::Partial;
 	while (status == sf::Socket::Status::Partial) status = socketHolder.getSocket().send(packet.getBuffer(), packet.getByteLength(), pip.ip, pip.port);
 	if (status != sf::Socket::Status::Done) Logger::error("Send Error: " + pip.toString());
+	if (status == sf::Socket::Status::Disconnected) {
+		Logger::error("Disconnected from " + pip.toString());
+		this->disconnecting = true;
+	}
 }

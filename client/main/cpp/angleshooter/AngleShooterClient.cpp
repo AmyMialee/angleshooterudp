@@ -361,49 +361,56 @@ void AngleShooterClient::run() {
 	auto frames = 0.;
 	auto ticks = 0.;
 	auto loops = 0.;
-	while (window.isOpen()) {
-		const auto deltaTime = deltaClock.restart().asSeconds();
-		tickTime += deltaTime;
-		networkTime += deltaTime;
-		frameTime += deltaTime;
-		secondTime += deltaTime;
-		InputManager::get().handleInput(window);
-		if (tickTime > 1.) {
-			Logger::warn("AngleShooter::run: Lagging behind by " + Util::toRoundedString(tickTime / AngleShooterCommon::TIME_PER_TICK) + " ticks (" + Util::toRoundedString(tickTime) + " seconds), skipping ahead");
-			tickTime = AngleShooterCommon::TIME_PER_TICK;
-		}
-		while (tickTime >= AngleShooterCommon::TIME_PER_TICK) {
-			tickTime -= AngleShooterCommon::TIME_PER_TICK;
-			AudioManager::get().tick();
-			if (onMainMenu) {
-				MainMenuManager::get().tick();
-			} else {
-				GameManager::get().tick();
+	try {
+		while (window.isOpen()) {
+			const auto deltaTime = deltaClock.restart().asSeconds();
+			tickTime += deltaTime;
+			networkTime += deltaTime;
+			frameTime += deltaTime;
+			secondTime += deltaTime;
+			InputManager::get().handleInput(window);
+			if (tickTime > 1.) {
+				Logger::warn("AngleShooter::run: Lagging behind by " + Util::toRoundedString(tickTime / AngleShooterCommon::TIME_PER_TICK) + " ticks (" + Util::toRoundedString(tickTime) + " seconds), skipping ahead");
+				tickTime = AngleShooterCommon::TIME_PER_TICK;
 			}
-			++ticks;
+			while (tickTime >= AngleShooterCommon::TIME_PER_TICK) {
+				tickTime -= AngleShooterCommon::TIME_PER_TICK;
+				AudioManager::get().tick();
+				if (onMainMenu) {
+					MainMenuManager::get().tick();
+				} else {
+					GameManager::get().tick();
+				}
+				++ticks;
+			}
+			if (networkTime >= AngleShooterCommon::TIME_PER_TICK / 2) {
+				tickNetwork();
+				networkTime -= AngleShooterCommon::TIME_PER_TICK / 2;
+			}
+			if (frameTime >= OptionsManager::get().getTimePerFrame()) {
+				this->tickDelta = tickTime / AngleShooterCommon::TIME_PER_TICK;
+				render();
+				while (frameTime >= OptionsManager::get().getTimePerFrame()) frameTime -= OptionsManager::get().getTimePerFrame();
+				++frames;
+			}
+			++loops;
+			if (secondTime >= .05f) {
+				tps = tps * .95 + .05 * (ticks / secondTime);
+				fps = fps * .95 + .05 * (frames / secondTime);
+				lps = lps * .95 + .05 * (loops / secondTime);
+				ticks = 0;
+				frames = 0;
+				loops = 0;
+				secondTime = 0;
+			}
+			sf::sleep(std::chrono::milliseconds(1));
 		}
-		if (networkTime >= AngleShooterCommon::TIME_PER_TICK / 2) {
-			tickNetwork();
-			networkTime -= AngleShooterCommon::TIME_PER_TICK / 2;
-		}
-		if (frameTime >= OptionsManager::get().getTimePerFrame()) {
-			this->tickDelta = tickTime / AngleShooterCommon::TIME_PER_TICK;
-			render();
-			while (frameTime >= OptionsManager::get().getTimePerFrame()) frameTime -= OptionsManager::get().getTimePerFrame();
-			++frames;
-		}
-		++loops;
-		if (secondTime >= .05f) {
-			tps = tps * .95 + .05 * (ticks / secondTime);
-			fps = fps * .95 + .05 * (frames / secondTime);
-			lps = lps * .95 + .05 * (loops / secondTime);
-			ticks = 0;
-			frames = 0;
-			loops = 0;
-			secondTime = 0;
-		}
-		sf::sleep(std::chrono::milliseconds(1));
+	} catch(std::runtime_error& e) {
+		Logger::error(e.what());
+	} catch(...) {
+		Logger::error("An Error Occurred");
 	}
+	if (this->server) this->disconnect();
 }
 
 void AngleShooterClient::render() {
@@ -508,7 +515,8 @@ void AngleShooterClient::connect(const PortedIP& server) {
 
 void AngleShooterClient::disconnect() {
 	Logger::info("Disconnected from server " + this->server->getPortedIP().toString());
-	//TODO: Send disconnect packet
+	auto leave = NetworkProtocol::C2S_QUIT->getPacket();
+	send(leave);
 	delete(this->server);
 	this->server = nullptr;
 	this->onMainMenu = true;

@@ -6,20 +6,25 @@ void GameManager::draw(sf::RenderTarget& target, sf::RenderStates states) const 
 	target.draw(WorldRenderer::get());
 	target.setView(target.getDefaultView());
 	for (const auto& score : SCORES | std::views::values) {
+		static sf::Sprite playerBackground(TextureHolder::getInstance().get(Identifier("characterassets/character_bg.png")));
 		static sf::Sprite playerSprite(TextureHolder::getInstance().getDefault(), sf::IntRect({0, 0}, {64, 64}));
 		static sf::Text text(FontHolder::getInstance().getDefault());
 		static std::once_flag flag;
 		std::call_once(flag, [&] {
+			Util::centre(playerBackground);
 			Util::centre(playerSprite);
-			playerSprite.setScale({1.f, 1.f});
 			Util::centre(text);
-			text.setCharacterSize(48);
+			playerBackground.setScale({1.f, 1.f});
+			playerSprite.setScale({1.f, 1.f});
 			text.setScale({1.f, 1.f});
+			text.setCharacterSize(48);
 			text.setFillColor(sf::Color::White);
 			text.setOutlineColor(sf::Color::Black);
 			text.setOutlineThickness(2.f);
 		});
-		const auto pos = sf::Vector2f({26, target.getView().getSize().y / 2 - SCORES.size() * 32.f + score.yCurrent * 64.f});
+		const auto pos = sf::Vector2f({32, target.getView().getSize().y / 2 - SCORES.size() * 36.f + score.yCurrent * 72.f});
+		playerBackground.setPosition(pos);
+		target.draw(playerBackground);
 		playerSprite.setPosition(pos);
 		playerSprite.setColor(score.cosmetics.colour);
 		playerSprite.setTexture(TextureHolder::getInstance().get(*score.cosmetics.character));

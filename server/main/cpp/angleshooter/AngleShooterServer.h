@@ -21,7 +21,7 @@ public:
 
 	void run();
 	void sendToAll(const OutputBitStream& packet, const std::function<bool(const std::pair<std::unique_ptr<NetworkPair>, PlayerDetails>&)>& predicate = [](const std::pair<std::unique_ptr<NetworkPair>, PlayerDetails>&) { return true; });
-	void send(OutputBitStream packet, const std::unique_ptr<NetworkPair>& pair);
+	void send(const OutputBitStream& packet, const std::unique_ptr<NetworkPair>& pair);
 
 	sf::UdpSocket& getSocket() override;
 	AngleShooterServer(const AngleShooterServer&) = delete;

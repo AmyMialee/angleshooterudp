@@ -73,7 +73,8 @@ AngleShooterServer::AngleShooterServer() {
         packet >> message;
         Logger::debug("Received Send Message Packet from " + sender.second.name + " (" + sender.first->getPortedIP().toString() + "): " + message);
         auto broadcastPacket = NetworkProtocol::S2C_BROADCAST_MESSAGE->getPacket();
-        broadcastPacket << "<" << sender.second.name << ">: " << message;
+    	const auto string = "<" + sender.second.name + ">: " + message;
+        broadcastPacket << string;
         sendToAll(broadcastPacket);
     });
     registerPacket(NetworkProtocol::C2S_QUIT, [this](InputBitStream&, const std::pair<std::unique_ptr<NetworkPair>, PlayerDetails>& sender) {
@@ -274,7 +275,7 @@ void AngleShooterServer::sendToAll(const OutputBitStream& packet, const std::fun
     }
 }
 
-void AngleShooterServer::send(OutputBitStream packet, const std::unique_ptr<NetworkPair>& pair) {
+void AngleShooterServer::send(const OutputBitStream& packet, const std::unique_ptr<NetworkPair>& pair) {
 	pair->send(packet);
 }
 

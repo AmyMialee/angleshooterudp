@@ -7,15 +7,18 @@ WorldRenderer::WorldRenderer() {
 	registerRenderer<PlayerEntity>(PlayerEntity::ID, [this](sf::RenderTarget& target, const std::shared_ptr<PlayerEntity>& player) {
 		if (player->deathTime > 0) return;
 		const auto deltaTime = static_cast<float>(AngleShooterClient::get().tickDelta);
+		static sf::Sprite playerBackground(TextureHolder::getInstance().get(Identifier("characterassets/character_bg.png")));
 		static sf::Sprite playerSprite(TextureHolder::getInstance().getDefault(), sf::IntRect({0, 0}, {64, 64}));
 		static sf::Sprite weaponSprite(TextureHolder::getInstance().get(Identifier("misc/gun_small.png")), sf::IntRect({0, 0}, {64, 64}));
 		static sf::Text text(FontHolder::getInstance().getDefault());
 		static std::once_flag flag;
 		std::call_once(flag, [&] {
+			Util::centre(playerBackground);
 			Util::centre(playerSprite);
 			const auto bounds = weaponSprite.getLocalBounds();
 			weaponSprite.setOrigin({bounds.size.x * 1.25f, std::floor(bounds.position.y + bounds.size.y / 2)});
 			weaponSprite.setScale({0.25f, 0.25f});
+			playerBackground.setScale({0.25f, 0.25f});
 			playerSprite.setScale({0.25f, 0.25f});
 			text.setCharacterSize(48);
 			text.setScale({0.125f, 0.125f});
@@ -24,8 +27,12 @@ WorldRenderer::WorldRenderer() {
 			text.setOutlineThickness(2.f);
 		});
 		const auto pos = player->getPosition() + player->getVelocity() * deltaTime;
+		const auto rotation = player->getRotation();
+		playerBackground.setPosition(pos);
+		playerBackground.setRotation(rotation);
+		target.draw(playerBackground);
 		playerSprite.setPosition(pos);
-		playerSprite.setRotation(player->getRotation());
+		playerSprite.setRotation(rotation);
 		playerSprite.setColor(player->cosmetics.colour);
 		playerSprite.setTexture(TextureHolder::getInstance().get(*player->cosmetics.character));
 		target.draw(playerSprite);

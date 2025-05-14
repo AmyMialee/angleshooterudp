@@ -35,7 +35,7 @@ public:
 	inline static PacketIdentifier* C2S_PLAYER_POSITION_SYNC;
 	inline static PacketIdentifier* C2S_UPDATE_NAME;
 	inline static PacketIdentifier* C2S_UPDATE_COSMETICS;
-	
+
 	static void initialize() {
 		PING = PacketIdentifier::of(true, "PING");
 		PONG = PacketIdentifier::of(true, "PONG");
