@@ -14,6 +14,9 @@
 
 #include "menu/MenuInput.h"
 #include "menu/MenuWidget.h"
+#include "menu/MenuButton.h"
+#include "menu/MenuSlider.h"
+#include "menu/TextButton.h"
 #include "menu/FloatingWidget.h"
 #include "menu/MenuPage.h"
 #include "menu/MenuManager.h"

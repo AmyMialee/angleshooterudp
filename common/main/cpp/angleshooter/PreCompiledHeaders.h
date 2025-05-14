@@ -48,6 +48,7 @@
 #include "util/Logger.h"
 #include "util/Util.h"
 #include "util/StackMove.h"
+#include "util/PlayerCosmetics.h"
 #include "network/PacketIdentifier.h"
 #include "network/PortedIP.h"
 #include "network/SocketHolder.h"

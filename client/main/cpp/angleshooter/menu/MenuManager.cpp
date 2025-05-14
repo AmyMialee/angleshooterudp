@@ -39,6 +39,10 @@ void MenuManager::handleEvent(const sf::Event& event) {
 		if (keyPressed->scancode == sf::Keyboard::Scan::Left || keyPressed->scancode == sf::Keyboard::Scan::A) this->input(MenuInput::LEFT);
 		if (keyPressed->scancode == sf::Keyboard::Scan::Right || keyPressed->scancode == sf::Keyboard::Scan::D) this->input(MenuInput::RIGHT);
 	}
+	if (const auto* keyReleased = event.getIf<sf::Event::KeyReleased>()) {
+		if (keyReleased->scancode == sf::Keyboard::Scan::Left || keyReleased->scancode == sf::Keyboard::Scan::A) this->input(MenuInput::RELEASE_LEFT);
+		if (keyReleased->scancode == sf::Keyboard::Scan::Right || keyReleased->scancode == sf::Keyboard::Scan::D) this->input(MenuInput::RELEASE_RIGHT);
+	}
 }
 
 void MenuManager::input(const MenuInput& input) {

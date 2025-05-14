@@ -106,6 +106,7 @@
     <ClCompile Include="main\cpp\angleshooter\resources\MapLoader.cpp" />
     <ClCompile Include="main\cpp\angleshooter\util\Identifier.cpp" />
     <ClCompile Include="main\cpp\angleshooter\util\Logger.cpp" />
+    <ClCompile Include="main\cpp\angleshooter\util\PlayerCosmetics.cpp" />
     <ClCompile Include="main\cpp\angleshooter\util\Util.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -125,6 +126,7 @@
     <ClInclude Include="main\cpp\angleshooter\util\Consumer.h" />
     <ClInclude Include="main\cpp\angleshooter\util\Identifier.h" />
     <ClInclude Include="main\cpp\angleshooter\util\Logger.h" />
+    <ClInclude Include="main\cpp\angleshooter\util\PlayerCosmetics.h" />
     <ClInclude Include="main\cpp\angleshooter\util\StackMove.h" />
     <ClInclude Include="main\cpp\angleshooter\util\Util.h" />
     <ClInclude Include="main\cpp\nlohmann\json.hpp" />

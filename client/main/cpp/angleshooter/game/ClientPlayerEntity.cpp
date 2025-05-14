@@ -34,7 +34,7 @@ void ClientPlayerEntity::readFromPacket(sf::Packet& packet) {
 	if (const auto it = GameManager::get().SCORES.find(this->getId()); it != GameManager::get().SCORES.end()) {
 		it->second.score = this->score;
 	} else {
-		GameManager::get().SCORES.emplace(this->getId(), ScoreEntry{this->name, this->colour, this->score, 0, 0});
+		GameManager::get().SCORES.emplace(this->getId(), ScoreEntry{this->name, this->cosmetics, this->score, 0, 0});
 	}
 	GameManager::get().refreshScores();
 }

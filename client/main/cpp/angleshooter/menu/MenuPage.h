@@ -1,5 +1,4 @@
 ﻿#pragma once
-#include "MenuButton.h"
 
 class MenuPage : public sf::Transformable, public sf::Drawable {
 	std::vector<MenuWidget*> widgets;

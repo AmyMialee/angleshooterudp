@@ -9,9 +9,11 @@ void OptionsManager::saveToFile() {
 	nlohmann::json json;
 	json["name"] = name;
 	json["ip"] = ip;
-	json["colour_r"] = r;
-	json["colour_g"] = g;
-	json["colour_b"] = b;
+	json["colour_r"] = cosmetics.colour.r;
+	json["colour_g"] = cosmetics.colour.g;
+	json["colour_b"] = cosmetics.colour.b;
+	json["character"] = PlayerCosmetics::getCharacterIndex(*cosmetics.character);
+	json["cosmetic"] = PlayerCosmetics::getCosmeticIndex(*cosmetics.cosmetic);
 	json["masterVolume"] = masterVolume;
 	json["musicVolume"] = musicVolume;
 	json["soundVolume"] = soundVolume;
@@ -39,9 +41,22 @@ void OptionsManager::loadFromFile() {
 		try {
 			name = json.value("name", "Player");
 			ip = json.value("ip", "127.0.0.1");
-			r = json.value("colour_r", 0xFF);
-			g = json.value("colour_g", 0xAA);
-			b = json.value("colour_b", 0xAA);
+			const auto r = json.value("colour_r", 0xFF);
+			const auto g = json.value("colour_g", 0xAA);
+			const auto b = json.value("colour_b", 0xAA);
+			const auto characterIndex = json.value("character", 0);
+			const auto cosmeticIndex = json.value("cosmetic", 0);
+			cosmetics.colour = {static_cast<uint8_t>(r), static_cast<uint8_t>(g), static_cast<uint8_t>(b), 0xFF};
+			if (characterIndex < PlayerCosmetics::CHARACTERS.size()) {
+				cosmetics.character = PlayerCosmetics::getCharacter(characterIndex);
+			} else {
+				cosmetics.character = PlayerCosmetics::KITA;
+			}
+			if (cosmeticIndex < PlayerCosmetics::COSMETICS.size()) {
+				cosmetics.cosmetic = PlayerCosmetics::getCosmetic(cosmeticIndex);
+			} else {
+				cosmetics.cosmetic = PlayerCosmetics::AMY_HAT;
+			}
 			masterVolume = json.value("masterVolume", 100.);
 			musicVolume = json.value("musicVolume", 0.);
 			soundVolume = json.value("soundVolume", 0.);
@@ -74,8 +89,8 @@ std::string OptionsManager::getIp() const {
 	return this->ip;
 }
 
-sf::Color OptionsManager::getColour() const {
-	return sf::Color(r, g, b, 255);
+PlayerCosmetics OptionsManager::getCosmetics() const {
+	return this->cosmetics;
 }
 
 double OptionsManager::getMasterVolume() const {
@@ -118,13 +133,33 @@ void OptionsManager::setIp(const std::string& ip) {
 }
 
 void OptionsManager::setColour(sf::Color colour) {
-	this->r = colour.r;
-	this->g = colour.g;
-	this->b = colour.b;
+	this->cosmetics.colour.r = colour.r;
+	this->cosmetics.colour.g = colour.g;
+	this->cosmetics.colour.b = colour.b;
 	saveToFile();
 	if (AngleShooterClient::get().server != nullptr) {
-		auto packet = NetworkProtocol::C2S_UPDATE_COLOUR->getPacket();
-		packet << colour.r << colour.g << colour.b;
+		auto packet = NetworkProtocol::C2S_UPDATE_COSMETICS->getPacket();
+		packet << this->cosmetics;
+		AngleShooterClient::get().send(packet);
+	}
+}
+
+void OptionsManager::setCharacter(Identifier* character) {
+	this->cosmetics.character = character;
+	saveToFile();
+	if (AngleShooterClient::get().server != nullptr) {
+		auto packet = NetworkProtocol::C2S_UPDATE_COSMETICS->getPacket();
+		packet << this->cosmetics;
+		AngleShooterClient::get().send(packet);
+	}
+}
+
+void OptionsManager::setCosmetic(Identifier* cosmetic) {
+	this->cosmetics.cosmetic = cosmetic;
+	saveToFile();
+	if (AngleShooterClient::get().server != nullptr) {
+		auto packet = NetworkProtocol::C2S_UPDATE_COSMETICS->getPacket();
+		packet << this->cosmetics;
 		AngleShooterClient::get().send(packet);
 	}
 }

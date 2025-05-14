@@ -63,7 +63,7 @@ bool PlayerEntity::isMarkedForRemoval() const {
 void PlayerEntity::writeToPacket(sf::Packet& packet) const {
 	Entity::writeToPacket(packet);
 	packet << this->name;
-	packet << this->colour.r << this->colour.g << this->colour.b;
+	packet << this->cosmetics;
 	packet << this->health;
 	packet << this->input.x;
 	packet << this->input.y;
@@ -75,9 +75,7 @@ void PlayerEntity::writeToPacket(sf::Packet& packet) const {
 void PlayerEntity::readFromPacket(sf::Packet& packet) {
 	Entity::readFromPacket(packet);
 	packet >> this->name;
-	packet >> this->colour.r;
-	packet >> this->colour.g;
-	packet >> this->colour.b;
+	packet >> this->cosmetics;
 	packet >> this->health;
 	packet >> this->input.x;
 	packet >> this->input.y;

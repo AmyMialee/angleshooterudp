@@ -41,15 +41,15 @@ AngleShooterServer::AngleShooterServer() {
 	});
 	registerPacket(NetworkProtocol::C2S_JOIN, [this](sf::Packet& packet, std::pair<std::unique_ptr<NetworkPair>, PlayerDetails>& sender) {
         std::string name;
-        uint8_t r, g, b;
+        PlayerCosmetics cosmetics;
         packet >> name;
-        packet >> r >> g >> b;
+        packet >> cosmetics;
         auto endName = name;
         auto count = 0;
         for (const auto& [pair, details] : clients | std::views::values) if (details.name == endName) endName = name + " " + std::to_string(++count);
         Logger::debug("Received Join Packet from " + endName + " (" + sender.first->getPortedIP().toString() + ")");
         sender.second.name = endName;
-        sender.second.colour = {r, g, b, 255};
+        sender.second.cosmetics = cosmetics;
         auto mapPacket = NetworkProtocol::S2C_INITIAL_SETUP->getPacket();
         mapPacket << ServerWorld::get().getMap()->getId();
         sender.second.player = ServerWorld::get().spawnPlayer(sender);
@@ -123,14 +123,12 @@ AngleShooterServer::AngleShooterServer() {
         syncNamePacket << name;
         sendToAll(syncNamePacket);
     });
-    registerPacket(NetworkProtocol::C2S_UPDATE_COLOUR, [this](sf::Packet& packet, std::pair<std::unique_ptr<NetworkPair>, PlayerDetails>& sender) {
-        uint8_t r, g, b;
-        packet >> r >> g >> b;
-        Logger::debug("Received Change Colour Packet " + std::to_string(r) + " " + std::to_string(g) + " " + std::to_string(b) + " (" + sender.first->getPortedIP().toString() + ")");
-        sender.second.colour = {r, g, b, 255};
-        auto syncColourPacket = NetworkProtocol::S2C_UPDATE_COLOUR->getPacket();
+    registerPacket(NetworkProtocol::C2S_UPDATE_COSMETICS, [this](sf::Packet& packet, std::pair<std::unique_ptr<NetworkPair>, PlayerDetails>& sender) {
+        packet >> sender.second.cosmetics;
+        Logger::debug("Received Change Cosmetics Packet (" + sender.first->getPortedIP().toString() + ")");
+        auto syncColourPacket = NetworkProtocol::S2C_UPDATE_COSMETICS->getPacket();
         syncColourPacket << sender.second.player->getId();
-        syncColourPacket << r << g << b;
+        syncColourPacket << sender.second.cosmetics;
         sendToAll(syncColourPacket);
     });
 }

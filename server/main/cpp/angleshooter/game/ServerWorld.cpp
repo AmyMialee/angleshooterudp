@@ -5,7 +5,7 @@ std::shared_ptr<ServerPlayerEntity> ServerWorld::spawnPlayer(std::pair<std::uniq
 	const auto player = std::make_shared<ServerPlayerEntity>(this->getNextId(), this);
 	this->spawnEntity(player);
 	player->name = sender.second.name;
-	player->colour = sender.second.colour;
+	player->cosmetics = sender.second.cosmetics;
 	player->setPosition(this->getMap()->getRandomSpawnpoint());
 	sender.second.player = player;
 	for (const auto& [pair, details] : AngleShooterServer::get().clients | std::views::values) {
@@ -24,7 +24,7 @@ std::shared_ptr<BulletEntity> ServerWorld::spawnBullet(uint16_t source, sf::Vect
 		if (entity->getEntityType() != PlayerEntity::ID) continue;
 		const auto player = dynamic_cast<PlayerEntity*>(entity.get());
 		if (player->getId() != source) continue;
-		bullet->colour = player->colour;
+		bullet->colour = player->cosmetics.colour;
 	}
 	bullet->setPosition(position);
 	bullet->setVelocity(velocity);

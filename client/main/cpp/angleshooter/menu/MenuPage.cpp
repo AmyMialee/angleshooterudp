@@ -12,7 +12,7 @@ void MenuPage::draw(sf::RenderTarget& target, sf::RenderStates states) const {
 	for (const auto& widget : this->widgets) target.draw(*widget, states);
 	for (const auto& widget : this->buttons) {
 		auto view = target.getView();
-		target.setView(sf::View({view.getCenter() + sf::Vector2f{0, static_cast<float>(std::pow(widget->selectedTime, 4) * 20)}, view.getSize()}));
+		target.setView(sf::View({view.getCenter() + widget->getOffset()}, view.getSize()));
 		target.draw(*widget, states);
 		target.setView(view);
 	}
@@ -59,22 +59,25 @@ void MenuPage::clearButtons() {
 
 void MenuPage::input(MenuInput input) {
 	if (this->selectedButton == nullptr) return;
+	if (const auto slider = dynamic_cast<MenuSlider*>(this->selectedButton); slider != nullptr && slider->pressed) {
+		slider->input(input);
+		return;
+	}
 	switch (input) {
 		case MenuInput::PRESS:
 			if (this->selectedButton->onClick) this->selectedButton->onClick();
-			break;
+			return;
 		case MenuInput::UP:
 			if (this->selectedButton->neighbourUp != nullptr) this->selectedButton = this->selectedButton->neighbourUp;
-			break;
+			return;
 		case MenuInput::DOWN:
 			if (this->selectedButton->neighbourDown != nullptr) this->selectedButton = this->selectedButton->neighbourDown;
-			break;
+			return;
 		case MenuInput::LEFT:
 			if (this->selectedButton->neighbourLeft != nullptr) this->selectedButton = this->selectedButton->neighbourLeft;
-			break;
+			return;
 		case MenuInput::RIGHT:
 			if (this->selectedButton->neighbourRight != nullptr) this->selectedButton = this->selectedButton->neighbourRight;
-			break;
 	}
 }
 

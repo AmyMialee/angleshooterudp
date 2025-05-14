@@ -7,13 +7,12 @@ WorldRenderer::WorldRenderer() {
 	registerRenderer<PlayerEntity>(PlayerEntity::ID, [this](const std::shared_ptr<PlayerEntity>& player) {
 		if (player->deathTime > 0) return;
 		const auto deltaTime = static_cast<float>(AngleShooterClient::get().tickDelta);
-		static sf::Sprite playerSprite(TextureHolder::getInstance().get(Identifier("player.png")));
+		static sf::Sprite playerSprite(TextureHolder::getInstance().getDefault());
 		static sf::Text text(FontHolder::getInstance().getDefault());
 		static std::once_flag flag;
 		std::call_once(flag, [&] {
 			Util::centre(playerSprite);
-			const auto textureSize1 = playerSprite.getTexture().getSize();
-			playerSprite.setScale(player->getScale().componentWiseDiv({static_cast<float>(textureSize1.x), static_cast<float>(textureSize1.y)}));
+			playerSprite.setScale(player->getScale().componentWiseDiv({64.f, 64.f}));
 			text.setCharacterSize(48);
 			text.setScale({0.125f, 0.125f});
 			text.setFillColor(sf::Color::White);
@@ -23,7 +22,10 @@ WorldRenderer::WorldRenderer() {
 		const auto pos = player->getPosition() + player->getVelocity() * deltaTime;
 		playerSprite.setPosition(pos);
 		playerSprite.setRotation(player->getRotation());
-		playerSprite.setColor(player->colour);
+		playerSprite.setColor(player->cosmetics.colour);
+		playerSprite.setTexture(TextureHolder::getInstance().get(*player->cosmetics.character));
+		AngleShooterClient::get().renderTexture.draw(playerSprite);
+		playerSprite.setTexture(TextureHolder::getInstance().get(*player->cosmetics.cosmetic));
 		AngleShooterClient::get().renderTexture.draw(playerSprite);
 		if (player->immunityTime > 0) {
 			auto circle = sf::CircleShape(player->getScale().x / 2.f + 2);
@@ -53,7 +55,7 @@ WorldRenderer::WorldRenderer() {
 		}
 		text.setString(player->name);
 		text.setPosition({pos.x - text.getGlobalBounds().size.x / 2, pos.y - 16});
-		const auto textColour = sf::Color({static_cast<std::uint8_t>(player->colour.r / 2 + 128), static_cast<std::uint8_t>(player->colour.g / 2 + 128), static_cast<std::uint8_t>(player->colour.b / 2 + 128)});
+		const auto textColour = sf::Color({static_cast<std::uint8_t>(player->cosmetics.colour.r / 2 + 128), static_cast<std::uint8_t>(player->cosmetics.colour.g / 2 + 128), static_cast<std::uint8_t>(player->cosmetics.colour.b / 2 + 128)});
 		text.setFillColor(textColour);
 		AngleShooterClient::get().renderTexture.draw(text);
 	});

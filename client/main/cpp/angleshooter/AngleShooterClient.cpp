@@ -95,7 +95,7 @@ void AngleShooterClient::registerPackets() {
 	registerPacket(NetworkProtocol::S2C_SPAWN_PLAYER, [this](sf::Packet& packet, const NetworkPair*) {
 		const auto player = ClientWorld::get().spawnPlayer(packet);
 		packet >> player->isClientPlayer;
-		GameManager::get().SCORES.emplace(player->getId(), ScoreEntry{player->name, player->colour, player->score, 0, 0});
+		GameManager::get().SCORES.emplace(player->getId(), ScoreEntry{player->name, player->cosmetics, player->score, 0, 0});
 		GameManager::get().refreshScores();
 	});
 	registerPacket(NetworkProtocol::S2C_SPAWN_BULLET, [this](sf::Packet& packet, const NetworkPair*) {
@@ -231,7 +231,7 @@ void AngleShooterClient::registerPackets() {
 			if (const auto it = GameManager::get().SCORES.find(player->getId()); it != GameManager::get().SCORES.end()) {
 				it->second.score = player->score;
 			} else {
-				GameManager::get().SCORES.emplace(player->getId(), ScoreEntry{player->name, player->colour, player->score, 0, 0});
+				GameManager::get().SCORES.emplace(player->getId(), ScoreEntry{player->name, player->cosmetics, player->score, 0, 0});
 			}
 			GameManager::get().refreshScores();
 			return;
@@ -257,11 +257,11 @@ void AngleShooterClient::registerPackets() {
 			return;
 		}
 	});
-	registerPacket(NetworkProtocol::S2C_UPDATE_COLOUR, [this](sf::Packet& packet, const NetworkPair*) {
+	registerPacket(NetworkProtocol::S2C_UPDATE_COSMETICS, [this](sf::Packet& packet, const NetworkPair*) {
 		uint16_t id;
 		packet >> id;
-		uint8_t r, g, b;
-		packet >> r >> g >> b;
+		PlayerCosmetics cosmetics;
+		packet >> cosmetics;
 		for (const auto& entity : ClientWorld::get().getEntities()) {
 			if (entity->getId() != id) continue;
 			if (entity->getEntityType() != PlayerEntity::ID) {
@@ -269,9 +269,9 @@ void AngleShooterClient::registerPackets() {
 				return;
 			}
 			const auto player = dynamic_cast<PlayerEntity*>(entity.get());
-			player->colour = {r, g, b, 255};
+			player->cosmetics = cosmetics;
 			if (const auto it = GameManager::get().SCORES.find(player->getId()); it != GameManager::get().SCORES.end()) {
-				it->second.colour = player->colour;
+				it->second.cosmetics = cosmetics;
 				GameManager::get().refreshScores();
 			}
 			return;
@@ -470,9 +470,7 @@ void AngleShooterClient::connect(const PortedIP& server) {
 	this->server = new NetworkPair(*this, server);
 	auto join = NetworkProtocol::C2S_JOIN->getPacket();
 	join << OptionsManager::get().getName();
-	join << OptionsManager::get().getColour().r;
-	join << OptionsManager::get().getColour().g;
-	join << OptionsManager::get().getColour().b;
+	join << OptionsManager::get().getCosmetics();
 	send(join);
 }
 

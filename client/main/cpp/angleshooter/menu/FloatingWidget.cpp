@@ -19,6 +19,6 @@ void FloatingWidget::tick() {
 		cycle++;
 		if (cycle > cycleSpeed) cycle = 0;
 		const auto delta = sin((float)cycle / (float)cycleSpeed * 2.f * M_PI) * 0.5f + 0.5f;
-		setPosition(Util::lerp(delta, first, second));
+		setPosition(Util::lerp(static_cast<float>(delta), first, second));
 	}
 }

@@ -55,11 +55,11 @@ void GameManager::draw(sf::RenderTarget& target, sf::RenderStates states) const 
 		});
 		const auto pos = sf::Vector2f({22, window.getView().getSize().y / 2 - SCORES.size() * (36 / 2) + score.yCurrent * 36.f});
 		playerSprite.setPosition(pos);
-		playerSprite.setColor(score.colour);
+		playerSprite.setColor(score.cosmetics.colour);
 		window.draw(playerSprite);
 		text.setString(score.name + ": " + std::to_string(score.score));
 		text.setPosition({pos.x + 22, pos.y - 16});
-		const auto textColour = sf::Color({static_cast<std::uint8_t>(score.colour.r / 2 + 128), static_cast<std::uint8_t>(score.colour.g / 2 + 128), static_cast<std::uint8_t>(score.colour.b / 2 + 128)});
+		const auto textColour = sf::Color({static_cast<std::uint8_t>(score.cosmetics.colour.r / 2 + 128), static_cast<std::uint8_t>(score.cosmetics.colour.g / 2 + 128), static_cast<std::uint8_t>(score.cosmetics.colour.b / 2 + 128)});
 		text.setFillColor(textColour);
 		window.draw(text);
 	}
@@ -85,7 +85,7 @@ void GameManager::refreshScores() {
 		if (auto it = SCORES.find(player->getId()); it != SCORES.end()) {
 			it->second.score = player->score;
 		} else {
-			SCORES.emplace(player->getId(), ScoreEntry{player->name, player->colour, player->score, 0, 0});
+			SCORES.emplace(player->getId(), ScoreEntry{player->name, player->cosmetics, player->score, 0, 0});
 		}
 	}
 	std::vector<std::pair<uint16_t, uint16_t>> scores;

@@ -11,4 +11,6 @@ struct MenuButton : MenuWidget {
 	explicit MenuButton(sf::Vector2f position = {0, 0}, sf::Vector2f size = {0, 0}, const Identifier& texture = Identifier::empty, std::function<void()> onClick = nullptr);
 	explicit MenuButton(sf::Vector2f position = {0, 0}, float size = 30, const Identifier& texture = Identifier::empty, std::function<void()> onClick = nullptr);
 	virtual void tick(bool selected);
+
+	[[nodiscard]] virtual sf::Vector2f getOffset() const;
 };
