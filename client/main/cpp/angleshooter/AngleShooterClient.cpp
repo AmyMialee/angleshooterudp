@@ -431,22 +431,24 @@ void AngleShooterClient::render() {
 		fill(this->window, &offset, "LPS: " + Util::toRoundedString(lps, 2));
 		fill(this->window, &offset, "Sequence: " + std::to_string(this->server ? this->server->getAcknowledgedSequence() : 0));
 	}
-	if (this->server && this->server->lastResponse.getElapsedTime().asSeconds() > AngleShooterCommon::TIMEOUT / 3) {
-		auto offset = 0;
-		static auto fill = [](sf::RenderWindow& window, int* offset, const std::string& words) {
-			static auto text = sf::Text(FontHolder::getInstance().getDefault(), "", 12);
-			text.setString(words);
-			text.setFillColor(sf::Color::Black);
-			const auto topRightPos = window.getView().getCenter() + window.getView().getSize() / 2.f;
-			text.setPosition(topRightPos + sf::Vector2f{4.f, 4.f + *offset} + sf::Vector2f{1.f, 1.f} + sf::Vector2f{-text.getGlobalBounds().size.x, 0});
-			window.draw(text);
-			text.setFillColor(sf::Color::Red);
-			text.setPosition(topRightPos + sf::Vector2f{4.f, 4.f + *offset} + sf::Vector2f{-text.getGlobalBounds().size.x, 0});
-			window.draw(text);
-			*offset = *offset + 14;
-		};
-		fill(this->window, &offset, "WARNING: Connection Problem");
-		fill(this->window, &offset, "Auto-disconnect in " + Util::toRoundedString(AngleShooterCommon::TIMEOUT - this->server->lastResponse.getElapsedTime().asSeconds(), 1) + " seconds");
+	if (this->server) {
+		if (const auto elapsed = this->server->lastResponse.getElapsedTime().asSeconds(); elapsed > AngleShooterCommon::TIMEOUT / 3) {
+			auto offset = 0;
+			static auto fill = [](sf::RenderWindow& window, int* offset, const std::string& words) {
+				static auto text = sf::Text(FontHolder::getInstance().getDefault(), "", 12);
+				text.setString(words);
+				text.setFillColor(sf::Color::Black);
+				const auto topRightPos = window.getView().getCenter() + sf::Vector2f{-text.getLocalBounds().size.x + window.getView().getSize().x / 2.f - 4, -window.getView().getSize().y / 2.f};
+				text.setPosition(topRightPos + sf::Vector2f{4.f, 4.f + *offset} + sf::Vector2f{1.f, 1.f});
+				window.draw(text);
+				text.setFillColor(sf::Color::Red);
+				text.setPosition(topRightPos + sf::Vector2f{4.f, 4.f + *offset});
+				window.draw(text);
+				*offset = *offset + 14;
+			};
+			fill(this->window, &offset, "WARNING: Connection Problem");
+			fill(this->window, &offset, "Auto-disconnect in " + Util::toRoundedString(AngleShooterCommon::TIMEOUT - elapsed, 1) + " seconds");
+		}
 	}
 	window.display();
 }
