@@ -67,19 +67,19 @@ void BloomProcessing::add(const sf::RenderTexture& source, const sf::RenderTextu
 	applyShader(*adder, target);
 }
 
-void BloomProcessing::apply(sf::RenderTexture& input, sf::RenderTarget& output) {
+void BloomProcessing::apply(sf::RenderTarget& input, sf::RenderTarget& output) {
 	const auto view = input.getView();
 	input.setView(input.getDefaultView());
 	output.setView(output.getDefaultView());
 	prepareTextures(input.getSize());
-	filterBright(input, brightness);
+	filterBright(createRenderTextureFromTarget(input), brightness);
 	downSample(brightness, firstPasses[0]);
 	blurMultiPass(firstPasses);
 	downSample(firstPasses[0], secondPasses[0]);
 	blurMultiPass(secondPasses);
 	add(firstPasses[0], secondPasses[0], firstPasses[1]);
 	firstPasses[1].display();
-	add(input, firstPasses[1], output);
+	add(createRenderTextureFromTarget(input), firstPasses[1], output);
 	input.setView(view);
 	output.setView(view);
 }

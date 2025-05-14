@@ -14,10 +14,7 @@ public:
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 	bool tick();
 	bool handleEvent(const sf::Event& event);
-
 	void refreshScores();
-	void init();
-	void destroy();
 
 	explicit GameManager(const InputManager&) = delete;
 	void operator=(const GameManager&) = delete;

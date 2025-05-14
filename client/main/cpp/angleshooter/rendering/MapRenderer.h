@@ -1,10 +1,10 @@
 #pragma once
 
-class MapRenderer {
-	sf::RenderTexture mapTexture;
-	sf::Sprite mapSprite;
+class MapRenderer : public sf::Drawable {
+	sf::RenderTexture* mapTexture;
+	sf::Sprite* mapSprite;
 	
 public:
 	explicit MapRenderer(Map& map);
-	void render();
+	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 };

@@ -1,43 +1,10 @@
 ﻿#include "PreCompiledClient.h"
 #include "GameManager.h"
 
-void GameManager::init() {
-	// const auto playButton = std::make_shared<Button>();
-	// playButton->setPosition({250, 250});
-	// playButton->setText("Resume");
-	// playButton->setCallback([this] {
-	// 	requestStackPop();
-	// });
-	// gui.pack(playButton);
-	// const auto settingsButton = std::make_shared<Button>();
-	// settingsButton->setPosition({250, 300});
-	// settingsButton->setText("Settings");
-	// settingsButton->setCallback([this] {
-	// 	requestStackPush(SettingsState::getId());
-	// });
-	// gui.pack(settingsButton);
-	// const auto exitButton = std::make_shared<Button>();
-	// exitButton->setPosition({250, 350});
-	// exitButton->setText("Exit");
-	// exitButton->setCallback([this] {
-	// 	requestStackClear();
-	// 	requestStackPush(MenuState::getId());
-	// });
-	// gui.pack(exitButton);
-	static const auto GAME_MUSIC = Identifier("gamemusic.ogg");
-	ClientWorld::get().init();
-	AudioManager::get().playMusic(GAME_MUSIC);
-}
-
-void GameManager::destroy() {
-	AngleShooterClient::get().disconnect();
-}
-
 void GameManager::draw(sf::RenderTarget& target, sf::RenderStates states) const {
-	auto& window = AngleShooterClient::get().renderTexture;
-	window.setView(window.getDefaultView());
-	WorldRenderer::get().render();
-	window.setView(window.getDefaultView());
+	target.setView(target.getDefaultView());
+	target.draw(WorldRenderer::get());
+	target.setView(target.getDefaultView());
 	for (const auto& score : SCORES | std::views::values) {
 		static sf::Sprite playerSprite(TextureHolder::getInstance().getDefault());
 		static sf::Text text(FontHolder::getInstance().getDefault());
@@ -52,52 +19,31 @@ void GameManager::draw(sf::RenderTarget& target, sf::RenderStates states) const 
 			text.setOutlineColor(sf::Color::Black);
 			text.setOutlineThickness(2.f);
 		});
-		const auto pos = sf::Vector2f({22, window.getView().getSize().y / 2 - SCORES.size() * (36 / 2) + score.yCurrent * 36.f});
+		const auto pos = sf::Vector2f({22, target.getView().getSize().y / 2 - SCORES.size() * (36 / 2) + score.yCurrent * 36.f});
 		playerSprite.setPosition(pos);
 		playerSprite.setColor(score.cosmetics.colour);
 		playerSprite.setTexture(TextureHolder::getInstance().get(*score.cosmetics.character));
-		AngleShooterClient::get().renderTexture.draw(playerSprite);
+		target.draw(playerSprite);
 		playerSprite.setTexture(TextureHolder::getInstance().get(*score.cosmetics.cosmetic));
-		AngleShooterClient::get().renderTexture.draw(playerSprite);
-		playerSprite.setPosition(pos);
-		playerSprite.setColor(score.cosmetics.colour);
-		window.draw(playerSprite);
+		target.draw(playerSprite);
 		text.setString(score.name + ": " + std::to_string(score.score));
 		text.setPosition({pos.x + 22, pos.y - 16});
 		const auto textColour = sf::Color({static_cast<std::uint8_t>(score.cosmetics.colour.r / 2 + 128), static_cast<std::uint8_t>(score.cosmetics.colour.g / 2 + 128), static_cast<std::uint8_t>(score.cosmetics.colour.b / 2 + 128)});
 		text.setFillColor(textColour);
-		window.draw(text);
+		target.draw(text);
 	}
-	AngleShooterClient::get().window.setView(AngleShooterClient::get().window.getDefaultView());
+	target.setView(target.getDefaultView());
 	if (this->paused) {
 		static sf::RectangleShape backgroundShape;
 		static std::once_flag flag;
 		std::call_once(flag, [&] {
 			backgroundShape.setFillColor(sf::Color(0, 0, 0, 150));
-			backgroundShape.setSize(AngleShooterClient::get().window.getView().getSize());
+			backgroundShape.setSize(target.getView().getSize());
 		});
-		auto& texture = AngleShooterClient::get().renderTexture;
+		auto& texture = target;
 		texture.draw(backgroundShape);
 		texture.setView(texture.getDefaultView());
 		texture.draw(this->menu);
-	}
-}
-
-void GameManager::refreshScores() {
-	for (const auto& entity : ClientWorld::get().getEntities()) {
-		if (entity->getEntityType() != PlayerEntity::ID) continue;
-		const auto player = dynamic_cast<PlayerEntity*>(entity.get());
-		if (auto it = SCORES.find(player->getId()); it != SCORES.end()) {
-			it->second.score = player->score;
-		} else {
-			SCORES.emplace(player->getId(), ScoreEntry{player->name, player->cosmetics, player->score, 0, 0});
-		}
-	}
-	std::vector<std::pair<uint16_t, uint16_t>> scores;
-	for (const auto& [first, second] : SCORES) scores.emplace_back(first, second.score);
-	std::ranges::sort(scores, [](const auto& a, const auto& b) { return a.second > b.second; });
-	for (auto i = 0; i < SCORES.size(); ++i) {
-		if (auto it = SCORES.find(scores[i].first); it != SCORES.end()) it->second.yTarget = static_cast<float>(i);
 	}
 }
 
@@ -116,6 +62,24 @@ bool GameManager::tick() {
 	}
 	if (this->paused) menu.tick();
 	return false;
+}
+
+void GameManager::refreshScores() {
+	for (const auto& entity : ClientWorld::get().getEntities()) {
+		if (entity->getEntityType() != PlayerEntity::ID) continue;
+		const auto player = dynamic_cast<PlayerEntity*>(entity.get());
+		if (auto it = SCORES.find(player->getId()); it != SCORES.end()) {
+			it->second.score = player->score;
+		} else {
+			SCORES.emplace(player->getId(), ScoreEntry{player->name, player->cosmetics, player->score, 0, 0});
+		}
+	}
+	std::vector<std::pair<uint16_t, uint16_t>> scores;
+	for (const auto& [first, second] : SCORES) scores.emplace_back(first, second.score);
+	std::ranges::sort(scores, [](const auto& a, const auto& b) { return a.second > b.second; });
+	for (auto i = 0; i < SCORES.size(); ++i) {
+		if (auto it = SCORES.find(scores[i].first); it != SCORES.end()) it->second.yTarget = static_cast<float>(i);
+	}
 }
 
 bool GameManager::handleEvent(const sf::Event& event) {

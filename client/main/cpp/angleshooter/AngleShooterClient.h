@@ -19,7 +19,6 @@ protected:
 public:
 	NetworkPair* server = nullptr;
 	sf::RenderWindow window = sf::RenderWindow(sf::VideoMode({1920, 1080}), "Angle Shooter", sf::Style::Default);
-	sf::RenderTexture renderTexture = sf::RenderTexture({980, 540});
 	double fps = 0;
 	double tps = 0;
 	double lps = 0;

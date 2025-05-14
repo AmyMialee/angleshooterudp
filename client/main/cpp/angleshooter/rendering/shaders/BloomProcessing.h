@@ -18,5 +18,5 @@ public:
 	static const Identifier GAUSSIAN;
 	static const Identifier ADD;
 	explicit BloomProcessing();
-	void apply(sf::RenderTexture& input, sf::RenderTarget& output) override;
+	void apply(sf::RenderTarget& input, sf::RenderTarget& output) override;
 };
