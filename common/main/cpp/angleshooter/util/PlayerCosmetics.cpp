@@ -13,6 +13,7 @@ sf::Packet& operator>>(sf::Packet& packet, PlayerCosmetics& id) {
 	packet >> r >> g >> b;
 	uint8_t characterIndex, cosmeticIndex;
 	packet >> characterIndex >> cosmeticIndex;
+	id.colour = {r, g, b, 0xFF};
 	id.character = PlayerCosmetics::getCharacter(characterIndex);
 	id.cosmetic = PlayerCosmetics::getCosmetic(cosmeticIndex);
 	return packet;

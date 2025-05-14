@@ -112,7 +112,6 @@
     <ClCompile Include="main\cpp\angleshooter\managers\InputManager.cpp" />
     <ClCompile Include="main\cpp\angleshooter\managers\MainMenuManager.cpp" />
     <ClCompile Include="main\cpp\angleshooter\managers\OptionsManager.cpp" />
-    <ClCompile Include="main\cpp\angleshooter\menuold\IpButton.cpp" />
     <ClCompile Include="main\cpp\angleshooter\menuold\NameButton.cpp" />
     <ClCompile Include="main\cpp\angleshooter\menu\FloatingWidget.cpp" />
     <ClCompile Include="main\cpp\angleshooter\menu\MenuButton.cpp" />
@@ -148,7 +147,6 @@
     <ClInclude Include="main\cpp\angleshooter\managers\InputManager.h" />
     <ClInclude Include="main\cpp\angleshooter\managers\MainMenuManager.h" />
     <ClInclude Include="main\cpp\angleshooter\managers\OptionsManager.h" />
-    <ClInclude Include="main\cpp\angleshooter\menuold\IpButton.h" />
     <ClInclude Include="main\cpp\angleshooter\menuold\NameButton.h" />
     <ClInclude Include="main\cpp\angleshooter\menu\FloatingWidget.h" />
     <ClInclude Include="main\cpp\angleshooter\menu\MenuButton.h" />

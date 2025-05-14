@@ -12,7 +12,10 @@ void World::tick() {
 	std::vector<std::shared_ptr<Entity>> objectList;
 	objectList.reserve(this->gameObjects.size());
 	for (const auto& value : this->gameObjects | std::views::values) objectList.push_back(value);
-	for (auto main = objectList.begin(); main != objectList.end(); ++main) main->get()->tick();
+	for (auto main = objectList.begin(); main != objectList.end(); ++main) {
+		if (!main->get()) continue;
+		main->get()->tick();
+	}
 }
 
 std::shared_ptr<Entity> World::spawnEntity(std::shared_ptr<Entity> entity) {

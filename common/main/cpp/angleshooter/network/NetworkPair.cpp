@@ -15,6 +15,10 @@ void NetworkPair::update() {
 			timestamp = now;
 		}
 	}
+	// if (this->lastSendTimer.getElapsedTime().asSeconds() > AngleShooterCommon::TIMEOUT / 3) {
+		// auto packet = NetworkProtocol::HEARTBEAT->getPacket();
+		// send(packet);
+	// }
 }
 
 void NetworkPair::send(sf::Packet& packet) {
@@ -90,6 +94,7 @@ PortedIP NetworkPair::getPortedIP() const {
 }
 
 void NetworkPair::sendPacketInternal(sf::Packet& packet) {
+	this->lastSendTimer.restart();
 	auto status = sf::Socket::Status::Partial;
 	while (status == sf::Socket::Status::Partial) status = socketHolder.getSocket().send(packet, pip.ip, pip.port);
 	if (status != sf::Socket::Status::Done) Logger::error("Send Error: " + pip.toString());

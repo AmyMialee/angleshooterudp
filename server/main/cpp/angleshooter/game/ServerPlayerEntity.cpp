@@ -17,8 +17,8 @@ void ServerPlayerEntity::tick() {
 		AngleShooterServer::get().sendToAll(healthPacket);
 	}
 	static Identifier shootSound("bullet.ogg");
-	if (this->firingInput.length() > 0.5f && this->bulletCharge >= 12) {
-		this->bulletCharge -= 12;
+	if (this->firingInput.length() > 0.5f && this->bulletCharge >= AngleShooterCommon::BULLET_DRAIN) {
+		this->bulletCharge -= AngleShooterCommon::BULLET_DRAIN;
 		const auto targetRotation = sf::radians(std::atan2(firingInput.y, firingInput.x));
 		auto x = std::cos(targetRotation.asRadians());
 		auto y = std::sin(targetRotation.asRadians());

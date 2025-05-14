@@ -7,6 +7,7 @@ public:
 	inline static PacketIdentifier* ACK;
 	inline static PacketIdentifier* CHAT_MESSAGE;
 	inline static PacketIdentifier* SERVER_SCAN;
+	inline static PacketIdentifier* HEARTBEAT;
 
 	inline static PacketIdentifier* S2C_INITIAL_SETUP;
 	inline static PacketIdentifier* S2C_BROADCAST_MESSAGE;
@@ -41,6 +42,7 @@ public:
 		ACK = PacketIdentifier::of(false, "ACK");
 		CHAT_MESSAGE = PacketIdentifier::of(true, "CHAT_MESSAGE");
 		SERVER_SCAN = PacketIdentifier::of(false, "SERVER_SCAN");
+		HEARTBEAT = PacketIdentifier::of(true, "HEARTBEAT");
 		
 		S2C_INITIAL_SETUP = PacketIdentifier::of(true, "S2C_INITIAL_SETUP");
 		S2C_BROADCAST_MESSAGE = PacketIdentifier::of(true, "S2C_BROADCAST_MESSAGE");

@@ -7,12 +7,12 @@ WorldRenderer::WorldRenderer() {
 	registerRenderer<PlayerEntity>(PlayerEntity::ID, [this](sf::RenderTarget& target, const std::shared_ptr<PlayerEntity>& player) {
 		if (player->deathTime > 0) return;
 		const auto deltaTime = static_cast<float>(AngleShooterClient::get().tickDelta);
-		static sf::Sprite playerSprite(TextureHolder::getInstance().getDefault());
+		static sf::Sprite playerSprite(TextureHolder::getInstance().getDefault(), sf::IntRect({0, 0}, {64, 64}));
 		static sf::Text text(FontHolder::getInstance().getDefault());
 		static std::once_flag flag;
 		std::call_once(flag, [&] {
 			Util::centre(playerSprite);
-			playerSprite.setScale(player->getScale().componentWiseDiv({64.f, 64.f}));
+			playerSprite.setScale({0.25f, 0.25f});
 			text.setCharacterSize(48);
 			text.setScale({0.125f, 0.125f});
 			text.setFillColor(sf::Color::White);
@@ -44,12 +44,12 @@ WorldRenderer::WorldRenderer() {
 		shape.setSize({bound.size.x * (static_cast<float>(player->health) / 8.f), 2});
 		shape.setFillColor(sf::Color::Green);
 		target.draw(shape);
-		if (player->immunityTime <= 0 && player->bulletCharge < 120) {
+		if (player->immunityTime <= 0 && player->bulletCharge < AngleShooterCommon::MAX_BULLETS) {
 			shape.setPosition(bound.position + player->getVelocity() * deltaTime + sf::Vector2f{0, bound.size.y + 4.5f});
 			shape.setSize({bound.size.x, 2});
 			shape.setFillColor(sf::Color::Black);
 			target.draw(shape);
-			shape.setSize({bound.size.x * (static_cast<float>(player->bulletCharge) / 120.f), 2});
+			shape.setSize({bound.size.x * (static_cast<float>(player->bulletCharge) / AngleShooterCommon::MAX_BULLETS), 2});
 			shape.setFillColor(sf::Color::Cyan);
 			target.draw(shape);
 		}
@@ -82,40 +82,20 @@ WorldRenderer::WorldRenderer() {
 }
 
 void WorldRenderer::tick() {
-	viewLast = viewCurrent;
-	auto minX = std::numeric_limits<float>::max();
-	auto minY = std::numeric_limits<float>::max();
-	auto maxX = std::numeric_limits<float>::min();
-	auto maxY = std::numeric_limits<float>::min();
-	for (const auto& gameObject : ClientWorld::get().getEntities()) {
-		if (const auto player = dynamic_cast<PlayerEntity*>(gameObject.get()); player != nullptr) {
-			const auto position = player->getPosition();
-			minX = std::min(minX, position.x);
-			minY = std::min(minY, position.y);
-			maxX = std::max(maxX, position.x);
-			maxY = std::max(maxY, position.y);
-		}
-	}
-	viewTarget = {{minX, minY}, {maxX, maxY}};
-	if (std::abs(viewCurrent.position.x - viewTarget.position.x) > 100 || std::abs(viewCurrent.position.y - viewTarget.position.y) > 100) {
-		viewCurrent = viewTarget;
-		return;
-	}
-	constexpr auto adjustment = 0.1f;
-	viewCurrent = {
-		{viewCurrent.position.x * (1 - adjustment) + viewTarget.position.x * adjustment, viewCurrent.position.y * (1 - adjustment) + viewTarget.position.y * adjustment},
-		{viewCurrent.size.x * (1 - adjustment) + viewTarget.size.x * adjustment, viewCurrent.size.y * (1 - adjustment) + viewTarget.size.y * adjustment}};
+	this->viewLast = this->viewCurrent;
+	if (!ClientWorld::get().gameObjects.contains(AngleShooterClient::get().playerId)) return;
+	const auto player = ClientWorld::get().gameObjects[AngleShooterClient::get().playerId];
+	const sf::View viewTarget = {player->getPosition(), sf::Vector2f{1920, 1080} * 0.25f};
+	viewCurrent = Util::lerp(0.1f, viewCurrent, viewTarget);
 }
 
 void WorldRenderer::draw(sf::RenderTarget& target, sf::RenderStates states) const {
-	auto view = target.getView();
-	const auto center = sf::Vector2f{viewLast.position.x / 2 + viewLast.size.x / 2, viewLast.position.y / 2 + viewLast.size.y / 2};
-	view.setCenter(center);
-	const auto average = 160 + std::max((viewCurrent.size.x - viewCurrent.position.x) / 2, (viewCurrent.size.y - viewCurrent.position.y) / 2) * 3.2f;
-	view.setSize({average, average / static_cast<float>(target.getSize().x) * static_cast<float>(target.getSize().y)});
+	const auto delta = AngleShooterClient::get().tickDelta;
+	const auto view = Util::lerp(delta, viewLast, viewCurrent);
 	target.setView(view);
 	if (ClientWorld::get().mapRenderer != nullptr) target.draw(*ClientWorld::get().mapRenderer);
 	for (const auto entity : ClientWorld::get().getEntities()) {
+		if (!entity) continue;
 		if (auto renderer = renderRegistry.find(entity->getEntityType().getHash()); renderer != renderRegistry.end()) renderer->second(target, entity);
 	}
 	if (AngleShooterClient::get().hitboxes) {

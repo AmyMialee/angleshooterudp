@@ -4,16 +4,17 @@
 MenuPage::MenuPage(const sf::View& view, MenuPage* previousPage) : view(view), previousPage(previousPage) {}
 
 void MenuPage::tick() {
-	for (const auto& widget : this->widgets) widget->tick();
-	for (const auto& button : this->buttons) button->tick(button == this->selectedButton);
+	for (auto it = this->widgets.begin(); it != this->widgets.end(); ++it) (*it)->tick();
+	for (auto it = this->buttons.begin(); it != this->buttons.end(); ++it) (*it)->tick(*it == this->selectedButton);
+
 }
 
 void MenuPage::draw(sf::RenderTarget& target, sf::RenderStates states) const {
-	for (const auto& widget : this->widgets) target.draw(*widget, states);
-	for (const auto& widget : this->buttons) {
+	for (auto it = this->widgets.begin(); it != this->widgets.end(); ++it) target.draw(**it, states);
+	for (auto it = this->buttons.begin(); it != this->buttons.end(); ++it) {
 		auto view = target.getView();
-		target.setView(sf::View({view.getCenter() + widget->getOffset()}, view.getSize()));
-		target.draw(*widget, states);
+		target.setView(sf::View({view.getCenter() + (*it)->getOffset()}, view.getSize()));
+		target.draw(**it, states);
 		target.setView(view);
 	}
 }

@@ -1,9 +1,8 @@
 ﻿#pragma once
 
 class WorldRenderer final : public sf::Drawable {
-	sf::FloatRect viewLast = {{0, 0}, {1920, 1080}};
-	sf::FloatRect viewCurrent = {{0, 0}, {1920, 1080}};
-	sf::FloatRect viewTarget = {{0, 0}, {1920, 1080}};
+	sf::View viewLast = {{0, 0}, {1920, 1080}};
+	sf::View viewCurrent = {{0, 0}, {1920, 1080}};
 	std::unordered_map<int, std::function<void(sf::RenderTarget& target, std::shared_ptr<Entity>)>> renderRegistry;
 
 protected:

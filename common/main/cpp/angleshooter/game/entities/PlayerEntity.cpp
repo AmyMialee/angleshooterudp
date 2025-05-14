@@ -19,19 +19,16 @@ void PlayerEntity::tick() {
 		this->immunityTime--;
 		this->bulletCharge = 0;
 	} else {
-		this->bulletCharge++;
-		this->bulletCharge = std::min(this->bulletCharge, static_cast<uint16_t>(120));
+		this->bulletCharge += AngleShooterCommon::BULLET_CHARGE;
+		this->bulletCharge = std::min(this->bulletCharge, static_cast<uint16_t>(AngleShooterCommon::MAX_BULLETS));
 	}
 	if (input.length() > 0) {  // NOLINT(clang-diagnostic-undefined-func-template)
 		input /= input.length();
 		constexpr auto movementSpeed = 1.6f;
 		input *= movementSpeed;
 		this->addVelocity(input);
-	}
-	if (this->firingInput.length() > 0) {
-		this->firingInput /= this->firingInput.length();
 		const auto currentRotation = this->getRotation();
-		const auto targetRotation = sf::radians(std::atan2(input.y, input.x));
+		const auto targetRotation = sf::radians(std::atan2(input.y, input.x)) + sf::degrees(-90);
 		auto rotationDifference = targetRotation - currentRotation;
 		if (rotationDifference.asRadians() > std::numbers::pi) {
 			rotationDifference -= sf::radians(2 * static_cast<float>(std::numbers::pi));
@@ -40,6 +37,9 @@ void PlayerEntity::tick() {
 		}
 		const auto newRotation = currentRotation + rotationDifference * 0.75f;
 		this->setRotation(newRotation);
+	}
+	if (this->firingInput.length() > 0) {
+		//TODO: Rotate Weapon
 	}
 	Entity::tick();
 }

@@ -72,7 +72,7 @@ public:
 	inline static auto FONT_Z = new Identifier("menu/font/Z.png");
 	inline static auto FONT_z = new Identifier("menu/font/z_lowercase.png");
 	inline static auto NUMBERS = std::array{
-		FONT_0, FONT_1, FONT_2, FONT_3, FONT_4, FONT_5, FONT_6, FONT_7, FONT_8, FONT_9
+		FONT_0, FONT_1, FONT_2, FONT_3, FONT_4, FONT_5, FONT_6, FONT_7, FONT_8, FONT_9, FONT_DOT
 	};
 	inline static auto ALPHABET = std::array{
 		FONT_A, FONT_B, FONT_C, FONT_D, FONT_E, FONT_F, FONT_G, FONT_H, FONT_I,
@@ -98,7 +98,8 @@ public:
 		{'k', FONT_k}, {'l', FONT_l}, {'m', FONT_m}, {'n', FONT_n}, {'o', FONT_o},
 		{'p', FONT_p}, {'q', FONT_q}, {'r', FONT_r}, {'s', FONT_s}, {'t', FONT_t},
 		{'u', FONT_u}, {'v', FONT_v}, {'w', FONT_w}, {'x', FONT_x}, {'y', FONT_y},
-		{'z', FONT_z}
+		{'z', FONT_z},
+		{'.', FONT_DOT}
 	};
 	sf::Texture getText(const std::string& string, int characterWidth = 28);
 

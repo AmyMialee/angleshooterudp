@@ -1,9 +1,9 @@
 {
-    "character": 1,
+    "character": 0,
     "colour_b": 255,
     "colour_g": 128,
     "colour_r": 184,
-    "cosmetic": 0,
+    "cosmetic": 6,
     "fps": 144,
     "ip": "127.0.0.1",
     "keybindings": {

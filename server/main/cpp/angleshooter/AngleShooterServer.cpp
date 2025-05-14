@@ -133,6 +133,7 @@ AngleShooterServer::AngleShooterServer() {
         syncColourPacket << sender.second.cosmetics;
         sendToAll(syncColourPacket);
     });
+	registerPacket(NetworkProtocol::HEARTBEAT, [this](sf::Packet&, const std::pair<std::unique_ptr<NetworkPair>, PlayerDetails>&) {});
 }
 
 void AngleShooterServer::handlePacket(sf::Packet& packet, std::pair<std::unique_ptr<NetworkPair>, PlayerDetails>& sender) {
@@ -243,6 +244,7 @@ void AngleShooterServer::runReceiver() {
 		while (iterator != clients.end()) {
 			if (pendingDisconnects.contains(iterator->second.first->getPortedIP())) {
                 Logger::info("Client disconnected: " + iterator->second.first->getPortedIP().toString());
+				if (iterator->second.second.player) iterator->second.second.player->shouldBeErased = true;
 				iterator = clients.erase(iterator);
 			} else ++iterator;
 		}
