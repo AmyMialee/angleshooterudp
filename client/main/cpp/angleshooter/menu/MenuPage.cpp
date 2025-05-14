@@ -55,6 +55,7 @@ void MenuPage::addLink(MenuButton* button1, MenuButton* button2, MenuInput side)
 
 void MenuPage::clearButtons() {
 	this->buttons.clear();
+	this->selectedButton = nullptr;
 }
 
 void MenuPage::input(MenuInput input) {

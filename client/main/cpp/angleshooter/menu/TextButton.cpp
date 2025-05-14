@@ -1,13 +1,7 @@
 ﻿#include "PreCompiledClient.h"
 #include "TextButton.h"
 
-TextButton::TextButton(sf::Vector2f position, sf::Vector2f size, const std::string& texture, int characterWidth, const std::function<void()>& onClick) : MenuButton(position, size, Identifier::empty, onClick), characterWidth(characterWidth) {
-	this->textTexture = getStringTexture(texture, characterWidth);
-	this->setTexture(&this->textTexture);
-	this->setSize(sf::Vector2f(this->textTexture.getSize()));
-}
-
-TextButton::TextButton(sf::Vector2f position, float size, const std::string& texture, int characterWidth, const std::function<void()>& onClick) : MenuButton(position, size, Identifier::empty, onClick), characterWidth(characterWidth) {
+TextButton::TextButton(sf::Vector2f position, const std::string& texture, int characterWidth, const std::function<void()>& onClick) : MenuButton(position, 0, Identifier::empty, onClick), characterWidth(characterWidth) {
 	this->textTexture = getStringTexture(texture, characterWidth);
 	this->setTexture(&this->textTexture);
 	this->setSize(sf::Vector2f(this->textTexture.getSize()));

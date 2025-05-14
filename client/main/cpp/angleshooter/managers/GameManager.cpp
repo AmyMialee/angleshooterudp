@@ -39,13 +39,12 @@ void GameManager::draw(sf::RenderTarget& target, sf::RenderStates states) const 
 	WorldRenderer::get().render();
 	window.setView(window.getDefaultView());
 	for (const auto& score : SCORES | std::views::values) {
-		static sf::Sprite playerSprite(TextureHolder::getInstance().get(Identifier("player.png")));
+		static sf::Sprite playerSprite(TextureHolder::getInstance().getDefault());
 		static sf::Text text(FontHolder::getInstance().getDefault());
 		static std::once_flag flag;
 		std::call_once(flag, [&] {
 			Util::centre(playerSprite);
-			const auto textureSize = playerSprite.getTexture().getSize();
-			playerSprite.setScale(sf::Vector2f{32.f, 32.f}.componentWiseDiv({static_cast<float>(textureSize.x), static_cast<float>(textureSize.y)}));
+			playerSprite.setScale(sf::Vector2f{16.f, 16.f}.componentWiseDiv({64.f, 64.f}));
 			Util::centre(text);
 			text.setCharacterSize(48);
 			text.setScale({0.5f, 0.5f});
@@ -54,6 +53,12 @@ void GameManager::draw(sf::RenderTarget& target, sf::RenderStates states) const 
 			text.setOutlineThickness(2.f);
 		});
 		const auto pos = sf::Vector2f({22, window.getView().getSize().y / 2 - SCORES.size() * (36 / 2) + score.yCurrent * 36.f});
+		playerSprite.setPosition(pos);
+		playerSprite.setColor(score.cosmetics.colour);
+		playerSprite.setTexture(TextureHolder::getInstance().get(*score.cosmetics.character));
+		AngleShooterClient::get().renderTexture.draw(playerSprite);
+		playerSprite.setTexture(TextureHolder::getInstance().get(*score.cosmetics.cosmetic));
+		AngleShooterClient::get().renderTexture.draw(playerSprite);
 		playerSprite.setPosition(pos);
 		playerSprite.setColor(score.cosmetics.colour);
 		window.draw(playerSprite);

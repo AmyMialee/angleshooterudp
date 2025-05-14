@@ -56,7 +56,7 @@ void MainMenuManager::populateOptionsPage() {
 	if (!this->optionsPage) return;
 	this->optionsPage->clearButtons();
 
-	const auto widgetBack = this->optionsPage->addButton(new TextButton({500, 240}, {200, 50}, "Back", 28, [this] {
+	const auto widgetBack = this->optionsPage->addButton(new TextButton({500, 240}, "Back", 28, [this] {
 		this->mainMenuManager.setCurrentPage(this->mainMenuManager.getMainPage());
 	}));
 
@@ -124,28 +124,56 @@ void MainMenuManager::populateOptionsPage() {
 void MainMenuManager::populateServerPage() {
 	if (!this->serverListPage) return;
 	this->serverListPage->clearButtons();
-	const auto widgetBack = this->serverListPage->addButton(new TextButton({20, 430}, {200, 50}, "Back", 28, ([this] {
+	const auto widgetBack = this->serverListPage->addButton(new TextButton({20, 430}, "Back", 28, ([this] {
 		this->mainMenuManager.setCurrentPage(this->mainMenuManager.getMainPage());
 	})));
-	const auto widgetRefresh = this->serverListPage->addButton(new TextButton({20, 530}, {200, 50}, "Refresh", 24, ([this] {
+	const auto widgetRefresh = this->serverListPage->addButton(new TextButton({20, 530}, "Refresh", 24, ([this] {
 		this->servers.clear();
 		auto packet = NetworkProtocol::SERVER_SCAN->getPacket();
 		auto status = sf::Socket::Status::Partial;
 		while (status == sf::Socket::Status::Partial) status = AngleShooterClient::get().getSocket().send(packet, sf::IpAddress(255, 255, 255, 255), AngleShooterCommon::PORT);
 	})));
-	const auto widgetLocal = this->serverListPage->addButton(new TextButton({20, 630}, {200, 50}, "localhost", 18, ([this] {
+	const auto widgetLocal = this->serverListPage->addButton(new TextButton({20, 630}, "localhost", 18, ([this] {
 		this->mainMenuManager.setCurrentPage(this->mainMenuManager.getMainPage());
 		AngleShooterClient::get().connect(PortedIP(sf::IpAddress(127, 0, 0, 1)));
 	})));
 	this->serverListPage->addLink(widgetBack, widgetRefresh, MenuInput::DOWN);
 	this->serverListPage->addLink(widgetRefresh, widgetLocal, MenuInput::DOWN);
-
+	auto xOffset = -1;
+	auto yOffset = 0;
+	std::vector<MenuButton*> buttons;
 	for (const auto& server : this->servers) {
-		const auto button = this->serverListPage->addButton(new TextButton({-200, 0}, {0, 50}, server.toString(), 18, ([this, server] {
+		const auto pos = sf::Vector2f{static_cast<float>(xOffset) * 261.f, 430 + static_cast<float>(yOffset) * 100.f};
+		const auto button = this->serverListPage->addButton(new TextButton(pos, server.toString(), 18, ([this, server] {
 			this->mainMenuManager.setCurrentPage(this->mainMenuManager.getMainPage());
 			AngleShooterClient::get().connect(server);
-		})), widgetRefresh, MenuInput::LEFT);
-		button->setPosition({20.f, 630.f - static_cast<float>(this->servers.size()) * 60.f});
+		})));
+		yOffset += 1;
+		if (yOffset > 3) {
+			yOffset = 0;
+			xOffset -= 1;
+		}
+		buttons.push_back(button);
+	}
+	for (size_t i = 0; i < buttons.size(); ++i) {
+		const auto row = static_cast<int>(i / 4);
+		const auto col = static_cast<int>(i % 4);
+		if (row > 0) {
+			this->serverListPage->addLink(buttons[i], buttons[i - 4], MenuInput::UP);
+		} else if (row == 0) {
+			this->serverListPage->addLink(buttons[i], widgetBack, MenuInput::UP);
+		}
+		if (row < static_cast<int>((buttons.size() - 1) / 4)) {
+			this->serverListPage->addLink(buttons[i], buttons[i + 4], MenuInput::DOWN);
+		} else if (row == static_cast<int>((buttons.size() - 1) / 4)) {
+			this->serverListPage->addLink(buttons[i], widgetLocal, MenuInput::DOWN);
+		}
+		if (col > 0) {
+			this->serverListPage->addLink(buttons[i], buttons[i - 1], MenuInput::LEFT);
+		} else if (col == 0) {
+			this->serverListPage->addLink(buttons[i], widgetRefresh, MenuInput::LEFT);
+		}
+		if (col < 3 && i + 1 < buttons.size()) this->serverListPage->addLink(buttons[i], buttons[i + 1], MenuInput::RIGHT);
 	}
 }
 

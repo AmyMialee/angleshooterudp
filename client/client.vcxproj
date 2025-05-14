@@ -182,6 +182,7 @@
     <Content Include="main\resources\assets\angleshooter\sounds\explode.ogg" />
     <Content Include="main\resources\assets\angleshooter\sounds\hurt.ogg" />
     <Content Include="main\resources\assets\angleshooter\sounds\ui_button_click.ogg" />
+    <Content Include="main\resources\assets\angleshooter\textures\bricks.png" />
     <Content Include="main\resources\assets\angleshooter\textures\bullet1.png" />
     <Content Include="main\resources\assets\angleshooter\textures\bullet2.png" />
     <Content Include="main\resources\assets\angleshooter\textures\bullet_core.png" />
@@ -198,6 +199,7 @@
     <Content Include="main\resources\assets\angleshooter\textures\characterassets\kita.png" />
     <Content Include="main\resources\assets\angleshooter\textures\characterassets\nijika.png" />
     <Content Include="main\resources\assets\angleshooter\textures\characterassets\ryo.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\cobble.png" />
     <Content Include="main\resources\assets\angleshooter\textures\mapassets\connection_reference.png" />
     <Content Include="main\resources\assets\angleshooter\textures\mapassets\floor.png" />
     <Content Include="main\resources\assets\angleshooter\textures\mapassets\wall_tiles\export.png" />
