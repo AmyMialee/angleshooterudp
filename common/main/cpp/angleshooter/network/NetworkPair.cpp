@@ -15,10 +15,10 @@ void NetworkPair::update() {
 			timestamp = now;
 		}
 	}
-	// if (this->lastSendTimer.getElapsedTime().asSeconds() > AngleShooterCommon::TIMEOUT / 3) {
-		// auto packet = NetworkProtocol::HEARTBEAT->getPacket();
-		// send(packet);
-	// }
+	if (this->lastSendTimer.getElapsedTime().asSeconds() > AngleShooterCommon::TIMEOUT / 3) {
+		auto packet = NetworkProtocol::HEARTBEAT->getPacket();
+		send(packet);
+	}
 }
 
 void NetworkPair::send(sf::Packet& packet) {
