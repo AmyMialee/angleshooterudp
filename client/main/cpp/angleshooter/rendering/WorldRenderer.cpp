@@ -13,6 +13,8 @@ WorldRenderer::WorldRenderer() {
 		static std::once_flag flag;
 		std::call_once(flag, [&] {
 			Util::centre(playerSprite);
+			const auto bounds = weaponSprite.getLocalBounds();
+			weaponSprite.setOrigin({bounds.size.x * 1.25f, std::floor(bounds.position.y + bounds.size.y / 2)});
 			weaponSprite.setScale({0.25f, 0.25f});
 			playerSprite.setScale({0.25f, 0.25f});
 			text.setCharacterSize(48);
@@ -38,13 +40,9 @@ WorldRenderer::WorldRenderer() {
 		if (const auto clientPlayer = dynamic_cast<ClientPlayerEntity*>(player.get()); clientPlayer != nullptr) {
 			weaponSprite.setPosition(pos);
 			if (std::abs(clientPlayer->weaponRotation.asDegrees()) > 90) {
-				weaponSprite.setScale({-0.25f, 0.25f});
-				const auto bounds = weaponSprite.getLocalBounds();
-				weaponSprite.setOrigin({bounds.size.x * 1.5f, std::floor(bounds.position.y + bounds.size.y / 2)});
+				weaponSprite.setScale({-0.25f, -0.25f});
 			} else {
 				weaponSprite.setScale({-0.25f, 0.25f});
-				const auto bounds = weaponSprite.getLocalBounds();
-				weaponSprite.setOrigin({-bounds.size.x * 0.5f, std::floor(bounds.position.y + bounds.size.y / 2)});
 			}
 			weaponSprite.setRotation(clientPlayer->weaponRotation);
 			weaponSprite.setColor(player->cosmetics.colour);
