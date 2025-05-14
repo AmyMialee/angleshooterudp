@@ -14,6 +14,8 @@ protected:
 	~MainMenuManager() override = default;
 
 public:
+	sf::Clock refreshTimeout;
+
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 	bool tick();
 	bool handleEvent(const sf::Event& event);

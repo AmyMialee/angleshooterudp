@@ -114,6 +114,7 @@
     <ClCompile Include="main\cpp\angleshooter\managers\OptionsManager.cpp" />
     <ClCompile Include="main\cpp\angleshooter\menu\DirectConnectButton.cpp" />
     <ClCompile Include="main\cpp\angleshooter\menu\FloatingWidget.cpp" />
+    <ClCompile Include="main\cpp\angleshooter\menu\HidingWidget.cpp" />
     <ClCompile Include="main\cpp\angleshooter\menu\MenuButton.cpp" />
     <ClCompile Include="main\cpp\angleshooter\menu\MenuManager.cpp" />
     <ClCompile Include="main\cpp\angleshooter\menu\MenuPage.cpp" />
@@ -149,6 +150,7 @@
     <ClInclude Include="main\cpp\angleshooter\managers\OptionsManager.h" />
     <ClInclude Include="main\cpp\angleshooter\menu\DirectConnectButton.h" />
     <ClInclude Include="main\cpp\angleshooter\menu\FloatingWidget.h" />
+    <ClInclude Include="main\cpp\angleshooter\menu\HidingWidget.h" />
     <ClInclude Include="main\cpp\angleshooter\menu\MenuButton.h" />
     <ClInclude Include="main\cpp\angleshooter\menu\MenuInput.h" />
     <ClInclude Include="main\cpp\angleshooter\menu\MenuManager.h" />
@@ -185,6 +187,7 @@
     <Content Include="main\resources\assets\angleshooter\textures\bullet2.png" />
     <Content Include="main\resources\assets\angleshooter\textures\bullet_core.png" />
     <Content Include="main\resources\assets\angleshooter\textures\bullet_ring.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\characterassets\character_bg.png" />
     <Content Include="main\resources\assets\angleshooter\textures\characterassets\cosmetics\amy_hat.png" />
     <Content Include="main\resources\assets\angleshooter\textures\characterassets\cosmetics\colon3.png" />
     <Content Include="main\resources\assets\angleshooter\textures\characterassets\cosmetics\crown.png" />
@@ -280,6 +283,7 @@
     <Content Include="main\resources\assets\angleshooter\textures\menu\font\h_lowercase.png" />
     <Content Include="main\resources\assets\angleshooter\textures\menu\font\I.png" />
     <Content Include="main\resources\assets\angleshooter\textures\menu\font\i_lowercase.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\menu\font\J.png" />
     <Content Include="main\resources\assets\angleshooter\textures\menu\font\j_lowercase.png" />
     <Content Include="main\resources\assets\angleshooter\textures\menu\font\K.png" />
     <Content Include="main\resources\assets\angleshooter\textures\menu\font\k_lowercase.png" />

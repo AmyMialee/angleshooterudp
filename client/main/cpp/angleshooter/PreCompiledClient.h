@@ -17,6 +17,7 @@
 #include "menu/MenuButton.h"
 #include "menu/MenuSlider.h"
 #include "menu/TextButton.h"
+#include "menu/HidingWidget.h"
 #include "menu/NameTypingButton.h"
 #include "menu/DirectConnectButton.h"
 #include "menu/FloatingWidget.h"

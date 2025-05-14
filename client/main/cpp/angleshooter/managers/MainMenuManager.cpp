@@ -50,6 +50,10 @@ void MainMenuManager::populateMainMenu() {
 	this->optionsPage->addWidget(this->playerPreviewWidget);
 	this->populateOptionsPage();
 	this->populateServerPage();
+	this->serverListPage->addWidget(new HidingWidget([&] {
+		if (this->refreshTimeout.getElapsedTime().asSeconds() > 30 && this->servers.size() == 0) return true;
+		return false;
+	}, sf::Vector2f({-381.f, 680}), 402, Identifier("menu/no_friends.png")));
 	if (!OptionsManager::get().isOnboarded()) {
 		this->mainMenuManager.addWidget(new MenuWidget({0, 540 - 1500}, 788, Identifier("menu/menu_options.png")));
 		this->onboardingPage = this->mainMenuManager.addPage(new MenuPage({{0, 560 - 1500}, sf::Vector2f{1920, 1080} * .85f}, this->mainMenuManager.getMainPage()));
@@ -223,7 +227,8 @@ void MainMenuManager::populateServerPage() {
 	})));
 	const auto widgetRefresh = this->serverListPage->addButton(new TextButton({-80, 530}, "Refresh", 24, ([this] {
 		this->servers.clear();
-		auto packet = NetworkProtocol::SERVER_SCAN->getPacket();
+		this->refreshTimeout.restart();
+		const auto packet = NetworkProtocol::SERVER_SCAN->getPacket();
 		auto status = sf::Socket::Status::Partial;
 		while (status == sf::Socket::Status::Partial) status = AngleShooterClient::get().getSocket().send(packet.getBuffer(), packet.getByteLength(), sf::IpAddress(255, 255, 255, 255), AngleShooterCommon::PORT);
 	})));
