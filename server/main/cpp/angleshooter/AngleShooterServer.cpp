@@ -223,7 +223,6 @@ void AngleShooterServer::run() {
 }
 
 void AngleShooterServer::tickNetwork() {
-    Logger::info("Starting Server Network Handler");
 	std::optional<sf::IpAddress> sender;
 	unsigned short port;
 	while (this->running) {

@@ -38,7 +38,7 @@ WorldRenderer::WorldRenderer() {
 		if (const auto clientPlayer = dynamic_cast<ClientPlayerEntity*>(player.get()); clientPlayer != nullptr) {
 			weaponSprite.setPosition(pos);
 			if (std::abs(clientPlayer->weaponRotation.asDegrees()) > 90) {
-				weaponSprite.setScale({-0.25f, -0.25f});
+				weaponSprite.setScale({-0.25f, 0.25f});
 				const auto bounds = weaponSprite.getLocalBounds();
 				weaponSprite.setOrigin({bounds.size.x * 1.5f, std::floor(bounds.position.y + bounds.size.y / 2)});
 			} else {
