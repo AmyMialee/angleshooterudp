@@ -17,9 +17,6 @@ MapRenderer::MapRenderer(Map& map) {
 			const auto color = static_cast<uint8_t>(map.isSolid(row, column) ? 255 : 128);
 			tile.setColor(sf::Color(color, color, color, 255));
 			this->mapTexture->draw(tile);
-			AngleShooterClient::get().window.clear();
-			AngleShooterClient::get().window.draw(sf::Sprite(this->mapTexture->getTexture()));
-			AngleShooterClient::get().window.display();
 		}
 	}
 	this->mapSprite = new sf::Sprite(this->mapTexture->getTexture());
