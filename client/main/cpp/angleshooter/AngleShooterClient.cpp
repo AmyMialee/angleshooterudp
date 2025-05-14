@@ -352,10 +352,10 @@ void AngleShooterClient::run() {
 	auto status = sf::Socket::Status::Partial;
 	while (status == sf::Socket::Status::Partial) status = getSocket().send(packet, sf::IpAddress(255, 255, 255, 255), AngleShooterCommon::PORT);
 	ClientWorld::get().init();
-    std::thread receiverThread(&AngleShooterClient::runReceiver, this);
 	sf::Clock deltaClock;
 	auto frameTime = 0.;
 	auto tickTime = 0.;
+	auto networkTime = 0.;
 	auto secondTime = 0.;
 	auto frames = 0.;
 	auto ticks = 0.;
@@ -363,6 +363,7 @@ void AngleShooterClient::run() {
 	while (window.isOpen()) {
 		const auto deltaTime = deltaClock.restart().asSeconds();
 		tickTime += deltaTime;
+		networkTime += deltaTime;
 		frameTime += deltaTime;
 		secondTime += deltaTime;
 		InputManager::get().handleInput(window);
@@ -379,6 +380,10 @@ void AngleShooterClient::run() {
 				GameManager::get().tick();
 			}
 			++ticks;
+		}
+		if (networkTime >= AngleShooterCommon::TIME_PER_TICK / 2) {
+			tickNetwork();
+			networkTime -= AngleShooterCommon::TIME_PER_TICK / 2;
 		}
 		if (frameTime >= OptionsManager::get().getTimePerFrame()) {
 			this->tickDelta = tickTime / AngleShooterCommon::TIME_PER_TICK;
@@ -446,14 +451,13 @@ void AngleShooterClient::render() {
 	window.display();
 }
 
-void AngleShooterClient::runReceiver() {
-	Logger::info("Starting Client Network Handler");
-	while (window.isOpen()) {
-		std::optional<sf::IpAddress> sender;
-		unsigned short port;
+void AngleShooterClient::tickNetwork() {
+	std::optional<sf::IpAddress> sender;
+	unsigned short port;
+	while (true) {
 		if (sf::Packet packet; socket.receive(packet, sender, port) == sf::Socket::Status::Done) {
 			if (!sender.has_value()) continue;
-			auto receivedPip = PortedIP{.ip= sender.value(), .port= port};
+			const auto receivedPip = PortedIP{.ip= sender.value(), .port= port};
 			if (!this->server) {
 				if (packet.getDataSize() > 0) {
 					if (const auto type = static_cast<const uint8_t*>(packet.getData())[0]; type == NetworkProtocol::SERVER_SCAN->getId()) {
@@ -462,20 +466,16 @@ void AngleShooterClient::runReceiver() {
 					}
 				}
 				Logger::warn("Received packet from non-server address: " + receivedPip.toString());
-				sleep(sf::milliseconds(64));
 				continue;
 			}
 			handlePacket(packet, this->server);
 			continue;
 		}
-		if (!this->server) {
-			sleep(sf::milliseconds(128));
-			continue;
-		}
-		this->server->update();
-		if (this->server->shouldDisconnect()) this->disconnect();
-		sleep(sf::milliseconds(6));
+		break;
 	}
+	if (!this->server) return;
+	this->server->update();
+	if (this->server->shouldDisconnect()) this->disconnect();
 }
 
 void AngleShooterClient::send(sf::Packet& packet) {

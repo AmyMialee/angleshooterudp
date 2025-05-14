@@ -8,10 +8,12 @@ WorldRenderer::WorldRenderer() {
 		if (player->deathTime > 0) return;
 		const auto deltaTime = static_cast<float>(AngleShooterClient::get().tickDelta);
 		static sf::Sprite playerSprite(TextureHolder::getInstance().getDefault(), sf::IntRect({0, 0}, {64, 64}));
+		static sf::Sprite weaponSprite(TextureHolder::getInstance().get(Identifier("misc/gun_small.png")), sf::IntRect({0, 0}, {64, 64}));
 		static sf::Text text(FontHolder::getInstance().getDefault());
 		static std::once_flag flag;
 		std::call_once(flag, [&] {
 			Util::centre(playerSprite);
+			weaponSprite.setScale({0.25f, 0.25f});
 			playerSprite.setScale({0.25f, 0.25f});
 			text.setCharacterSize(48);
 			text.setScale({0.125f, 0.125f});
@@ -32,6 +34,21 @@ WorldRenderer::WorldRenderer() {
 			circle.setPosition(pos - player->getScale() / 2.f - sf::Vector2f{2.f, 2.f});
 			circle.setFillColor(sf::Color(0, 255, 255, 120));
 			target.draw(circle);
+		}
+		if (const auto clientPlayer = dynamic_cast<ClientPlayerEntity*>(player.get()); clientPlayer != nullptr) {
+			weaponSprite.setPosition(pos);
+			if (std::abs(clientPlayer->weaponRotation.asDegrees()) > 90) {
+				weaponSprite.setScale({-0.25f, -0.25f});
+				const auto bounds = weaponSprite.getLocalBounds();
+				weaponSprite.setOrigin({bounds.size.x * 1.5f, std::floor(bounds.position.y + bounds.size.y / 2)});
+			} else {
+				weaponSprite.setScale({-0.25f, 0.25f});
+				const auto bounds = weaponSprite.getLocalBounds();
+				weaponSprite.setOrigin({-bounds.size.x * 0.5f, std::floor(bounds.position.y + bounds.size.y / 2)});
+			}
+			weaponSprite.setRotation(clientPlayer->weaponRotation);
+			weaponSprite.setColor(player->cosmetics.colour);
+			target.draw(weaponSprite);
 		}
 		const auto bound = player->getBoundingBox();
 		sf::RectangleShape shape;

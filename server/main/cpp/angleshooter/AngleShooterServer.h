@@ -6,7 +6,7 @@ class AngleShooterServer final : public SocketHolder {
 	sf::UdpSocket listenerSocket;
 	bool running = true;
 
-	void runReceiver();
+	void tickNetwork();
 	void handlePacket(sf::Packet& packet, std::pair<std::unique_ptr<NetworkPair>, PlayerDetails>& sender);
 	void registerPacket(PacketIdentifier* packetType, const std::function<void(sf::Packet& packet, std::pair<std::unique_ptr<NetworkPair>, PlayerDetails>& sender)>& handler);
 

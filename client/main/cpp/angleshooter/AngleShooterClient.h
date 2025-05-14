@@ -6,7 +6,7 @@ class AngleShooterClient final : public SocketHolder {
 	sf::UdpSocket socket;
 
 	void render();
-	void runReceiver();
+	void tickNetwork();
 
 	void handlePacket(sf::Packet& packet, NetworkPair* sender);
 	void registerPackets();

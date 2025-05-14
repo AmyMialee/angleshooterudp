@@ -183,9 +183,9 @@ void AngleShooterServer::run() {
 	Logger::info("Starting AngleShooter Server");
 	ServerWorld::get().init();
 	ServerWorld::get().loadMap(Identifier("testmaplarge"));
-    std::thread receiverThread(&AngleShooterServer::runReceiver, this);
     sf::Clock deltaClock;
     auto tickTime = 0.;
+	auto networkTime = 0.;
     auto secondTime = 0.;
     auto ticks = 0;
 	auto loops = 0;
@@ -193,6 +193,7 @@ void AngleShooterServer::run() {
     while (this->running) {
         const auto deltaTime = deltaClock.restart().asSeconds();
         tickTime += deltaTime;
+    	networkTime += deltaTime;
         secondTime += deltaTime;
         if (tickTime > 1.) {
             Logger::warn("AngleShooter::run: Lagging behind by " + Util::toRoundedString(tickTime / AngleShooterCommon::TIME_PER_TICK) + " ticks (" + Util::toRoundedString(tickTime) + " seconds), skipping ahead");
@@ -203,6 +204,10 @@ void AngleShooterServer::run() {
             ServerWorld::get().tick();
             ++ticks;
         }
+    	if (networkTime >= AngleShooterCommon::TIME_PER_TICK / 2) {
+			tickNetwork();
+			networkTime -= AngleShooterCommon::TIME_PER_TICK / 2;
+		}
 		++loops;
         if (secondTime >= .1f) {
             tps = ticks / secondTime;
@@ -217,7 +222,7 @@ void AngleShooterServer::run() {
     }
 }
 
-void AngleShooterServer::runReceiver() {
+void AngleShooterServer::tickNetwork() {
     Logger::info("Starting Server Network Handler");
 	std::set<PortedIP> pendingDisconnects;
 	while (this->running) {

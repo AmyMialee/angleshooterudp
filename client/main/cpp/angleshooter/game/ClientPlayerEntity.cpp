@@ -5,6 +5,19 @@ ClientPlayerEntity::ClientPlayerEntity(uint16_t id, World* world) : PlayerEntity
 
 void ClientPlayerEntity::tick() {
 	PlayerEntity::tick();
+	if (firingInput.length() > 0.5f) {  // NOLINT(clang-diagnostic-undefined-func-template)
+		firingInput /= firingInput.length();
+		this->targetRotation = sf::radians(std::atan2(firingInput.y, firingInput.x));
+	}
+	auto rotationDifference = targetRotation - weaponRotation;
+	if (rotationDifference.asRadians() > std::numbers::pi) {
+		rotationDifference -= sf::radians(2 * static_cast<float>(std::numbers::pi));
+	} else if (rotationDifference.asRadians() < -std::numbers::pi) {
+		rotationDifference += sf::radians(2 * static_cast<float>(std::numbers::pi));
+	}
+	this->weaponSpin += rotationDifference * 0.1f;
+	this->weaponSpin *= 0.9f;
+	this->weaponRotation += this->weaponSpin;
 	if (!isClientPlayer) return;
 	input = sf::Vector2f(0, 0);
 	if (InputManager::get().getUp()->isPressed()) input += sf::Vector2f(0, -1);

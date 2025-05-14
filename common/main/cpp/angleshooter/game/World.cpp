@@ -9,6 +9,7 @@ void World::init() {
 
 void World::tick() {
 	this->age++;
+
 	for (auto main = this->gameObjects.begin(); main != this->gameObjects.end(); ++main) {
 		if (!main->second) continue;
 		main->second->tick();
