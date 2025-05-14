@@ -225,7 +225,7 @@ void MainMenuManager::populateServerPage() {
 		this->servers.clear();
 		auto packet = NetworkProtocol::SERVER_SCAN->getPacket();
 		auto status = sf::Socket::Status::Partial;
-		while (status == sf::Socket::Status::Partial) status = AngleShooterClient::get().getSocket().send(packet, sf::IpAddress(255, 255, 255, 255), AngleShooterCommon::PORT);
+		while (status == sf::Socket::Status::Partial) status = AngleShooterClient::get().getSocket().send(packet.getBuffer(), packet.getByteLength(), sf::IpAddress(255, 255, 255, 255), AngleShooterCommon::PORT);
 	})));
 	const auto widgetLocal = this->serverListPage->addButton(new DirectConnectButton({-80, 630}, "Direct"));
 	this->serverListPage->addLink(widgetBack, widgetRefresh, MenuInput::DOWN);

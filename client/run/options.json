@@ -19,6 +19,6 @@
     "masterVolume": 1.0,
     "musicVolume": 0.0,
     "name": "Amy",
-    "onboarded": false,
+    "onboarded": true,
     "soundVolume": 0.0
 }

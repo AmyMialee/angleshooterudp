@@ -69,7 +69,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)/x64/SFML-3.0.0/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>sfml-system-d.lib;sfml-window-d.lib;sfml-graphics-d.lib;sfml-audio-d.lib;sfml-network-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ws2_32.lib;sfml-system-d.lib;sfml-window-d.lib;sfml-graphics-d.lib;sfml-audio-d.lib;sfml-network-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -92,7 +92,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)/x64/SFML-3.0.0/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>sfml-system.lib;sfml-window.lib;sfml-graphics.lib;sfml-audio.lib;sfml-network.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ws2_32.lib;sfml-system.lib;sfml-window.lib;sfml-graphics.lib;sfml-audio.lib;sfml-network.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -100,13 +100,13 @@
     <ClCompile Include="main\cpp\angleshooter\game\entities\Entity.cpp" />
     <ClCompile Include="main\cpp\angleshooter\game\entities\PlayerEntity.cpp" />
     <ClCompile Include="main\cpp\angleshooter\game\World.cpp" />
+    <ClCompile Include="main\cpp\angleshooter\network\BitStream.cpp" />
     <ClCompile Include="main\cpp\angleshooter\network\NetworkPair.cpp" />
     <ClCompile Include="main\cpp\angleshooter\network\PacketIdentifier.cpp" />
     <ClCompile Include="main\cpp\angleshooter\resources\Map.cpp" />
     <ClCompile Include="main\cpp\angleshooter\resources\MapLoader.cpp" />
     <ClCompile Include="main\cpp\angleshooter\util\Identifier.cpp" />
     <ClCompile Include="main\cpp\angleshooter\util\Logger.cpp" />
-    <ClCompile Include="main\cpp\angleshooter\util\PlayerCosmetics.cpp" />
     <ClCompile Include="main\cpp\angleshooter\util\Util.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -116,6 +116,7 @@
     <ClInclude Include="main\cpp\angleshooter\game\entities\PlayerEntity.h" />
     <ClInclude Include="main\cpp\angleshooter\game\World.h" />
     <ClInclude Include="main\cpp\angleshooter\NetworkProtocol.hpp" />
+    <ClInclude Include="main\cpp\angleshooter\network\BitStream.h" />
     <ClInclude Include="main\cpp\angleshooter\network\NetworkPair.h" />
     <ClInclude Include="main\cpp\angleshooter\network\PacketIdentifier.h" />
     <ClInclude Include="main\cpp\angleshooter\network\PortedIP.h" />

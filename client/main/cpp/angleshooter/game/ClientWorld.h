@@ -14,8 +14,8 @@ public:
 	ClientWorld(const ClientWorld&) = delete;
 	void operator=(const ClientWorld&) = delete;
 
-	std::shared_ptr<ClientPlayerEntity> spawnPlayer(sf::Packet& packet);
-	std::shared_ptr<BulletEntity> spawnBullet(sf::Packet& packet);
+	std::shared_ptr<ClientPlayerEntity> spawnPlayer(InputBitStream& packet);
+	std::shared_ptr<BulletEntity> spawnBullet(InputBitStream& packet);
 
 	void tick() override;
 	void playMusic(const Identifier& id, float volume, float pitch) override;

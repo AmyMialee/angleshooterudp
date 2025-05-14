@@ -52,7 +52,4 @@ struct PlayerCosmetics {
 		if (index >= COSMETICS.size()) return &Identifier::empty;
 		return COSMETICS[index];
 	}
-
-	friend sf::Packet& operator<<(sf::Packet& packet, const PlayerCosmetics& cosmetics);
-	friend sf::Packet& operator>>(sf::Packet& packet, PlayerCosmetics& id);
 };

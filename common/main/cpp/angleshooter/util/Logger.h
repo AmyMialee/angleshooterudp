@@ -4,7 +4,7 @@ enum class Severity : std::uint8_t {
     DEBUG,
     INFO,
     WARN,
-    ERROR
+    ISSUE
 };
 
 class Logger {

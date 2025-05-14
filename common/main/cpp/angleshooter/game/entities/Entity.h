@@ -35,8 +35,8 @@ public:
 	virtual void onWallCollision();
 	virtual void onCollision(Entity& other);
 
-	virtual void writeToPacket(sf::Packet& packet) const;
-	virtual void readFromPacket(sf::Packet& packet);
+	virtual void writeToPacket(OutputBitStream& packet) const;
+	virtual void readFromPacket(InputBitStream& packet);
 	
 	[[nodiscard]] virtual bool isMarkedForRemoval() const = 0;
 	[[nodiscard]] virtual const Identifier& getEntityType() const = 0;

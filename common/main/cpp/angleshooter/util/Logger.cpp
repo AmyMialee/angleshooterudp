@@ -41,7 +41,7 @@ void Logger::warn(const std::string& message) {
 }
 
 void Logger::error(const std::string& message) {
-    getInstance().log(Severity::ERROR, message);
+    getInstance().log(Severity::ISSUE, message);
 }
 
 void Logger::debugOnce(const std::string& message) {
@@ -57,7 +57,7 @@ void Logger::warnOnce(const std::string& message) {
 }
 
 void Logger::errorOnce(const std::string& message) {
-    getInstance().logOnce(Severity::ERROR, message);
+    getInstance().logOnce(Severity::ISSUE, message);
 }
 
 std::string Logger::severityToString(Severity level) const {
@@ -65,7 +65,7 @@ std::string Logger::severityToString(Severity level) const {
         case Severity::DEBUG: return "DEBUG";
         case Severity::INFO: return "INFO";
         case Severity::WARN: return "WARN";
-        case Severity::ERROR: return "ERROR";
+        case Severity::ISSUE: return "ERROR";
     }
     return "UNKNOWN";
 }
@@ -75,7 +75,7 @@ std::string Logger::severityToColour(Severity level) const {
         case Severity::DEBUG: return "\033[38;5;247m";
         case Severity::INFO: return "\033[38;5;110m";
         case Severity::WARN: return "\033[38;5;215m";
-        case Severity::ERROR: return "\033[38;5;210m";
+        case Severity::ISSUE: return "\033[38;5;210m";
     }
     return "\033[0;39m";
 }

@@ -16,6 +16,6 @@ public:
 	[[nodiscard]] static PacketIdentifier* of(bool reliable, std::string space, std::string path);
 	[[nodiscard]] uint8_t getId() const;
 	[[nodiscard]] bool isReliable() const;
-	[[nodiscard]] sf::Packet getPacket() const;
+	[[nodiscard]] OutputBitStream getPacket() const;
 	[[nodiscard]] static PacketIdentifier* fromId(uint8_t id);
 };

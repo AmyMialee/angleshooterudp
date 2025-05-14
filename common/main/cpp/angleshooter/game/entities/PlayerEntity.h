@@ -21,6 +21,6 @@ public:
 	virtual bool damage(uint16_t source, uint16_t amount);
 	virtual void onDeath(uint16_t source);
 
-	void writeToPacket(sf::Packet& packet) const override;
-	void readFromPacket(sf::Packet& packet) override;
+	void writeToPacket(OutputBitStream& packet) const override;
+	void readFromPacket(InputBitStream& packet) override;
 };

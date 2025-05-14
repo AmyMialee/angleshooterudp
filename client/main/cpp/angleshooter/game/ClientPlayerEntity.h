@@ -12,5 +12,5 @@ public:
 	bool isClientPlayer = false;
 	explicit ClientPlayerEntity(uint16_t id, World* world);
 	void tick() override;
-	void readFromPacket(sf::Packet& packet) override;
+	void readFromPacket(InputBitStream& packet) override;
 };

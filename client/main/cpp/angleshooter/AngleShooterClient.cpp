@@ -25,38 +25,38 @@ AngleShooterClient::AngleShooterClient() {
 }
 
 void AngleShooterClient::registerPackets() {
-	registerPacket(NetworkProtocol::PING, [this](sf::Packet&, const NetworkPair* sender) {
+	registerPacket(NetworkProtocol::PING, [this](InputBitStream&, const NetworkPair* sender) {
 		Logger::debug("Ping! from " + sender->getPortedIP().toString());
 		auto pong = NetworkProtocol::PONG->getPacket();
 		send(pong);
 	});
-	registerPacket(NetworkProtocol::PONG, [this](sf::Packet&, NetworkPair* sender) {
+	registerPacket(NetworkProtocol::PONG, [this](InputBitStream&, NetworkPair* sender) {
 		const auto rtt = sender->stopRoundTripTimer();
 		Logger::debug("Pong! from " + sender->getPortedIP().toString() + " in " + Util::toRoundedString(rtt * 1000, 0) + "ms");
 	});
-	registerPacket(NetworkProtocol::ACK, [this](sf::Packet& packet, NetworkPair* sender) {
+	registerPacket(NetworkProtocol::ACK, [this](InputBitStream& packet, NetworkPair* sender) {
 		uint32_t sequence;
 		packet >> sequence;
 		sender->acceptAcknowledgment(sequence);
 	});
-	registerPacket(NetworkProtocol::CHAT_MESSAGE, [this](sf::Packet& packet, const NetworkPair*) {
+	registerPacket(NetworkProtocol::CHAT_MESSAGE, [this](InputBitStream& packet, const NetworkPair*) {
 		std::string message;
 		packet >> message;
 		Logger::info(message);
 	});
-	registerPacket(NetworkProtocol::S2C_INITIAL_SETUP, [this](sf::Packet& packet, const NetworkPair*) {
+	registerPacket(NetworkProtocol::S2C_INITIAL_SETUP, [this](InputBitStream& packet, const NetworkPair*) {
 		Logger::debug("Received Initial Setup Packet");
 		Identifier id;
 		packet >> id;
 		ClientWorld::get().loadMap(id);
 		packet >> this->playerId;
 	});
-	registerPacket(NetworkProtocol::S2C_BROADCAST_MESSAGE, [this](sf::Packet& packet, const NetworkPair*) {
+	registerPacket(NetworkProtocol::S2C_BROADCAST_MESSAGE, [this](InputBitStream& packet, const NetworkPair*) {
 		std::string message;
 		packet >> message;
 		Logger::debug("Received Broadcast Message Packet from server: " + message);
 	});
-	registerPacket(NetworkProtocol::S2C_PLAY_MUSIC, [this](sf::Packet& packet, const NetworkPair*) {
+	registerPacket(NetworkProtocol::S2C_PLAY_MUSIC, [this](InputBitStream& packet, const NetworkPair*) {
 		Identifier id;
 		float volume, pitch;
 		packet >> id;
@@ -64,7 +64,7 @@ void AngleShooterClient::registerPackets() {
 		packet >> pitch;
 		ClientWorld::get().playMusic(id, volume, pitch);
 	});
-	registerPacket(NetworkProtocol::S2C_PLAY_SOUND, [this](sf::Packet& packet, const NetworkPair*) {
+	registerPacket(NetworkProtocol::S2C_PLAY_SOUND, [this](InputBitStream& packet, const NetworkPair*) {
 		Identifier id;
 		float volume, pitch, x, y, attenuation;
 		packet >> id;
@@ -75,7 +75,7 @@ void AngleShooterClient::registerPackets() {
 		packet >> attenuation;
 		ClientWorld::get().playSound(id, volume, pitch, {x, y}, attenuation);
 	});
-	registerPacket(NetworkProtocol::S2C_PLAY_SOUND_3D, [this](sf::Packet& packet, const NetworkPair*) {
+	registerPacket(NetworkProtocol::S2C_PLAY_SOUND_3D, [this](InputBitStream& packet, const NetworkPair*) {
 		Identifier id;
 		float volume, pitch, x, y, z, attenuation;
 		packet >> id;
@@ -87,21 +87,21 @@ void AngleShooterClient::registerPackets() {
 		packet >> attenuation;
 		ClientWorld::get().playSound3d(id, volume, pitch, {x, y, z}, attenuation);
 	});
-	registerPacket(NetworkProtocol::S2C_LOAD_MAP, [this](sf::Packet& packet, const NetworkPair*) {
+	registerPacket(NetworkProtocol::S2C_LOAD_MAP, [this](InputBitStream& packet, const NetworkPair*) {
 		Identifier id;
 		packet >> id;
 		ClientWorld::get().loadMap(id);
 	});
-	registerPacket(NetworkProtocol::S2C_SPAWN_PLAYER, [this](sf::Packet& packet, const NetworkPair*) {
+	registerPacket(NetworkProtocol::S2C_SPAWN_PLAYER, [this](InputBitStream& packet, const NetworkPair*) {
 		const auto player = ClientWorld::get().spawnPlayer(packet);
 		packet >> player->isClientPlayer;
 		GameManager::get().SCORES.emplace(player->getId(), ScoreEntry{player->name, player->cosmetics, player->score, 0, 0});
 		GameManager::get().refreshScores();
 	});
-	registerPacket(NetworkProtocol::S2C_SPAWN_BULLET, [this](sf::Packet& packet, const NetworkPair*) {
+	registerPacket(NetworkProtocol::S2C_SPAWN_BULLET, [this](InputBitStream& packet, const NetworkPair*) {
 		ClientWorld::get().spawnBullet(packet);
 	});
-	registerPacket(NetworkProtocol::S2C_PLAYER_INPUT, [this](sf::Packet& packet, const NetworkPair*) {
+	registerPacket(NetworkProtocol::S2C_PLAYER_INPUT, [this](InputBitStream& packet, const NetworkPair*) {
 		uint16_t id;
 		float x, y;
 		float firingX, firingY;
@@ -122,11 +122,11 @@ void AngleShooterClient::registerPackets() {
 			return;
 		}
 	});
-	registerPacket(NetworkProtocol::S2C_PLAYER_POSITION_SYNC, [this](sf::Packet& packet, const NetworkPair*) {
+	registerPacket(NetworkProtocol::S2C_PLAYER_POSITION_SYNC, [this](InputBitStream& packet, const NetworkPair*) {
 		uint16_t id;
 		packet >> id;
 		if (id == this->playerId) {
-			packet.clear();
+			packet.reset(0);
 			return;
 		}
 		float x, y;
@@ -137,7 +137,7 @@ void AngleShooterClient::registerPackets() {
 			return;
 		}
 	});
-	registerPacket(NetworkProtocol::S2C_BULLET_CHARGE, [this](sf::Packet& packet, const NetworkPair*) {
+	registerPacket(NetworkProtocol::S2C_BULLET_CHARGE, [this](InputBitStream& packet, const NetworkPair*) {
 		uint16_t id;
 		packet >> id;
 		uint16_t charge;
@@ -153,7 +153,7 @@ void AngleShooterClient::registerPackets() {
 			return;
 		}
 	});
-	registerPacket(NetworkProtocol::S2C_HEALTH, [this](sf::Packet& packet, const NetworkPair*) {
+	registerPacket(NetworkProtocol::S2C_HEALTH, [this](InputBitStream& packet, const NetworkPair*) {
 		uint16_t id;
 		packet >> id;
 		uint16_t health;
@@ -169,7 +169,7 @@ void AngleShooterClient::registerPackets() {
 			return;
 		}
 	});
-	registerPacket(NetworkProtocol::S2C_DEATH, [this](sf::Packet& packet, const NetworkPair*) {
+	registerPacket(NetworkProtocol::S2C_DEATH, [this](InputBitStream& packet, const NetworkPair*) {
 		uint16_t id;
 		packet >> id;
 		for (const auto& entity : ClientWorld::get().getEntities()) {
@@ -184,7 +184,7 @@ void AngleShooterClient::registerPackets() {
 			return;
 		}
 	});
-	registerPacket(NetworkProtocol::S2C_TELEPORT, [this](sf::Packet& packet, const NetworkPair*) {
+	registerPacket(NetworkProtocol::S2C_TELEPORT, [this](InputBitStream& packet, const NetworkPair*) {
 		uint16_t id;
 		packet >> id;
 		float x, y;
@@ -200,7 +200,7 @@ void AngleShooterClient::registerPackets() {
 			return;
 		}
 	});
-	registerPacket(NetworkProtocol::S2C_REMOVE_OBJECT, [this](sf::Packet& packet, const NetworkPair*) {
+	registerPacket(NetworkProtocol::S2C_REMOVE_OBJECT, [this](InputBitStream& packet, const NetworkPair*) {
 		uint16_t id;
 		packet >> id;
 		auto iterator = ClientWorld::get().gameObjects.begin();
@@ -216,7 +216,7 @@ void AngleShooterClient::registerPackets() {
 			}
 		}
 	});
-	registerPacket(NetworkProtocol::S2C_UPDATE_SCORE, [this](sf::Packet& packet, const NetworkPair*) {
+	registerPacket(NetworkProtocol::S2C_UPDATE_SCORE, [this](InputBitStream& packet, const NetworkPair*) {
 		uint16_t id;
 		packet >> id;
 		uint16_t score;
@@ -238,7 +238,7 @@ void AngleShooterClient::registerPackets() {
 			return;
 		}
 	});
-	registerPacket(NetworkProtocol::S2C_UPDATE_NAME, [this](sf::Packet& packet, const NetworkPair*) {
+	registerPacket(NetworkProtocol::S2C_UPDATE_NAME, [this](InputBitStream& packet, const NetworkPair*) {
 		uint16_t id;
 		packet >> id;
 		std::string name;
@@ -258,7 +258,7 @@ void AngleShooterClient::registerPackets() {
 			return;
 		}
 	});
-	registerPacket(NetworkProtocol::S2C_UPDATE_COSMETICS, [this](sf::Packet& packet, const NetworkPair*) {
+	registerPacket(NetworkProtocol::S2C_UPDATE_COSMETICS, [this](InputBitStream& packet, const NetworkPair*) {
 		uint16_t id;
 		packet >> id;
 		PlayerCosmetics cosmetics;
@@ -280,7 +280,7 @@ void AngleShooterClient::registerPackets() {
 	});
 }
 
-void AngleShooterClient::handlePacket(sf::Packet& packet, NetworkPair* sender) {
+void AngleShooterClient::handlePacket(InputBitStream& packet, NetworkPair* sender) {
 	sender->resetTimeout();
 	uint8_t packetType;
 	packet >> packetType;
@@ -304,16 +304,16 @@ void AngleShooterClient::handlePacket(sf::Packet& packet, NetworkPair* sender) {
 	}
 	if (packetHandlers.contains(packetType)) {
 		packetHandlers[packetType](packet, sender);
-		if (packet.getReadPosition() != packet.getDataSize()) {
+		if (packet.getRemainingBitCount() > 0) {
 			Logger::error("Packet " + packetIds[packetType]->toString() + " has unused data");
-			packet.clear();
+			packet.reset(0);
 		}
 		return;
 	}
 	Logger::error("Received unknown packet id: " + std::to_string(packetType) + " from " + sender->getPortedIP().toString());
 }
 
-void AngleShooterClient::registerPacket(PacketIdentifier* packetType, const std::function<void(sf::Packet& packet, NetworkPair* sender)>& handler) {
+void AngleShooterClient::registerPacket(PacketIdentifier* packetType, const std::function<void(InputBitStream& packet, NetworkPair* sender)>& handler) {
 	this->packetHandlers.emplace(packetType->getId(), handler);
 	this->packetIds.emplace(packetType->getId(), packetType);
 }
@@ -350,7 +350,7 @@ void AngleShooterClient::run() {
 	MainMenuManager::get().populateMainMenu();
 	auto packet = NetworkProtocol::SERVER_SCAN->getPacket();
 	auto status = sf::Socket::Status::Partial;
-	while (status == sf::Socket::Status::Partial) status = getSocket().send(packet, sf::IpAddress(255, 255, 255, 255), AngleShooterCommon::PORT);
+	while (status == sf::Socket::Status::Partial) status = getSocket().send(packet.getBuffer(), packet.getByteLength(), sf::IpAddress(255, 255, 255, 255), AngleShooterCommon::PORT);
 	ClientWorld::get().init();
 	sf::Clock deltaClock;
 	auto frameTime = 0.;
@@ -454,18 +454,25 @@ void AngleShooterClient::render() {
 }
 
 void AngleShooterClient::tickNetwork() {
+	uint8_t packetStorage[1500];
+	size_t capturedSize = 0;
 	std::optional<sf::IpAddress> sender;
 	unsigned short port;
+	InputBitStream packet(packetStorage, static_cast<uint32_t>(capturedSize) * 8);
 	while (true) {
-		if (sf::Packet packet; socket.receive(packet, sender, port) == sf::Socket::Status::Done) {
-			if (!sender.has_value()) continue;
+		capturedSize = 0;
+		if (socket.receive(packetStorage, sizeof(packetStorage), capturedSize, sender, port) == sf::Socket::Status::Done) {
+			if (!sender.has_value() || capturedSize == 0) continue;
 			const auto receivedPip = PortedIP{.ip= sender.value(), .port= port};
+			if (std::cmp_equal(capturedSize, -WSAECONNRESET)) {
+				this->server->setDisconnecting();
+			} else if (capturedSize > 0) {
+				packet.reset(static_cast<uint32_t>(capturedSize));
+			}
 			if (!this->server) {
-				if (packet.getDataSize() > 0) {
-					if (const auto type = static_cast<const uint8_t*>(packet.getData())[0]; type == NetworkProtocol::SERVER_SCAN->getId()) {
-						MainMenuManager::get().addServer(receivedPip);
-						continue;
-					}
+				if (const auto type = packetStorage[0]; type == NetworkProtocol::SERVER_SCAN->getId()) {
+					MainMenuManager::get().addServer(receivedPip);
+					continue;
 				}
 				Logger::warn("Received packet from non-server address: " + receivedPip.toString());
 				continue;
@@ -480,7 +487,7 @@ void AngleShooterClient::tickNetwork() {
 	if (this->server->shouldDisconnect()) this->disconnect();
 }
 
-void AngleShooterClient::send(sf::Packet& packet) {
+void AngleShooterClient::send(OutputBitStream& packet) {
 	if (this->server == nullptr) {
 		Logger::error("Cannot send packet, not connected to server");
 		return;

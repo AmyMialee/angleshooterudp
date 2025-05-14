@@ -35,8 +35,8 @@ bool PacketIdentifier::isReliable() const {
 	return this->reliable;
 }
 
-sf::Packet PacketIdentifier::getPacket() const {
-	sf::Packet packet;
+OutputBitStream PacketIdentifier::getPacket() const {
+	OutputBitStream packet;
 	packet << this->id;
 	return packet;
 }

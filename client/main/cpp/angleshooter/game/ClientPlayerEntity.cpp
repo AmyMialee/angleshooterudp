@@ -46,7 +46,7 @@ void ClientPlayerEntity::tick() {
 	}
 }
 
-void ClientPlayerEntity::readFromPacket(sf::Packet& packet) {
+void ClientPlayerEntity::readFromPacket(InputBitStream& packet) {
 	PlayerEntity::readFromPacket(packet);
 	if (const auto it = GameManager::get().SCORES.find(this->getId()); it != GameManager::get().SCORES.end()) {
 		it->second.score = this->score;
