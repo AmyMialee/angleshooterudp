@@ -6,8 +6,8 @@ class PlayerEntity : public Entity {
 public:
 	std::string name;
 	sf::Vector2f input = {0, 0};
-	bool isFiring = false;
-	sf::Color colour = {0xFF, 0xAA, 0xAA, 0xFF};
+	sf::Vector2f firingInput = {0, 0};
+	PlayerCosmetics cosmetics;
 	uint16_t health = 8;
 	uint16_t deathTime = 0;
 	uint16_t immunityTime = 0;
@@ -21,6 +21,6 @@ public:
 	virtual bool damage(uint16_t source, uint16_t amount);
 	virtual void onDeath(uint16_t source);
 
-	void writeToPacket(sf::Packet& packet) const override;
-	void readFromPacket(sf::Packet& packet) override;
+	void writeToPacket(OutputBitStream& packet) const override;
+	void readFromPacket(InputBitStream& packet) override;
 };

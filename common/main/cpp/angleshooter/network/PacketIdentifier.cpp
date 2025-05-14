@@ -6,7 +6,6 @@ uint8_t PacketIdentifier::getNextId() const {
 		Logger::error("PacketIdentifier ID overflow, unable to allocate more");
 		return nextId;
 	}
-	Logger::debug("Packet Created with ID: " + std::to_string(nextId) + " (" + this->toString() + ")");
 	return nextId++;
 }
 
@@ -36,8 +35,8 @@ bool PacketIdentifier::isReliable() const {
 	return this->reliable;
 }
 
-sf::Packet PacketIdentifier::getPacket() const {
-	sf::Packet packet;
+OutputBitStream PacketIdentifier::getPacket() const {
+	OutputBitStream packet;
 	packet << this->id;
 	return packet;
 }

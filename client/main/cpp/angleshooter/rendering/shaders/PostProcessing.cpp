@@ -17,3 +17,15 @@ void PostProcessing::applyShader(const sf::Shader& shader, sf::RenderTarget& out
 	states.blendMode = sf::BlendNone;
 	output.draw(vertices, states);
 }
+
+sf::RenderTexture PostProcessing::createRenderTextureFromTarget(const sf::RenderTarget& target) {
+	const auto size = target.getSize();
+	sf::RenderTexture renderTexture({size.x, size.y});
+	renderTexture.clear();
+	if (const auto targetTexture = dynamic_cast<const sf::Texture*>(&target)) {
+		const sf::Sprite sprite(*targetTexture);
+		renderTexture.draw(sprite);
+	}
+	renderTexture.display();
+	return renderTexture;
+}

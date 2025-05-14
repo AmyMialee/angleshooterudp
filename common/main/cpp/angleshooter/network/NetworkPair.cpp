@@ -2,7 +2,7 @@
 #include "NetworkPair.h"
 
 NetworkPair::NetworkPair(SocketHolder& socketHolder, PortedIP pip) : socketHolder(socketHolder), pip(pip) {
-	auto packet = NetworkProtocol::PING->getPacket();
+	const auto packet = NetworkProtocol::PING->getPacket();
 	this->send(packet);
 	this->lastResponse.restart();
 }
@@ -15,23 +15,27 @@ void NetworkPair::update() {
 			timestamp = now;
 		}
 	}
+	if (this->lastSendTimer.getElapsedTime().asSeconds() > AngleShooterCommon::TIMEOUT / 3) {
+		const auto packet = NetworkProtocol::HEARTBEAT->getPacket();
+		send(packet);
+	}
 }
 
-void NetworkPair::send(sf::Packet& packet) {
-	const auto bytes = static_cast<const uint8_t*>(packet.getData());
-	const auto type = bytes[0];
-	if (const auto id = PacketIdentifier::fromId(bytes[0]); id->isReliable()) {
-		const auto body = static_cast<const uint8_t*>(packet.getData()) + 1;
-		const auto bodySize = packet.getDataSize() - 1;
-		sf::Packet updated;
+void NetworkPair::send(const OutputBitStream& packet) {
+	const auto type = packet.getBuffer()[0];
+	if (const auto id = PacketIdentifier::fromId(type); id->isReliable()) {
+		const auto body = packet.getBuffer() + 1;
+		const auto bodySize = packet.getByteLength() - 1;
+		OutputBitStream updated;
 		updated << type;
 		const auto sequence = this->getNextSequence();
 		updated << sequence;
-		updated.append(body, bodySize);
-		packet = updated;
-		sentPackets[sequence] = {packet, std::chrono::steady_clock::now()};
+		updated.writeBits(body, bodySize * 8);
+		sentPackets[sequence] = {updated, std::chrono::steady_clock::now()};
+		sendPacketInternal(updated);
+	} else {
+		sendPacketInternal(packet);
 	}
-	sendPacketInternal(packet);
 }
 
 void NetworkPair::acceptAcknowledgment(uint32_t sequence) {
@@ -89,8 +93,9 @@ PortedIP NetworkPair::getPortedIP() const {
 	return pip;
 }
 
-void NetworkPair::sendPacketInternal(sf::Packet& packet) {
+void NetworkPair::sendPacketInternal(const OutputBitStream& packet) {
+	this->lastSendTimer.restart();
 	auto status = sf::Socket::Status::Partial;
-	while (status == sf::Socket::Status::Partial) status = socketHolder.getSocket().send(packet, pip.ip, pip.port);
+	while (status == sf::Socket::Status::Partial) status = socketHolder.getSocket().send(packet.getBuffer(), packet.getByteLength(), pip.ip, pip.port);
 	if (status != sf::Socket::Status::Done) Logger::error("Send Error: " + pip.toString());
 }

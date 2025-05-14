@@ -12,7 +12,7 @@ class Map {
 
 public:
 	static const Identifier DEFAULT_TILE;
-	Map(const Identifier& mapId, uint16_t rows, uint16_t columns);
+	Map(Identifier mapId, uint16_t rows, uint16_t columns);
 	[[nodiscard]] bool isSolid(uint16_t row, uint16_t column) const;
 	[[nodiscard]] const Identifier& getTexture(uint16_t row, uint16_t column) const;
 	void setTile(uint16_t row, uint16_t column, const Identifier& texture, bool solid);

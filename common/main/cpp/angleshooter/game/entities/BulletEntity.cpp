@@ -16,7 +16,7 @@ void BulletEntity::tick() {
 
 void BulletEntity::onCollision(Entity& other) {
 	if (other.getEntityType() != PlayerEntity::ID) return;
-	if (const auto player = dynamic_cast<PlayerEntity*>(&other); this->source != player->getId() && this->getDistanceTo(other) < 8) {
+	if (const auto player = dynamic_cast<PlayerEntity*>(&other); this->source != player->getId() && this->getDistanceTo(other) < AngleShooterCommon::BULLET_RADIUS) {
 		if (player != nullptr) {
 			if (player->damage(this->source, 1)) {
 				this->hasHit = true;
@@ -33,7 +33,7 @@ bool BulletEntity::isMarkedForRemoval() const {
 	return this->hasHit;
 }
 
-void BulletEntity::writeToPacket(sf::Packet& packet) const {
+void BulletEntity::writeToPacket(OutputBitStream& packet) const {
 	Entity::writeToPacket(packet);
 	packet << this->source;
 	packet << this->colour.r;
@@ -43,7 +43,7 @@ void BulletEntity::writeToPacket(sf::Packet& packet) const {
 	packet << this->getVelocity().y;
 }
 
-void BulletEntity::readFromPacket(sf::Packet& packet) {
+void BulletEntity::readFromPacket(InputBitStream& packet) {
 	Entity::readFromPacket(packet);
 	packet >> this->source;
 	uint8_t r, g, b;

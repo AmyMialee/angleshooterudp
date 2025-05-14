@@ -14,6 +14,6 @@ public:
 	void onCollision(Entity& other) override;
 	void onWallCollision() override;
 
-	void writeToPacket(sf::Packet& packet) const override;
-	void readFromPacket(sf::Packet& packet) override;
+	void writeToPacket(OutputBitStream& packet) const override;
+	void readFromPacket(InputBitStream& packet) override;
 };

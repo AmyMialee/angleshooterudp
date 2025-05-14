@@ -50,13 +50,13 @@ void Entity::tick() {
 
 void Entity::onCollision(Entity& other) {}
 
-void Entity::writeToPacket(sf::Packet& packet) const {
+void Entity::writeToPacket(OutputBitStream& packet) const {
 	packet << this->getId();
 	packet << this->getPosition().x;
 	packet << this->getPosition().y;
 }
 
-void Entity::readFromPacket(sf::Packet& packet) {
+void Entity::readFromPacket(InputBitStream& packet) {
 	float x, y;
 	packet >> x;
 	packet >> y;

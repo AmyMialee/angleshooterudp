@@ -6,7 +6,9 @@ enum class MenuInput : std::uint8_t {
 	UP,
 	DOWN,
 	LEFT,
-	RIGHT
+	RIGHT,
+	RELEASE_LEFT,
+	RELEASE_RIGHT,
 };
 
 inline const char* toString(MenuInput move) {
@@ -17,6 +19,8 @@ inline const char* toString(MenuInput move) {
 		case MenuInput::DOWN: return "DOWN";
 		case MenuInput::LEFT: return "LEFT";
 		case MenuInput::RIGHT: return "RIGHT";
+		case MenuInput::RELEASE_LEFT: return "RELEASE_LEFT";
+		case MenuInput::RELEASE_RIGHT: return "RELEASE_RIGHT";
 	}
 	Logger::errorOnce("Invalid MenuInput used for toString");
 	return "UNKNOWN";

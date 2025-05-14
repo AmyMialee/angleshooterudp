@@ -68,7 +68,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)/x64/SFML-3.0.0/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>sfml-system-d.lib;sfml-window-d.lib;sfml-graphics-d.lib;sfml-audio-d.lib;sfml-network-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ws2_32.lib;sfml-system-d.lib;sfml-window-d.lib;sfml-graphics-d.lib;sfml-audio-d.lib;sfml-network-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -91,7 +91,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)/x64/SFML-3.0.0/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>sfml-system.lib;sfml-window.lib;sfml-graphics.lib;sfml-audio.lib;sfml-network.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ws2_32.lib;sfml-system.lib;sfml-window.lib;sfml-graphics.lib;sfml-audio.lib;sfml-network.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -108,28 +108,28 @@
     <ClCompile Include="main\cpp\angleshooter\game\ClientPlayerEntity.cpp" />
     <ClCompile Include="main\cpp\angleshooter\game\ClientWorld.cpp" />
     <ClCompile Include="main\cpp\angleshooter\managers\AudioManager.cpp" />
+    <ClCompile Include="main\cpp\angleshooter\managers\GameManager.cpp" />
     <ClCompile Include="main\cpp\angleshooter\managers\InputManager.cpp" />
+    <ClCompile Include="main\cpp\angleshooter\managers\MainMenuManager.cpp" />
     <ClCompile Include="main\cpp\angleshooter\managers\OptionsManager.cpp" />
-    <ClCompile Include="main\cpp\angleshooter\managers\StateManager.cpp" />
-    <ClCompile Include="main\cpp\angleshooter\menuold\IpButton.cpp" />
-    <ClCompile Include="main\cpp\angleshooter\menuold\NameButton.cpp" />
-    <ClCompile Include="main\cpp\angleshooter\menuold\Slider.cpp" />
+    <ClCompile Include="main\cpp\angleshooter\menu\DirectConnectButton.cpp" />
+    <ClCompile Include="main\cpp\angleshooter\menu\FloatingWidget.cpp" />
     <ClCompile Include="main\cpp\angleshooter\menu\MenuButton.cpp" />
     <ClCompile Include="main\cpp\angleshooter\menu\MenuManager.cpp" />
     <ClCompile Include="main\cpp\angleshooter\menu\MenuPage.cpp" />
+    <ClCompile Include="main\cpp\angleshooter\menu\MenuSlider.cpp" />
+    <ClCompile Include="main\cpp\angleshooter\menu\MenuWidget.cpp" />
+    <ClCompile Include="main\cpp\angleshooter\menu\PlayerPreviewWidget.cpp" />
+    <ClCompile Include="main\cpp\angleshooter\menu\TextButton.cpp" />
+    <ClCompile Include="main\cpp\angleshooter\menu\NameTypingButton.cpp" />
     <ClCompile Include="main\cpp\angleshooter\PreCompiledClient.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeaderOutputFile>$(IntDir)client.pch</PrecompiledHeaderOutputFile>
     </ClCompile>
     <ClCompile Include="main\cpp\angleshooter\rendering\MapRenderer.cpp" />
-    <ClCompile Include="main\cpp\angleshooter\rendering\shaders\BloomProcessing.cpp" />
     <ClCompile Include="main\cpp\angleshooter\rendering\shaders\PostProcessing.cpp" />
     <ClCompile Include="main\cpp\angleshooter\rendering\WorldRenderer.cpp" />
-    <ClCompile Include="main\cpp\angleshooter\states\GameState.cpp" />
-    <ClCompile Include="main\cpp\angleshooter\states\MenuState.cpp" />
-    <ClCompile Include="main\cpp\angleshooter\states\ServerListState.cpp" />
     <ClCompile Include="main\cpp\angleshooter\util\Keybinding.cpp" />
-    <ClCompile Include="main\cpp\angleshooter\util\State.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main\cpp\angleshooter\AngleShooterClient.h" />
@@ -143,28 +143,27 @@
     <ClInclude Include="main\cpp\angleshooter\game\ClientPlayerEntity.h" />
     <ClInclude Include="main\cpp\angleshooter\game\ClientWorld.h" />
     <ClInclude Include="main\cpp\angleshooter\managers\AudioManager.h" />
+    <ClInclude Include="main\cpp\angleshooter\managers\GameManager.h" />
     <ClInclude Include="main\cpp\angleshooter\managers\InputManager.h" />
+    <ClInclude Include="main\cpp\angleshooter\managers\MainMenuManager.h" />
     <ClInclude Include="main\cpp\angleshooter\managers\OptionsManager.h" />
-    <ClInclude Include="main\cpp\angleshooter\managers\StateManager.h" />
-    <ClInclude Include="main\cpp\angleshooter\menuold\IpButton.h" />
-    <ClInclude Include="main\cpp\angleshooter\menuold\NameButton.h" />
-    <ClInclude Include="main\cpp\angleshooter\menuold\Slider.h" />
+    <ClInclude Include="main\cpp\angleshooter\menu\DirectConnectButton.h" />
+    <ClInclude Include="main\cpp\angleshooter\menu\FloatingWidget.h" />
     <ClInclude Include="main\cpp\angleshooter\menu\MenuButton.h" />
     <ClInclude Include="main\cpp\angleshooter\menu\MenuInput.h" />
     <ClInclude Include="main\cpp\angleshooter\menu\MenuManager.h" />
     <ClInclude Include="main\cpp\angleshooter\menu\MenuPage.h" />
+    <ClInclude Include="main\cpp\angleshooter\menu\MenuSlider.h" />
     <ClInclude Include="main\cpp\angleshooter\menu\MenuWidget.h" />
+    <ClInclude Include="main\cpp\angleshooter\menu\PlayerPreviewWidget.h" />
+    <ClInclude Include="main\cpp\angleshooter\menu\TextButton.h" />
+    <ClInclude Include="main\cpp\angleshooter\menu\NameTypingButton.h" />
     <ClInclude Include="main\cpp\angleshooter\PreCompiledClient.h" />
     <ClInclude Include="main\cpp\angleshooter\rendering\MapRenderer.h" />
-    <ClInclude Include="main\cpp\angleshooter\rendering\shaders\BloomProcessing.h" />
     <ClInclude Include="main\cpp\angleshooter\rendering\shaders\PostProcessing.h" />
     <ClInclude Include="main\cpp\angleshooter\rendering\WorldRenderer.h" />
-    <ClInclude Include="main\cpp\angleshooter\states\GameState.h" />
-    <ClInclude Include="main\cpp\angleshooter\states\MenuState.h" />
-    <ClInclude Include="main\cpp\angleshooter\states\ServerListState.h" />
     <ClInclude Include="main\cpp\angleshooter\util\Keybinding.h" />
     <ClInclude Include="main\cpp\angleshooter\util\ScoreEntry.h" />
-    <ClInclude Include="main\cpp\angleshooter\util\State.h" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="main\resources\assets\angleshooter\fonts\ubuntu-m.ttf" />
@@ -181,18 +180,141 @@
     <Content Include="main\resources\assets\angleshooter\sounds\explode.ogg" />
     <Content Include="main\resources\assets\angleshooter\sounds\hurt.ogg" />
     <Content Include="main\resources\assets\angleshooter\sounds\ui_button_click.ogg" />
-    <Content Include="main\resources\assets\angleshooter\textures\background.png" />
     <Content Include="main\resources\assets\angleshooter\textures\bricks.png" />
     <Content Include="main\resources\assets\angleshooter\textures\bullet1.png" />
     <Content Include="main\resources\assets\angleshooter\textures\bullet2.png" />
     <Content Include="main\resources\assets\angleshooter\textures\bullet_core.png" />
     <Content Include="main\resources\assets\angleshooter\textures\bullet_ring.png" />
-    <Content Include="main\resources\assets\angleshooter\textures\buttonnormal.png" />
-    <Content Include="main\resources\assets\angleshooter\textures\buttonpressed.png" />
-    <Content Include="main\resources\assets\angleshooter\textures\buttonselected.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\characterassets\cosmetics\amy_hat.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\characterassets\cosmetics\colon3.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\characterassets\cosmetics\crown.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\characterassets\cosmetics\eyegrower.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\characterassets\cosmetics\hat_out_of_time.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\characterassets\cosmetics\horns.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\characterassets\cosmetics\isaac_reference.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\characterassets\cosmetics\loser_mask.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\characterassets\hitori.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\characterassets\kita.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\characterassets\nijika.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\characterassets\ryo.png" />
     <Content Include="main\resources\assets\angleshooter\textures\cobble.png" />
-    <Content Include="main\resources\assets\angleshooter\textures\main_menu.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\mapassets\connection_reference.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\mapassets\floor.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\mapassets\wall_tiles\export.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\mapassets\wall_tiles\export0.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\mapassets\wall_tiles\export1.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\mapassets\wall_tiles\export10.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\mapassets\wall_tiles\export11.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\mapassets\wall_tiles\export12.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\mapassets\wall_tiles\export13.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\mapassets\wall_tiles\export14.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\mapassets\wall_tiles\export15.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\mapassets\wall_tiles\export16.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\mapassets\wall_tiles\export17.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\mapassets\wall_tiles\export18.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\mapassets\wall_tiles\export19.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\mapassets\wall_tiles\export2.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\mapassets\wall_tiles\export20.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\mapassets\wall_tiles\export21.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\mapassets\wall_tiles\export23.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\mapassets\wall_tiles\export24.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\mapassets\wall_tiles\export25.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\mapassets\wall_tiles\export26.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\mapassets\wall_tiles\export27.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\mapassets\wall_tiles\export28.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\mapassets\wall_tiles\export29.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\mapassets\wall_tiles\export3.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\mapassets\wall_tiles\export30.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\mapassets\wall_tiles\export31.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\mapassets\wall_tiles\export32.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\mapassets\wall_tiles\export33.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\mapassets\wall_tiles\export34.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\mapassets\wall_tiles\export35.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\mapassets\wall_tiles\export36.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\mapassets\wall_tiles\export37.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\mapassets\wall_tiles\export38.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\mapassets\wall_tiles\export39.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\mapassets\wall_tiles\export4.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\mapassets\wall_tiles\export40.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\mapassets\wall_tiles\export41.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\mapassets\wall_tiles\export42.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\mapassets\wall_tiles\export43.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\mapassets\wall_tiles\export44.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\mapassets\wall_tiles\export45.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\mapassets\wall_tiles\export46.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\mapassets\wall_tiles\export47.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\mapassets\wall_tiles\export5.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\mapassets\wall_tiles\export6.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\mapassets\wall_tiles\export7.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\mapassets\wall_tiles\export8.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\mapassets\wall_tiles\export9.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\mapassets\wall_tiles_sheet.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\menu\button_left.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\menu\button_right.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\menu\font\0.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\menu\font\1.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\menu\font\2.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\menu\font\3.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\menu\font\4.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\menu\font\5.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\menu\font\6.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\menu\font\7.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\menu\font\8.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\menu\font\9.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\menu\font\A.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\menu\font\a_lowercase.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\menu\font\B.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\menu\font\b_lowercase.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\menu\font\C.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\menu\font\c_lowercase.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\menu\font\D.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\menu\font\dot.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\menu\font\d_lowercase.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\menu\font\E.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\menu\font\e_lowercase.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\menu\font\F.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\menu\font\f_lowercase.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\menu\font\G.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\menu\font\g_lowercase.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\menu\font\H.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\menu\font\h_lowercase.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\menu\font\I.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\menu\font\i_lowercase.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\menu\font\j_lowercase.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\menu\font\K.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\menu\font\k_lowercase.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\menu\font\L.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\menu\font\l_lowercase.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\menu\font\M.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\menu\font\m_lowercase.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\menu\font\N.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\menu\font\n_lowercase.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\menu\font\O.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\menu\font\o_lowercase.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\menu\font\P.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\menu\font\p_lowercase.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\menu\font\Q.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\menu\font\q_lowercase.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\menu\font\R.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\menu\font\r_lowercase.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\menu\font\S.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\menu\font\s_lowercase.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\menu\font\T.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\menu\font\t_lowercase.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\menu\font\U.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\menu\font\u_lowercase.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\menu\font\V.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\menu\font\v_lowercase.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\menu\font\W.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\menu\font\w_lowercase.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\menu\font\X.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\menu\font\x_lowercase.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\menu\font\Y.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\menu\font\y_lowercase.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\menu\font\Z.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\menu\font\z_lowercase.png" />
     <Content Include="main\resources\assets\angleshooter\textures\menu\menu_bg.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\menu\menu_button_blank.png" />
     <Content Include="main\resources\assets\angleshooter\textures\menu\menu_button_credits.png" />
     <Content Include="main\resources\assets\angleshooter\textures\menu\menu_button_exit.png" />
     <Content Include="main\resources\assets\angleshooter\textures\menu\menu_button_options.png" />
@@ -206,12 +328,13 @@
     <Content Include="main\resources\assets\angleshooter\textures\menu\menu_options_bar_fill.png" />
     <Content Include="main\resources\assets\angleshooter\textures\menu\menu_options_check_empty.png" />
     <Content Include="main\resources\assets\angleshooter\textures\menu\menu_options_check_full.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\menu\menu_options_underline.png" />
     <Content Include="main\resources\assets\angleshooter\textures\menu\menu_servers.png" />
     <Content Include="main\resources\assets\angleshooter\textures\menu\no_friends.png" />
-    <Content Include="main\resources\assets\angleshooter\textures\player.png" />
-    <Content Include="main\resources\assets\angleshooter\textures\player1.png" />
-    <Content Include="main\resources\assets\angleshooter\textures\player2.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\misc\gun_big.png" />
+    <Content Include="main\resources\assets\angleshooter\textures\misc\gun_small.png" />
     <Content Include="main\resources\assets\angleshooter\textures\sfml_logo.png" />
+    <Content Include="main\resources\data\angleshooter\maps\e1m1.json" />
     <Content Include="main\resources\data\angleshooter\maps\testmap.json" />
     <Content Include="main\resources\data\angleshooter\maps\testmaplarge.json" />
   </ItemGroup>

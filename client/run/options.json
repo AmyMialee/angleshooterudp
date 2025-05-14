@@ -1,19 +1,24 @@
 {
-    "colour_b": 170,
-    "colour_g": 170,
-    "colour_r": 255,
+    "character": 0,
+    "colour_b": 255,
+    "colour_g": 128,
+    "colour_r": 199,
+    "cosmetic": 0,
     "fps": 144,
     "ip": "127.0.0.1",
     "keybindings": {
         "angleshooter:down": 18,
-        "angleshooter:fire": 40,
+        "angleshooter:firedown": 88,
+        "angleshooter:fireleft": 87,
+        "angleshooter:fireright": 86,
+        "angleshooter:fireup": 89,
         "angleshooter:left": 0,
         "angleshooter:right": 3,
         "angleshooter:up": 22
     },
     "masterVolume": 1.0,
     "musicVolume": 0.0,
-    "name": "Player",
+    "name": "Amy",
     "onboarded": true,
     "soundVolume": 0.0
 }

@@ -1,5 +1,21 @@
 #pragma once
 
+#ifdef _WIN32
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
+#include "Windows.h"
+#include "WinSock2.h"
+#include "Ws2tcpip.h"
+#else
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <sys/types.h>
+#include <netdb.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <unistd.h>
+#endif
+
 #include <chrono>
 #include <corecrt_math_defines.h>
 #include <fstream>
@@ -20,6 +36,7 @@
 #include <numbers>
 #include <mutex>
 #include <queue>
+#include <utility>
 #include <regex>
 
 #include <SFML/Audio.hpp>
@@ -48,6 +65,8 @@
 #include "util/Logger.h"
 #include "util/Util.h"
 #include "util/StackMove.h"
+#include "util/PlayerCosmetics.h"
+#include "network/BitStream.h"
 #include "network/PacketIdentifier.h"
 #include "network/PortedIP.h"
 #include "network/SocketHolder.h"

@@ -7,6 +7,7 @@
 
 template<typename T>
 class ResourceHolder {
+protected:
     std::set<int> attemptedResources;
     std::map<int, std::unique_ptr<T>> resourceMap;
     std::string directory;

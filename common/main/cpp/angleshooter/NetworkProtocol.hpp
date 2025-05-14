@@ -7,6 +7,7 @@ public:
 	inline static PacketIdentifier* ACK;
 	inline static PacketIdentifier* CHAT_MESSAGE;
 	inline static PacketIdentifier* SERVER_SCAN;
+	inline static PacketIdentifier* HEARTBEAT;
 
 	inline static PacketIdentifier* S2C_INITIAL_SETUP;
 	inline static PacketIdentifier* S2C_BROADCAST_MESSAGE;
@@ -25,7 +26,7 @@ public:
 	inline static PacketIdentifier* S2C_REMOVE_OBJECT;
 	inline static PacketIdentifier* S2C_UPDATE_SCORE;
 	inline static PacketIdentifier* S2C_UPDATE_NAME;
-	inline static PacketIdentifier* S2C_UPDATE_COLOUR;
+	inline static PacketIdentifier* S2C_UPDATE_COSMETICS;
 
 	inline static PacketIdentifier* C2S_JOIN;
 	inline static PacketIdentifier* C2S_SEND_MESSAGE;
@@ -33,7 +34,7 @@ public:
 	inline static PacketIdentifier* C2S_PLAYER_INPUT;
 	inline static PacketIdentifier* C2S_PLAYER_POSITION_SYNC;
 	inline static PacketIdentifier* C2S_UPDATE_NAME;
-	inline static PacketIdentifier* C2S_UPDATE_COLOUR;
+	inline static PacketIdentifier* C2S_UPDATE_COSMETICS;
 	
 	static void initialize() {
 		PING = PacketIdentifier::of(true, "PING");
@@ -41,6 +42,7 @@ public:
 		ACK = PacketIdentifier::of(false, "ACK");
 		CHAT_MESSAGE = PacketIdentifier::of(true, "CHAT_MESSAGE");
 		SERVER_SCAN = PacketIdentifier::of(false, "SERVER_SCAN");
+		HEARTBEAT = PacketIdentifier::of(true, "HEARTBEAT");
 		
 		S2C_INITIAL_SETUP = PacketIdentifier::of(true, "S2C_INITIAL_SETUP");
 		S2C_BROADCAST_MESSAGE = PacketIdentifier::of(true, "S2C_BROADCAST_MESSAGE");
@@ -59,7 +61,7 @@ public:
 		S2C_REMOVE_OBJECT = PacketIdentifier::of(true, "S2C_REMOVE_OBJECT");
 		S2C_UPDATE_SCORE = PacketIdentifier::of(true, "S2C_UPDATE_SCORE");
 		S2C_UPDATE_NAME = PacketIdentifier::of(true, "S2C_UPDATE_NAME");
-		S2C_UPDATE_COLOUR = PacketIdentifier::of(true, "S2C_UPDATE_COLOUR");
+		S2C_UPDATE_COSMETICS = PacketIdentifier::of(true, "S2C_UPDATE_COSMETICS");
 
 		C2S_JOIN = PacketIdentifier::of(true, "C2S_JOIN");
 		C2S_SEND_MESSAGE = PacketIdentifier::of(true, "C2S_SEND_MESSAGE");
@@ -67,6 +69,6 @@ public:
 		C2S_PLAYER_INPUT = PacketIdentifier::of(true, "C2S_PLAYER_INPUT");
 		C2S_PLAYER_POSITION_SYNC = PacketIdentifier::of(false, "C2S_PLAYER_POSITION_SYNC");
 		C2S_UPDATE_NAME = PacketIdentifier::of(true, "C2S_UPDATE_NAME");
-		C2S_UPDATE_COLOUR = PacketIdentifier::of(true, "C2S_UPDATE_COLOUR");
+		C2S_UPDATE_COSMETICS = PacketIdentifier::of(true, "C2S_UPDATE_COSMETICS");
 	}
 };

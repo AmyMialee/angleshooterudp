@@ -17,15 +17,16 @@ void ServerPlayerEntity::tick() {
 		AngleShooterServer::get().sendToAll(healthPacket);
 	}
 	static Identifier shootSound("bullet.ogg");
-	if (isFiring && this->bulletCharge >= 12) {
-		this->bulletCharge -= 12;
-		auto x = std::cos(this->getRotation().asRadians());
-		auto y = std::sin(this->getRotation().asRadians());
-		x += Util::randomNormalFloat(0.025f);
-		y += Util::randomNormalFloat(0.025f);
+	if (this->firingInput.length() > 0.5f && this->bulletCharge >= AngleShooterCommon::BULLET_DRAIN) {
+		this->bulletCharge -= AngleShooterCommon::BULLET_DRAIN;
+		const auto targetRotation = sf::radians(std::atan2(firingInput.y, firingInput.x));
+		auto x = std::cos(targetRotation.asRadians());
+		auto y = std::sin(targetRotation.asRadians());
+		x += Util::randomNormalFloat(0.05f);
+		y += Util::randomNormalFloat(0.05f);
 		const auto velocity = sf::Vector2f(x, y);
 		const auto bullet = dynamic_cast<ServerWorld*>(this->world)->spawnBullet(this->getId(), this->getPosition(), velocity * 8.f);
-		bullet->setRotation(this->getRotation());
+		bullet->setRotation(targetRotation);
 		this->world->playSound(shootSound, .6f, Util::randomFloat(1.f, 1.6f), this->getPosition());
 		auto packet = NetworkProtocol::S2C_BULLET_CHARGE->getPacket();
 		packet << this->getId() << this->bulletCharge;
@@ -53,14 +54,16 @@ void ServerPlayerEntity::onDeath(uint16_t source) {
 		const auto velocity = sf::Vector2f(x, y);
 		const auto bullet = dynamic_cast<ServerWorld*>(this->world)->spawnBullet(source, this->getPosition(), velocity * 1.28f);
 		bullet->setRotation(sf::radians(std::atan2(velocity.y, velocity.x)));
-		this->world->spawnEntity(bullet);
 	}
 	static Identifier explodeSound("explode.ogg");
 	this->world->playSound(explodeSound, .8f, Util::randomFloat(1.2f, 1.8f), this->getPosition());
 	auto packet = NetworkProtocol::S2C_DEATH->getPacket();
 	packet << this->getId();
 	AngleShooterServer::get().sendToAll(packet);
-	for (const auto& [pair, details] : AngleShooterServer::get().clients | std::views::values) {
+
+
+	for (const auto key : AngleShooterServer::get().clients | std::views::keys) {
+		auto& [pair, details] = AngleShooterServer::get().clients[key];
 		if (details.player->getId() != source) continue;
 		details.player->score++;
 		auto scorePacket = NetworkProtocol::S2C_UPDATE_SCORE->getPacket();

@@ -18,4 +18,9 @@ public:
 	static uint16_t swapBytes16(uint16_t inData);
 	static uint32_t swapBytes32(uint32_t inData);
 	static uint64_t swapBytes64(uint64_t inData);
+	// Colour Methods Taken From https://gist.github.com/marukrap/7c361f2c367eaf40537a8715e3fd952a
+	static std::tuple<float, float, float> rgbToHsl(const sf::Color& color);
+	static std::tuple<float, float, float> rgbToHsv(const sf::Color& color);
+	static sf::Color hslToRgb(float hue, float saturation, float lightness);
+	static sf::Color hsvToRgb(float hue, float saturation, float value);
 };

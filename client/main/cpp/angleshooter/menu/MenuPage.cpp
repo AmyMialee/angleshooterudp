@@ -4,73 +4,82 @@
 MenuPage::MenuPage(const sf::View& view, MenuPage* previousPage) : view(view), previousPage(previousPage) {}
 
 void MenuPage::tick() {
-	for (const auto& widget : this->buttons) widget->tick();
+	for (auto it = this->widgets.begin(); it != this->widgets.end(); ++it) (*it)->tick();
+	for (auto it = this->buttons.begin(); it != this->buttons.end(); ++it) (*it)->tick(*it == this->selectedButton);
+
 }
 
 void MenuPage::draw(sf::RenderTarget& target, sf::RenderStates states) const {
-	for (const auto& widget : this->buttons) {
+	for (auto it = this->widgets.begin(); it != this->widgets.end(); ++it) target.draw(**it, states);
+	for (auto it = this->buttons.begin(); it != this->buttons.end(); ++it) {
 		auto view = target.getView();
-		if (widget == this->selectedButton) {
-			auto newView = sf::View({view.getCenter() + sf::Vector2f{0.f, 50.f}, view.getSize()});
-			target.setView(newView);
-		}
-		target.draw(*widget, states);
+		target.setView(sf::View({view.getCenter() + (*it)->getOffset()}, view.getSize()));
+		target.draw(**it, states);
 		target.setView(view);
 	}
+}
+
+MenuWidget* MenuPage::addWidget(MenuWidget* page) {
+	this->widgets.push_back(page);
+	return page;
 }
 
 MenuButton* MenuPage::addButton(MenuButton* button, MenuButton* neighbour, MenuInput side) {
 	this->buttons.push_back(button);
 	if (button != nullptr) {
 		if (this->selectedButton == nullptr) this->selectedButton = button;
-		if (neighbour != nullptr) switch (side) {
-			case MenuInput::UP:
-				if (button->neighbourUp != nullptr) Logger::error("MenuPage::addWidget: neighbourUp already set");
-				button->neighbourUp = neighbour;
-				if (neighbour->neighbourDown != nullptr) Logger::error("MenuPage::addWidget: neighbourDown already set");
-				neighbour->neighbourDown = button;
-				break;
-			case MenuInput::DOWN:
-				if (button->neighbourDown != nullptr) Logger::error("MenuPage::addWidget: neighbourDown already set");
-				button->neighbourDown = neighbour;
-				if (neighbour->neighbourUp != nullptr) Logger::error("MenuPage::addWidget: neighbourUp already set");
-				neighbour->neighbourUp = button;
-				break;
-			case MenuInput::LEFT:
-				if (button->neighbourLeft != nullptr) Logger::error("MenuPage::addWidget: neighbourLeft already set");
-				button->neighbourLeft = neighbour;
-				if (neighbour->neighbourRight != nullptr) Logger::error("MenuPage::addWidget: neighbourRight already set");
-				neighbour->neighbourRight = button;
-				break;
-			case MenuInput::RIGHT:
-				if (button->neighbourRight != nullptr) Logger::error("MenuPage::addWidget: neighbourRight already set");
-				button->neighbourRight = neighbour;
-				if (neighbour->neighbourLeft != nullptr) Logger::error("MenuPage::addWidget: neighbourLeft already set");
-				neighbour->neighbourLeft = button;
-				break;
-		}
+		if (neighbour != nullptr) addLink(button, neighbour, side);
 	}
 	return button;
 }
 
+void MenuPage::addLink(MenuButton* button1, MenuButton* button2, MenuInput side) {
+	switch (side) {
+		case MenuInput::UP:
+			if (button1->neighbourUp == nullptr) button1->neighbourUp = button2;
+			if (button2->neighbourDown == nullptr) button2->neighbourDown = button1;
+			break;
+		case MenuInput::DOWN:
+			if (button1->neighbourDown == nullptr) button1->neighbourDown = button2;
+			if (button2->neighbourUp == nullptr) button2->neighbourUp = button1;
+			break;
+		case MenuInput::LEFT:
+			if (button1->neighbourLeft == nullptr) button1->neighbourLeft = button2;
+			if (button2->neighbourRight == nullptr) button2->neighbourRight = button1;
+			break;
+		case MenuInput::RIGHT:
+			if (button1->neighbourRight == nullptr) button1->neighbourRight = button2;
+			if (button2->neighbourLeft == nullptr) button2->neighbourLeft = button1;
+			break;
+	}
+}
+
+void MenuPage::clearButtons() {
+	this->buttons.clear();
+	this->selectedButton = nullptr;
+}
+
 void MenuPage::input(MenuInput input) {
 	if (this->selectedButton == nullptr) return;
+	if (const auto slider = dynamic_cast<MenuSlider*>(this->selectedButton); slider != nullptr && slider->pressed) {
+		slider->input(input);
+		return;
+	}
 	switch (input) {
 		case MenuInput::PRESS:
 			if (this->selectedButton->onClick) this->selectedButton->onClick();
-			break;
+			return;
 		case MenuInput::UP:
 			if (this->selectedButton->neighbourUp != nullptr) this->selectedButton = this->selectedButton->neighbourUp;
-			break;
+			return;
 		case MenuInput::DOWN:
 			if (this->selectedButton->neighbourDown != nullptr) this->selectedButton = this->selectedButton->neighbourDown;
-			break;
+			return;
 		case MenuInput::LEFT:
 			if (this->selectedButton->neighbourLeft != nullptr) this->selectedButton = this->selectedButton->neighbourLeft;
-			break;
+			return;
 		case MenuInput::RIGHT:
 			if (this->selectedButton->neighbourRight != nullptr) this->selectedButton = this->selectedButton->neighbourRight;
-			break;
 	}
 }
 

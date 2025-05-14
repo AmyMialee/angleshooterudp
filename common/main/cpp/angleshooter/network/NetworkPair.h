@@ -1,7 +1,7 @@
 #pragma once
 
 class NetworkPair {
-	std::unordered_map<uint32_t, std::pair<sf::Packet, std::chrono::steady_clock::time_point>> sentPackets;
+	std::unordered_map<uint32_t, std::pair<OutputBitStream, std::chrono::steady_clock::time_point>> sentPackets;
 	SocketHolder& socketHolder;
 	PortedIP pip;
 	sf::Clock roundTripTimer;
@@ -9,17 +9,19 @@ class NetworkPair {
 	uint32_t nextSequence = 0;
 	uint32_t acknowledgedSequence = 0;
 	const std::chrono::milliseconds resendInterval{500};
-	sf::Clock lastResponse;
 	uint32_t playerId = -1;
 	bool disconnecting = false;
 
-	void sendPacketInternal(sf::Packet& packet);
+	void sendPacketInternal(const OutputBitStream& packet);
 
 public:
+	sf::Clock lastResponse;
+	sf::Clock lastSendTimer;
+
 	explicit NetworkPair(SocketHolder& socketHolder, PortedIP pip);
 
 	void update();
-	void send(sf::Packet& packet);
+	void send(const OutputBitStream& packet);
 	void acceptAcknowledgment(uint32_t sequence);
 
 	[[nodiscard]] unsigned int getPlayerId() const;

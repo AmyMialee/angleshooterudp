@@ -9,6 +9,7 @@ public:
 	virtual ~PostProcessing() = default;
 	PostProcessing(const PostProcessing&) = delete;
 	PostProcessing& operator=(const PostProcessing&) = delete;
-	virtual void apply(sf::RenderTexture& input, sf::RenderTarget& output) = 0;
+	virtual void apply(sf::RenderTarget& input, sf::RenderTarget& output) = 0;
 	[[nodiscard]] static bool areShadersSupported();
+	static sf::RenderTexture createRenderTextureFromTarget(const sf::RenderTarget& target);
 };

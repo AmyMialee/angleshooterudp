@@ -9,10 +9,11 @@ void World::init() {
 
 void World::tick() {
 	this->age++;
-	std::vector<std::shared_ptr<Entity>> objectList;
-	objectList.reserve(this->gameObjects.size());
-	for (const auto& value : this->gameObjects | std::views::values) objectList.push_back(value);
-	for (auto main = objectList.begin(); main != objectList.end(); ++main) main->get()->tick();
+
+	for (auto main = this->gameObjects.begin(); main != this->gameObjects.end(); ++main) {
+		if (!main->second) continue;
+		main->second->tick();
+	}
 }
 
 std::shared_ptr<Entity> World::spawnEntity(std::shared_ptr<Entity> entity) {
@@ -23,7 +24,7 @@ std::shared_ptr<Entity> World::spawnEntity(std::shared_ptr<Entity> entity) {
 std::vector<std::shared_ptr<Entity>> World::getEntities() {
 	std::vector<std::shared_ptr<Entity>> values;
 	values.reserve(this->gameObjects.size());
-	for (const auto& value : this->gameObjects | std::views::values) values.push_back(value);
+	for (auto main = this->gameObjects.begin(); main != this->gameObjects.end(); ++main) values.push_back(main->second);
 	return values;
 }
 

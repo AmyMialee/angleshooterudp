@@ -4372,7 +4372,7 @@ class exception : public std::exception
 {
   public:
     /// returns the explanatory string
-    const char* what() const noexcept override
+    [[nodiscard]] const char* what() const noexcept override
     {
         return m.what();
     }
@@ -5943,14 +5943,14 @@ class byte_container_with_subtype : public BinaryType
 
     /// @brief return the binary subtype
     /// @sa https://json.nlohmann.me/api/byte_container_with_subtype/subtype/
-    constexpr subtype_type subtype() const noexcept
+    [[nodiscard]] constexpr subtype_type subtype() const noexcept
     {
         return m_has_subtype ? m_subtype : static_cast<subtype_type>(-1);
     }
 
     /// @brief return whether the value has a subtype
     /// @sa https://json.nlohmann.me/api/byte_container_with_subtype/has_subtype/
-    constexpr bool has_subtype() const noexcept
+    [[nodiscard]] constexpr bool has_subtype() const noexcept
     {
         return m_has_subtype;
     }
@@ -6258,7 +6258,7 @@ class input_stream_adapter
     // end up as the same value, e.g. 0xFFFFFFFF.
     std::char_traits<char>::int_type get_character()
     {
-        auto res = sb->sbumpc();
+        const auto res = sb->sbumpc();
         // set eof manually, as we don't use the istream interface.
         if (JSON_HEDLEY_UNLIKELY(res == std::char_traits<char>::eof()))
         {
@@ -6305,7 +6305,7 @@ class iterator_input_adapter
     template<typename BaseInputAdapter, size_t T>
     friend struct wide_string_input_helper;
 
-    bool empty() const
+    [[nodiscard]] bool empty() const
     {
         return current == end;
     }
@@ -6587,7 +6587,7 @@ template < typename CharT,
                int >::type = 0 >
 contiguous_bytes_input_adapter input_adapter(CharT b)
 {
-    auto length = std::strlen(reinterpret_cast<const char*>(b));
+    const auto length = std::strlen(reinterpret_cast<const char*>(b));
     const auto* ptr = reinterpret_cast<const char*>(b);
     return input_adapter(ptr, ptr + length);
 }
@@ -6930,7 +6930,7 @@ class json_sax_dom_parser
         return false;
     }
 
-    constexpr bool is_errored() const
+    [[nodiscard]] constexpr bool is_errored() const
     {
         return errored;
     }
@@ -7180,7 +7180,7 @@ class json_sax_dom_callback_parser
         return false;
     }
 
-    constexpr bool is_errored() const
+    [[nodiscard]] constexpr bool is_errored() const
     {
         return errored;
     }
@@ -8781,19 +8781,19 @@ scan_number_done:
     /////////////////////
 
     /// return integer value
-    constexpr number_integer_t get_number_integer() const noexcept
+    [[nodiscard]] constexpr number_integer_t get_number_integer() const noexcept
     {
         return value_integer;
     }
 
     /// return unsigned integer value
-    constexpr number_unsigned_t get_number_unsigned() const noexcept
+    [[nodiscard]] constexpr number_unsigned_t get_number_unsigned() const noexcept
     {
         return value_unsigned;
     }
 
     /// return floating-point value
-    constexpr number_float_t get_number_float() const noexcept
+    [[nodiscard]] constexpr number_float_t get_number_float() const noexcept
     {
         return value_float;
     }
@@ -8809,7 +8809,7 @@ scan_number_done:
     /////////////////////
 
     /// return position of last read token
-    constexpr position_t get_position() const noexcept
+    [[nodiscard]] constexpr position_t get_position() const noexcept
     {
         return position;
     }
@@ -8817,7 +8817,7 @@ scan_number_done:
     /// return the last read token (for errors only).  Will never contain EOF
     /// (an arbitrary value that is not a valid char value, often -1), because
     /// 255 may legitimately occur.  May contain NUL, which should be escaped.
-    std::string get_token_string() const
+    [[nodiscard]] std::string get_token_string() const
     {
         // escape control characters
         std::string result;
@@ -11311,7 +11311,7 @@ class binary_reader
                 }
                 if (!dim.empty())  // if ndarray, convert to an object in JData annotated array format
                 {
-                    for (auto i : dim) // test if any dimension in an ndarray is 0, if so, return a 1D empty container
+                    for (const auto i : dim) // test if any dimension in an ndarray is 0, if so, return a 1D empty container
                     {
                         if ( i == 0 )
                         {
@@ -12042,7 +12042,7 @@ class binary_reader
     /*!
     @return a string representation of the last read byte
     */
-    std::string get_token_string() const
+    [[nodiscard]] std::string get_token_string() const
     {
         std::array<char, 3> cr{{}};
         static_cast<void>((std::snprintf)(cr.data(), cr.size(), "%.2hhX", static_cast<unsigned char>(current))); // NOLINT(cppcoreguidelines-pro-type-vararg,hicpp-vararg)
@@ -12055,9 +12055,9 @@ class binary_reader
     @param[in] context  further context information
     @return a message string to use in the parse_error exceptions
     */
-    std::string exception_message(const input_format_t format,
-                                  const std::string& detail,
-                                  const std::string& context) const
+    [[nodiscard]] std::string exception_message(const input_format_t format,
+                                                const std::string& detail,
+                                                const std::string& context) const
     {
         std::string error_msg = "syntax error while parsing ";
 
@@ -12741,7 +12741,7 @@ class primitive_iterator_t
     difference_type m_it = (std::numeric_limits<std::ptrdiff_t>::min)();
 
   public:
-    constexpr difference_type get_value() const noexcept
+    [[nodiscard]] constexpr difference_type get_value() const noexcept
     {
         return m_it;
     }
@@ -12759,13 +12759,13 @@ class primitive_iterator_t
     }
 
     /// return whether the iterator can be dereferenced
-    constexpr bool is_begin() const noexcept
+    [[nodiscard]] constexpr bool is_begin() const noexcept
     {
         return m_it == begin_value;
     }
 
     /// return whether the iterator is at end
-    constexpr bool is_end() const noexcept
+    [[nodiscard]] constexpr bool is_end() const noexcept
     {
         return m_it == end_value;
     }
@@ -12800,7 +12800,7 @@ class primitive_iterator_t
 
     primitive_iterator_t operator++(int)& noexcept // NOLINT(cert-dcl21-cpp)
     {
-        auto result = *this;
+        const auto result = *this;
         ++m_it;
         return result;
     }
@@ -12813,7 +12813,7 @@ class primitive_iterator_t
 
     primitive_iterator_t operator--(int)& noexcept // NOLINT(cert-dcl21-cpp)
     {
-        auto result = *this;
+        const auto result = *this;
         --m_it;
         return result;
     }
@@ -13587,7 +13587,7 @@ class iter_impl // NOLINT(cppcoreguidelines-special-member-functions,hicpp-speci
     @brief return the key of an object iterator
     @pre The iterator is initialized; i.e. `m_object != nullptr`.
     */
-    const typename object_t::key_type& key() const
+    [[nodiscard]] const typename object_t::key_type& key() const
     {
         JSON_ASSERT(m_object != nullptr);
 
@@ -13603,7 +13603,7 @@ class iter_impl // NOLINT(cppcoreguidelines-special-member-functions,hicpp-speci
     @brief return the value of an iterator
     @pre The iterator is initialized; i.e. `m_object != nullptr`.
     */
-    reference value() const
+    [[nodiscard]] reference value() const
     {
         return operator*();
     }
@@ -13870,7 +13870,7 @@ class json_pointer
 
     /// @brief return a string representation of the JSON pointer
     /// @sa https://json.nlohmann.me/api/json_pointer/to_string/
-    string_t to_string() const
+    [[nodiscard]] string_t to_string() const
     {
         return std::accumulate(reference_tokens.begin(), reference_tokens.end(),
                                string_t{},
@@ -13947,7 +13947,7 @@ class json_pointer
 
     /// @brief returns the parent of this JSON pointer
     /// @sa https://json.nlohmann.me/api/json_pointer/parent_pointer/
-    json_pointer parent_pointer() const
+    [[nodiscard]] json_pointer parent_pointer() const
     {
         if (empty())
         {
@@ -13973,7 +13973,7 @@ class json_pointer
 
     /// @brief return last reference token
     /// @sa https://json.nlohmann.me/api/json_pointer/back/
-    const string_t& back() const
+    [[nodiscard]] const string_t& back() const
     {
         if (JSON_HEDLEY_UNLIKELY(empty()))
         {
@@ -13999,7 +13999,7 @@ class json_pointer
 
     /// @brief return whether pointer points to the root document
     /// @sa https://json.nlohmann.me/api/json_pointer/empty/
-    bool empty() const noexcept
+    [[nodiscard]] bool empty() const noexcept
     {
         return reference_tokens.empty();
     }
@@ -14054,7 +14054,7 @@ class json_pointer
     }
 
   JSON_PRIVATE_UNLESS_TESTED:
-    json_pointer top() const
+    [[nodiscard]] json_pointer top() const
     {
         if (JSON_HEDLEY_UNLIKELY(empty()))
         {
@@ -14637,7 +14637,7 @@ class json_pointer
     }
 
     // can't use conversion operator because of ambiguity
-    json_pointer<string_t> convert() const&
+    [[nodiscard]] json_pointer<string_t> convert() const&
     {
         json_pointer<string_t> result;
         result.reference_tokens = reference_tokens;
@@ -20571,10 +20571,10 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
 
     /// @brief serialization
     /// @sa https://json.nlohmann.me/api/basic_json/dump/
-    string_t dump(const int indent = -1,
-                  const char indent_char = ' ',
-                  const bool ensure_ascii = false,
-                  const error_handler_t error_handler = error_handler_t::strict) const
+    [[nodiscard]] string_t dump(const int indent = -1,
+                                const char indent_char = ' ',
+                                const bool ensure_ascii = false,
+                                const error_handler_t error_handler = error_handler_t::strict) const
     {
         string_t result;
         serializer s(detail::output_adapter<char, string_t>(result), indent_char, error_handler);
@@ -20593,98 +20593,98 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
 
     /// @brief return the type of the JSON value (explicit)
     /// @sa https://json.nlohmann.me/api/basic_json/type/
-    constexpr value_t type() const noexcept
+    [[nodiscard]] constexpr value_t type() const noexcept
     {
         return m_data.m_type;
     }
 
     /// @brief return whether type is primitive
     /// @sa https://json.nlohmann.me/api/basic_json/is_primitive/
-    constexpr bool is_primitive() const noexcept
+    [[nodiscard]] constexpr bool is_primitive() const noexcept
     {
         return is_null() || is_string() || is_boolean() || is_number() || is_binary();
     }
 
     /// @brief return whether type is structured
     /// @sa https://json.nlohmann.me/api/basic_json/is_structured/
-    constexpr bool is_structured() const noexcept
+    [[nodiscard]] constexpr bool is_structured() const noexcept
     {
         return is_array() || is_object();
     }
 
     /// @brief return whether value is null
     /// @sa https://json.nlohmann.me/api/basic_json/is_null/
-    constexpr bool is_null() const noexcept
+    [[nodiscard]] constexpr bool is_null() const noexcept
     {
         return m_data.m_type == value_t::null;
     }
 
     /// @brief return whether value is a boolean
     /// @sa https://json.nlohmann.me/api/basic_json/is_boolean/
-    constexpr bool is_boolean() const noexcept
+    [[nodiscard]] constexpr bool is_boolean() const noexcept
     {
         return m_data.m_type == value_t::boolean;
     }
 
     /// @brief return whether value is a number
     /// @sa https://json.nlohmann.me/api/basic_json/is_number/
-    constexpr bool is_number() const noexcept
+    [[nodiscard]] constexpr bool is_number() const noexcept
     {
         return is_number_integer() || is_number_float();
     }
 
     /// @brief return whether value is an integer number
     /// @sa https://json.nlohmann.me/api/basic_json/is_number_integer/
-    constexpr bool is_number_integer() const noexcept
+    [[nodiscard]] constexpr bool is_number_integer() const noexcept
     {
         return m_data.m_type == value_t::number_integer || m_data.m_type == value_t::number_unsigned;
     }
 
     /// @brief return whether value is an unsigned integer number
     /// @sa https://json.nlohmann.me/api/basic_json/is_number_unsigned/
-    constexpr bool is_number_unsigned() const noexcept
+    [[nodiscard]] constexpr bool is_number_unsigned() const noexcept
     {
         return m_data.m_type == value_t::number_unsigned;
     }
 
     /// @brief return whether value is a floating-point number
     /// @sa https://json.nlohmann.me/api/basic_json/is_number_float/
-    constexpr bool is_number_float() const noexcept
+    [[nodiscard]] constexpr bool is_number_float() const noexcept
     {
         return m_data.m_type == value_t::number_float;
     }
 
     /// @brief return whether value is an object
     /// @sa https://json.nlohmann.me/api/basic_json/is_object/
-    constexpr bool is_object() const noexcept
+    [[nodiscard]] constexpr bool is_object() const noexcept
     {
         return m_data.m_type == value_t::object;
     }
 
     /// @brief return whether value is an array
     /// @sa https://json.nlohmann.me/api/basic_json/is_array/
-    constexpr bool is_array() const noexcept
+    [[nodiscard]] constexpr bool is_array() const noexcept
     {
         return m_data.m_type == value_t::array;
     }
 
     /// @brief return whether value is a string
     /// @sa https://json.nlohmann.me/api/basic_json/is_string/
-    constexpr bool is_string() const noexcept
+    [[nodiscard]] constexpr bool is_string() const noexcept
     {
         return m_data.m_type == value_t::string;
     }
 
     /// @brief return whether value is a binary array
     /// @sa https://json.nlohmann.me/api/basic_json/is_binary/
-    constexpr bool is_binary() const noexcept
+    [[nodiscard]] constexpr bool is_binary() const noexcept
     {
         return m_data.m_type == value_t::binary;
     }
 
     /// @brief return whether value is discarded
     /// @sa https://json.nlohmann.me/api/basic_json/is_discarded/
-    constexpr bool is_discarded() const noexcept
+    [[nodiscard]] constexpr bool is_discarded() const noexcept
     {
         return m_data.m_type == value_t::discarded;
     }
@@ -20905,7 +20905,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
                    detail::is_default_constructible<ValueType>::value&&
                    detail::has_from_json<basic_json_t, ValueType>::value,
                    int > = 0 >
-    ValueType get_impl(detail::priority_tag<0> /*unused*/) const noexcept(noexcept(
+    [[nodiscard]] ValueType get_impl(detail::priority_tag<0> /*unused*/) const noexcept(noexcept(
                 JSONSerializer<ValueType>::from_json(std::declval<const basic_json_t&>(), std::declval<ValueType&>())))
     {
         auto ret = ValueType();
@@ -20995,7 +20995,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
              detail::enable_if_t<
                  std::is_same<BasicJsonType, basic_json_t>::value,
                  int> = 0>
-    basic_json get_impl(detail::priority_tag<3> /*unused*/) const
+    [[nodiscard]] basic_json get_impl(detail::priority_tag<3> /*unused*/) const
     {
         return *this;
     }
@@ -21041,7 +21041,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
     */
     template < typename ValueTypeCV, typename ValueType = detail::uncvref_t<ValueTypeCV>>
 #if defined(JSON_HAS_CPP_14)
-    constexpr
+    [[nodiscard]] constexpr
 #endif
     auto get() const noexcept(
     noexcept(std::declval<const basic_json_t&>().template get_impl<ValueType>(detail::priority_tag<4> {})))
@@ -21215,7 +21215,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
 
     /// @brief get a binary value
     /// @sa https://json.nlohmann.me/api/basic_json/get_binary/
-    const binary_t& get_binary() const
+    [[nodiscard]] const binary_t& get_binary() const
     {
         if (!is_binary())
         {
@@ -21252,15 +21252,12 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
                 JSON_THROW(out_of_range::create(401, detail::concat("array index ", std::to_string(idx), " is out of range"), this));
             }
         }
-        else
-        {
-            JSON_THROW(type_error::create(304, detail::concat("cannot use at() with ", type_name()), this));
-        }
+        JSON_THROW(type_error::create(304, detail::concat("cannot use at() with ", type_name()), this));
     }
 
     /// @brief access specified array element with bounds checking
     /// @sa https://json.nlohmann.me/api/basic_json/at/
-    const_reference at(size_type idx) const
+    [[nodiscard]] const_reference at(size_type idx) const
     {
         // at only works for arrays
         if (JSON_HEDLEY_LIKELY(is_array()))
@@ -21275,10 +21272,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
                 JSON_THROW(out_of_range::create(401, detail::concat("array index ", std::to_string(idx), " is out of range"), this));
             }
         }
-        else
-        {
-            JSON_THROW(type_error::create(304, detail::concat("cannot use at() with ", type_name()), this));
-        }
+        JSON_THROW(type_error::create(304, detail::concat("cannot use at() with ", type_name()), this));
     }
 
     /// @brief access specified object element with bounds checking
@@ -21321,7 +21315,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
 
     /// @brief access specified object element with bounds checking
     /// @sa https://json.nlohmann.me/api/basic_json/at/
-    const_reference at(const typename object_t::key_type& key) const
+    [[nodiscard]] const_reference at(const typename object_t::key_type& key) const
     {
         // at only works for objects
         if (JSON_HEDLEY_UNLIKELY(!is_object()))
@@ -21700,7 +21694,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
 
     /// @brief access the first element
     /// @sa https://json.nlohmann.me/api/basic_json/front/
-    const_reference front() const
+    [[nodiscard]] const_reference front() const
     {
         return *cbegin();
     }
@@ -21716,7 +21710,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
 
     /// @brief access the last element
     /// @sa https://json.nlohmann.me/api/basic_json/back/
-    const_reference back() const
+    [[nodiscard]] const_reference back() const
     {
         auto tmp = cend();
         --tmp;
@@ -21964,7 +21958,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
 
     /// @brief find an element in a JSON object
     /// @sa https://json.nlohmann.me/api/basic_json/find/
-    const_iterator find(const typename object_t::key_type& key) const
+    [[nodiscard]] const_iterator find(const typename object_t::key_type& key) const
     {
         auto result = cend();
 
@@ -22010,7 +22004,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
 
     /// @brief returns the number of occurrences of a key in a JSON object
     /// @sa https://json.nlohmann.me/api/basic_json/count/
-    size_type count(const typename object_t::key_type& key) const
+    [[nodiscard]] size_type count(const typename object_t::key_type& key) const
     {
         // return 0 for all nonobject types
         return is_object() ? m_data.m_value.object->count(key) : 0;
@@ -22028,7 +22022,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
 
     /// @brief check the existence of an element in a JSON object
     /// @sa https://json.nlohmann.me/api/basic_json/contains/
-    bool contains(const typename object_t::key_type& key) const
+    [[nodiscard]] bool contains(const typename object_t::key_type& key) const
     {
         return is_object() && m_data.m_value.object->find(key) != m_data.m_value.object->end();
     }
@@ -22044,7 +22038,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
 
     /// @brief check the existence of an element in a JSON object given a JSON pointer
     /// @sa https://json.nlohmann.me/api/basic_json/contains/
-    bool contains(const json_pointer& ptr) const
+    [[nodiscard]] bool contains(const json_pointer& ptr) const
     {
         return ptr.contains(this);
     }
@@ -22076,14 +22070,14 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
 
     /// @brief returns an iterator to the first element
     /// @sa https://json.nlohmann.me/api/basic_json/begin/
-    const_iterator begin() const noexcept
+    [[nodiscard]] const_iterator begin() const noexcept
     {
         return cbegin();
     }
 
     /// @brief returns a const iterator to the first element
     /// @sa https://json.nlohmann.me/api/basic_json/cbegin/
-    const_iterator cbegin() const noexcept
+    [[nodiscard]] const_iterator cbegin() const noexcept
     {
         const_iterator result(this);
         result.set_begin();
@@ -22101,14 +22095,14 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
 
     /// @brief returns an iterator to one past the last element
     /// @sa https://json.nlohmann.me/api/basic_json/end/
-    const_iterator end() const noexcept
+    [[nodiscard]] const_iterator end() const noexcept
     {
         return cend();
     }
 
     /// @brief returns an iterator to one past the last element
     /// @sa https://json.nlohmann.me/api/basic_json/cend/
-    const_iterator cend() const noexcept
+    [[nodiscard]] const_iterator cend() const noexcept
     {
         const_iterator result(this);
         result.set_end();
@@ -22124,7 +22118,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
 
     /// @brief returns an iterator to the reverse-beginning
     /// @sa https://json.nlohmann.me/api/basic_json/rbegin/
-    const_reverse_iterator rbegin() const noexcept
+    [[nodiscard]] const_reverse_iterator rbegin() const noexcept
     {
         return crbegin();
     }
@@ -22138,21 +22132,21 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
 
     /// @brief returns an iterator to the reverse-end
     /// @sa https://json.nlohmann.me/api/basic_json/rend/
-    const_reverse_iterator rend() const noexcept
+    [[nodiscard]] const_reverse_iterator rend() const noexcept
     {
         return crend();
     }
 
     /// @brief returns a const reverse iterator to the last element
     /// @sa https://json.nlohmann.me/api/basic_json/crbegin/
-    const_reverse_iterator crbegin() const noexcept
+    [[nodiscard]] const_reverse_iterator crbegin() const noexcept
     {
         return const_reverse_iterator(cend());
     }
 
     /// @brief returns a const reverse iterator to one before the first
     /// @sa https://json.nlohmann.me/api/basic_json/crend/
-    const_reverse_iterator crend() const noexcept
+    [[nodiscard]] const_reverse_iterator crend() const noexcept
     {
         return const_reverse_iterator(cbegin());
     }
@@ -22189,7 +22183,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
 
     /// @brief helper to access iterator member functions in range-based for
     /// @sa https://json.nlohmann.me/api/basic_json/items/
-    iteration_proxy<const_iterator> items() const noexcept
+    [[nodiscard]] iteration_proxy<const_iterator> items() const noexcept
     {
         return iteration_proxy<const_iterator>(*this);
     }
@@ -22205,7 +22199,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
 
     /// @brief checks whether the container is empty.
     /// @sa https://json.nlohmann.me/api/basic_json/empty/
-    bool empty() const noexcept
+    [[nodiscard]] bool empty() const noexcept
     {
         switch (m_data.m_type)
         {
@@ -22244,7 +22238,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
 
     /// @brief returns the number of elements
     /// @sa https://json.nlohmann.me/api/basic_json/size/
-    size_type size() const noexcept
+    [[nodiscard]] size_type size() const noexcept
     {
         switch (m_data.m_type)
         {
@@ -22283,7 +22277,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
 
     /// @brief returns the maximum possible number of elements
     /// @sa https://json.nlohmann.me/api/basic_json/max_size/
-    size_type max_size() const noexcept
+    [[nodiscard]] size_type max_size() const noexcept
     {
         switch (m_data.m_type)
         {
@@ -22972,7 +22966,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
     }
 
   private:
-    bool compares_unordered(const_reference rhs, bool inverse = false) const noexcept
+    [[nodiscard]] bool compares_unordered(const_reference rhs, bool inverse = false) const noexcept
     {
         return compares_unordered(*this, rhs, inverse);
     }
@@ -23959,7 +23953,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
 
     /// @brief access specified element via JSON Pointer
     /// @sa https://json.nlohmann.me/api/basic_json/at/
-    const_reference at(const json_pointer& ptr) const
+    [[nodiscard]] const_reference at(const json_pointer& ptr) const
     {
         return ptr.get_checked(this);
     }
@@ -23973,7 +23967,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
 
     /// @brief return flattened JSON value
     /// @sa https://json.nlohmann.me/api/basic_json/flatten/
-    basic_json flatten() const
+    [[nodiscard]] basic_json flatten() const
     {
         basic_json result(value_t::object);
         json_pointer::flatten("", *this, result);
@@ -23982,7 +23976,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
 
     /// @brief unflatten a previously flattened JSON value
     /// @sa https://json.nlohmann.me/api/basic_json/unflatten/
-    basic_json unflatten() const
+    [[nodiscard]] basic_json unflatten() const
     {
         return json_pointer::unflatten(*this);
     }
@@ -24269,7 +24263,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
 
     /// @brief applies a JSON patch to a copy of the current object
     /// @sa https://json.nlohmann.me/api/basic_json/patch/
-    basic_json patch(const basic_json& json_patch) const
+    [[nodiscard]] basic_json patch(const basic_json& json_patch) const
     {
         basic_json result = *this;
         result.patch_inplace(json_patch);

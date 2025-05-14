@@ -4,16 +4,19 @@
 #include "../game/ClientWorld.h"
 
 WorldRenderer::WorldRenderer() {
-	registerRenderer<PlayerEntity>(PlayerEntity::ID, [this](const std::shared_ptr<PlayerEntity>& player) {
+	registerRenderer<PlayerEntity>(PlayerEntity::ID, [this](sf::RenderTarget& target, const std::shared_ptr<PlayerEntity>& player) {
 		if (player->deathTime > 0) return;
 		const auto deltaTime = static_cast<float>(AngleShooterClient::get().tickDelta);
-		static sf::Sprite playerSprite(TextureHolder::getInstance().get(Identifier("player.png")));
+		static sf::Sprite playerSprite(TextureHolder::getInstance().getDefault(), sf::IntRect({0, 0}, {64, 64}));
+		static sf::Sprite weaponSprite(TextureHolder::getInstance().get(Identifier("misc/gun_small.png")), sf::IntRect({0, 0}, {64, 64}));
 		static sf::Text text(FontHolder::getInstance().getDefault());
 		static std::once_flag flag;
 		std::call_once(flag, [&] {
 			Util::centre(playerSprite);
-			const auto textureSize1 = playerSprite.getTexture().getSize();
-			playerSprite.setScale(player->getScale().componentWiseDiv({static_cast<float>(textureSize1.x), static_cast<float>(textureSize1.y)}));
+			const auto bounds = weaponSprite.getLocalBounds();
+			weaponSprite.setOrigin({bounds.size.x * 1.25f, std::floor(bounds.position.y + bounds.size.y / 2)});
+			weaponSprite.setScale({0.25f, 0.25f});
+			playerSprite.setScale({0.25f, 0.25f});
 			text.setCharacterSize(48);
 			text.setScale({0.125f, 0.125f});
 			text.setFillColor(sf::Color::White);
@@ -23,13 +26,27 @@ WorldRenderer::WorldRenderer() {
 		const auto pos = player->getPosition() + player->getVelocity() * deltaTime;
 		playerSprite.setPosition(pos);
 		playerSprite.setRotation(player->getRotation());
-		playerSprite.setColor(player->colour);
-		AngleShooterClient::get().renderTexture.draw(playerSprite);
+		playerSprite.setColor(player->cosmetics.colour);
+		playerSprite.setTexture(TextureHolder::getInstance().get(*player->cosmetics.character));
+		target.draw(playerSprite);
+		playerSprite.setTexture(TextureHolder::getInstance().get(*player->cosmetics.cosmetic));
+		target.draw(playerSprite);
 		if (player->immunityTime > 0) {
 			auto circle = sf::CircleShape(player->getScale().x / 2.f + 2);
 			circle.setPosition(pos - player->getScale() / 2.f - sf::Vector2f{2.f, 2.f});
 			circle.setFillColor(sf::Color(0, 255, 255, 120));
-			AngleShooterClient::get().renderTexture.draw(circle);
+			target.draw(circle);
+		}
+		if (const auto clientPlayer = dynamic_cast<ClientPlayerEntity*>(player.get()); clientPlayer != nullptr) {
+			weaponSprite.setPosition(pos);
+			if (std::abs(clientPlayer->weaponRotation.asDegrees()) > 90) {
+				weaponSprite.setScale({-0.25f, -0.25f});
+			} else {
+				weaponSprite.setScale({-0.25f, 0.25f});
+			}
+			weaponSprite.setRotation(clientPlayer->weaponRotation);
+			weaponSprite.setColor(player->cosmetics.colour);
+			target.draw(weaponSprite);
 		}
 		const auto bound = player->getBoundingBox();
 		sf::RectangleShape shape;
@@ -38,26 +55,26 @@ WorldRenderer::WorldRenderer() {
 		shape.setPosition(bound.position + player->getVelocity() * deltaTime + sf::Vector2f{0, bound.size.y + 2});
 		shape.setSize({bound.size.x, 2});
 		shape.setFillColor(sf::Color::Black);
-		AngleShooterClient::get().renderTexture.draw(shape);
+		target.draw(shape);
 		shape.setSize({bound.size.x * (static_cast<float>(player->health) / 8.f), 2});
 		shape.setFillColor(sf::Color::Green);
-		AngleShooterClient::get().renderTexture.draw(shape);
-		if (player->immunityTime <= 0 && player->bulletCharge < 120) {
+		target.draw(shape);
+		if (player->immunityTime <= 0 && player->bulletCharge < AngleShooterCommon::MAX_BULLETS) {
 			shape.setPosition(bound.position + player->getVelocity() * deltaTime + sf::Vector2f{0, bound.size.y + 4.5f});
 			shape.setSize({bound.size.x, 2});
 			shape.setFillColor(sf::Color::Black);
-			AngleShooterClient::get().renderTexture.draw(shape);
-			shape.setSize({bound.size.x * (static_cast<float>(player->bulletCharge) / 120.f), 2});
+			target.draw(shape);
+			shape.setSize({bound.size.x * (static_cast<float>(player->bulletCharge) / AngleShooterCommon::MAX_BULLETS), 2});
 			shape.setFillColor(sf::Color::Cyan);
-			AngleShooterClient::get().renderTexture.draw(shape);
+			target.draw(shape);
 		}
 		text.setString(player->name);
 		text.setPosition({pos.x - text.getGlobalBounds().size.x / 2, pos.y - 16});
-		const auto textColour = sf::Color({static_cast<std::uint8_t>(player->colour.r / 2 + 128), static_cast<std::uint8_t>(player->colour.g / 2 + 128), static_cast<std::uint8_t>(player->colour.b / 2 + 128)});
+		const auto textColour = sf::Color({static_cast<std::uint8_t>(player->cosmetics.colour.r / 2 + 128), static_cast<std::uint8_t>(player->cosmetics.colour.g / 2 + 128), static_cast<std::uint8_t>(player->cosmetics.colour.b / 2 + 128)});
 		text.setFillColor(textColour);
-		AngleShooterClient::get().renderTexture.draw(text);
+		target.draw(text);
 	});
-	registerRenderer<BulletEntity>(BulletEntity::ID, [this](const std::shared_ptr<BulletEntity>& bullet) {
+	registerRenderer<BulletEntity>(BulletEntity::ID, [this](sf::RenderTarget& target, const std::shared_ptr<BulletEntity>& bullet) {
 		const auto deltaTime = static_cast<float>(AngleShooterClient::get().tickDelta);
 		static sf::Sprite bulletCore(TextureHolder::getInstance().get(Identifier("bullet_core.png")));
 		static sf::Sprite bulletRing(TextureHolder::getInstance().get(Identifier("bullet_ring.png")));
@@ -74,49 +91,29 @@ WorldRenderer::WorldRenderer() {
 		bulletCore.setPosition(pos);
 		bulletRing.setPosition(pos);
 		bulletRing.setColor(bullet->colour);
-		AngleShooterClient::get().renderTexture.draw(bulletCore);
-		AngleShooterClient::get().renderTexture.draw(bulletRing);
+		target.draw(bulletCore);
+		target.draw(bulletRing);
 	});
 }
 
 void WorldRenderer::tick() {
-	viewLast = viewCurrent;
-	auto minX = std::numeric_limits<float>::max();
-	auto minY = std::numeric_limits<float>::max();
-	auto maxX = std::numeric_limits<float>::min();
-	auto maxY = std::numeric_limits<float>::min();
-	for (const auto& gameObject : ClientWorld::get().getEntities()) {
-		if (const auto player = dynamic_cast<PlayerEntity*>(gameObject.get()); player != nullptr) {
-			const auto position = player->getPosition();
-			minX = std::min(minX, position.x);
-			minY = std::min(minY, position.y);
-			maxX = std::max(maxX, position.x);
-			maxY = std::max(maxY, position.y);
-		}
-	}
-	viewTarget = {{minX, minY}, {maxX, maxY}};
-	if (std::abs(viewCurrent.position.x - viewTarget.position.x) > 100 || std::abs(viewCurrent.position.y - viewTarget.position.y) > 100) {
-		viewCurrent = viewTarget;
-		return;
-	}
-	constexpr auto adjustment = 0.1f;
-	viewCurrent = {
-		{viewCurrent.position.x * (1 - adjustment) + viewTarget.position.x * adjustment, viewCurrent.position.y * (1 - adjustment) + viewTarget.position.y * adjustment},
-		{viewCurrent.size.x * (1 - adjustment) + viewTarget.size.x * adjustment, viewCurrent.size.y * (1 - adjustment) + viewTarget.size.y * adjustment}};
+	this->viewLast = this->viewCurrent;
+	if (!ClientWorld::get().gameObjects.contains(AngleShooterClient::get().playerId)) return;
+	const auto player = ClientWorld::get().gameObjects[AngleShooterClient::get().playerId];
+	const sf::View viewTarget = {player->getPosition(), sf::Vector2f{1920, 1080} * 0.25f};
+	viewCurrent = Util::lerp(0.1f, viewCurrent, viewTarget);
 }
 
-void WorldRenderer::render() {
-	auto view = AngleShooterClient::get().renderTexture.getView();
-	const auto center = sf::Vector2f{viewLast.position.x / 2 + viewLast.size.x / 2, viewLast.position.y / 2 + viewLast.size.y / 2};
-	view.setCenter(center);
-	const auto average = 160 + std::max((viewCurrent.size.x - viewCurrent.position.x) / 2, (viewCurrent.size.y - viewCurrent.position.y) / 2) * 3.2f;
-	view.setSize({average, average / static_cast<float>(AngleShooterClient::get().renderTexture.getSize().x) * static_cast<float>(AngleShooterClient::get().renderTexture.getSize().y)});
-	AngleShooterClient::get().renderTexture.setView(view);
-	if (ClientWorld::get().mapRenderer != nullptr) ClientWorld::get().mapRenderer->render();
+void WorldRenderer::draw(sf::RenderTarget& target, sf::RenderStates states) const {
+	const auto delta = AngleShooterClient::get().tickDelta;
+	const auto view = Util::lerp(static_cast<float>(delta), viewLast, viewCurrent);
+	target.setView(view);
+	if (ClientWorld::get().mapRenderer != nullptr) target.draw(*ClientWorld::get().mapRenderer);
 	for (const auto entity : ClientWorld::get().getEntities()) {
-		if (auto renderer = renderRegistry.find(entity->getEntityType().getHash()); renderer != renderRegistry.end()) renderer->second(entity);
+		if (!entity) continue;
+		if (auto renderer = renderRegistry.find(entity->getEntityType().getHash()); renderer != renderRegistry.end()) renderer->second(target, entity);
 	}
-	if (OptionsManager::get().isDebugEnabled()) {
+	if (AngleShooterClient::get().hitboxes) {
 		sf::RectangleShape shape;
 		shape.setFillColor(sf::Color::Transparent);
 		shape.setOutlineColor(sf::Color::Green);
@@ -125,7 +122,7 @@ void WorldRenderer::render() {
 			const auto rect = entity->getBoundingBox();
 			shape.setPosition(rect.position);
 			shape.setSize(rect.size);
-			AngleShooterClient::get().renderTexture.draw(shape);
+			target.draw(shape);
 			const auto pos = entity->getPosition();
 			const auto rotation = entity->getRotation().asRadians();
 			sf::VertexArray line(sf::PrimitiveType::Lines, 2);
@@ -133,15 +130,13 @@ void WorldRenderer::render() {
 			line[0].color = sf::Color::Red;
 			line[1].position = pos + sf::Vector2f(std::cos(rotation) * 16, std::sin(rotation) * 16);
 			line[1].color = sf::Color::Red;
-			AngleShooterClient::get().renderTexture.draw(line);
+			target.draw(line);
 		}
 	}
-	static auto bloomProcessing = BloomProcessing();
-	bloomProcessing.apply(AngleShooterClient::get().renderTexture, AngleShooterClient::get().renderTexture);
 }
 
-template<typename T> void WorldRenderer::registerRenderer(const Identifier& id, std::function<void(std::shared_ptr<T>)> renderer) {
-    renderRegistry[id.getHash()] = [renderer](const std::shared_ptr<Entity>& entity) {
-        renderer(std::static_pointer_cast<T>(entity));
+template<typename T> void WorldRenderer::registerRenderer(const Identifier& id, std::function<void(sf::RenderTarget&, std::shared_ptr<T>)> renderer) {
+    renderRegistry[id.getHash()] = [renderer](sf::RenderTarget& target, const std::shared_ptr<Entity>& entity) {
+        renderer(target, std::static_pointer_cast<T>(entity));
     };
 }

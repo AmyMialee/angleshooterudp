@@ -3,7 +3,7 @@
 
 const Identifier Map::DEFAULT_TILE("bricks.png");
 
-Map::Map(const Identifier& mapId, uint16_t rows, uint16_t columns) : mapId(mapId), rows(rows), columns(columns) {
+Map::Map(Identifier mapId, uint16_t rows, uint16_t columns) : mapId(std::move(mapId)), rows(rows), columns(columns) {
 	this->textureGrid.resize(rows);
 	this->collisionGrid.resize(rows);
 	for (uint16_t row = 0; row < rows; ++row) {
