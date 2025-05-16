@@ -354,15 +354,15 @@ void AngleShooterClient::run() {
 	auto status = sf::Socket::Status::Partial;
 	while (status == sf::Socket::Status::Partial) status = getSocket().send(packet.getBuffer(), packet.getByteLength(), sf::IpAddress(255, 255, 255, 255), AngleShooterCommon::PORT);
 	ClientWorld::get().init();
-	sf::Clock deltaClock;
-	auto frameTime = 0.;
-	auto tickTime = 0.;
-	auto networkTime = 0.;
-	auto secondTime = 0.;
-	auto frames = 0.;
-	auto ticks = 0.;
-	auto loops = 0.;
 	try {
+		auto loops = 0.;
+		auto ticks = 0.;
+		auto frames = 0.;
+		auto secondTime = 0.;
+		auto networkTime = 0.;
+		auto tickTime = 0.;
+		auto frameTime = 0.;
+		sf::Clock deltaClock;
 		while (window.isOpen()) {
 			const auto deltaTime = deltaClock.restart().asSeconds();
 			tickTime += deltaTime;
@@ -496,7 +496,7 @@ void AngleShooterClient::tickNetwork() {
 	if (this->server->shouldDisconnect()) this->disconnect();
 }
 
-void AngleShooterClient::send(OutputBitStream& packet) {
+void AngleShooterClient::send(const OutputBitStream& packet) {
 	if (this->server == nullptr) {
 		Logger::error("Cannot send packet, not connected to server");
 		return;
@@ -516,7 +516,7 @@ void AngleShooterClient::connect(const PortedIP& server) {
 
 void AngleShooterClient::disconnect() {
 	Logger::info("Disconnected from server " + this->server->getPortedIP().toString());
-	auto leave = NetworkProtocol::C2S_QUIT->getPacket();
+	const auto leave = NetworkProtocol::C2S_QUIT->getPacket();
 	send(leave);
 	delete(this->server);
 	this->server = nullptr;

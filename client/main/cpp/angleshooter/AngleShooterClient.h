@@ -29,7 +29,7 @@ public:
 	bool onMainMenu = true;
 
 	void run();
-	void send(OutputBitStream& packet);
+	void send(const OutputBitStream& packet);
 	void connect(const PortedIP& server);
 	void disconnect();
 
