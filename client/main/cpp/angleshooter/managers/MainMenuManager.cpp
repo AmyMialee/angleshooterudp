@@ -17,7 +17,7 @@ bool MainMenuManager::handleEvent(const sf::Event& event) {
 
 void MainMenuManager::populateMainMenu() {
 	for (auto x = -1; x <= 1; ++x) for (auto y = -1; y <= 1; ++y) this->mainMenuManager.addWidget(new MenuWidget({1860.f * x, 1317.f * y}, 1860, Identifier("menu/menu_bg.png")));
-	this->mainMenuManager.addWidget(new MenuWidget({-763, 32}, 461, Identifier("menu/menu_credits_techy.png")));
+	this->mainMenuManager.addWidget(new MenuWidget({-763, 32}, 461, Identifier("menu/menu_credits_amy.png")));
 	this->mainMenuManager.addWidget(new MenuWidget({700, 540}, 788, Identifier("menu/menu_options.png")));
 	this->mainMenuManager.addWidget(new MenuWidget({-220, 560}, 1046, Identifier("menu/menu_servers.png")));
 	this->mainMenuManager.addWidget(new MenuWidget({0, 0}, 1044, Identifier("menu/menu_main.png")));
